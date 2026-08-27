@@ -28,6 +28,7 @@ PLANNED: dict[str, str] = {
     "uk_national_trails": "4 - Europe wave",
     "refuges_info": "4 - Europe wave",
     "spain_regional": "4 - Europe wave",
+    "mapa_caminos_naturales": "4 - Europe wave",
     "usfs": "2 - prove it on three continents",
     "nps": "5 - Americas & Oceania wave",
     "usgs_ndt": "5 - Americas & Oceania wave",

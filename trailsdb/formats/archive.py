@@ -33,28 +33,33 @@ def iter_members(path: Path, suffixes: tuple[str, ...]) -> Iterator[tuple[str, b
 
 
 def iter_gpx(path: Path) -> Iterator[tuple[str, bytes]]:
-    """Yield GPX payloads from a file that is either a GPX or a ZIP containing some."""
+    """Yield GPX payloads from a file that is either a GPX or a ZIP containing some.
+
+    Content decides, not the extension. Download endpoints hand back whatever
+    they feel like under whatever name the pipeline chose -- CNIG names every
+    download ``.gpx`` because that is what it asked for -- and a ZIP parsed as
+    XML fails with an unreadable "invalid token" instead of saying it is a ZIP.
+    """
     path = Path(path)
-    if path.suffix.lower() == ".gpx":
+    if is_zip(path):
+        found = False
+        for name, payload in iter_members(path, (".gpx",)):
+            found = True
+            yield name, payload
+        if found:
+            return
+        with zipfile.ZipFile(path) as archive:
+            others = sorted({Path(n).suffix.lower() for n in archive.namelist() if Path(n).suffix})
+        if {".shp", ".gpkg", ".gdb"} & set(others):
+            raise UnsupportedFormat(
+                f"{path}: archive holds {', '.join(others)} but no GPX -- "
+                f"install the 'geo' extra (fiona, pyproj) to read it"
+            )
+        raise UnsupportedFormat(
+            f"{path}: archive holds no GPX (members: {', '.join(others) or 'none'})"
+        )
+
+    if path.suffix.lower() == ".gpx" or path.read_bytes()[:200].lstrip()[:1] == b"<":
         yield path.name, path.read_bytes()
         return
-    if not is_zip(path):
-        raise UnsupportedFormat(f"{path}: not a GPX file and not a ZIP archive")
-
-    found = False
-    for name, payload in iter_members(path, (".gpx",)):
-        found = True
-        yield name, payload
-    if found:
-        return
-
-    with zipfile.ZipFile(path) as archive:
-        others = sorted(
-            {Path(n).suffix.lower() for n in archive.namelist() if Path(n).suffix} - {""}
-        )
-    if {".shp", ".gpkg", ".gdb"} & set(others):
-        raise UnsupportedFormat(
-            f"{path}: archive holds {', '.join(others)} but no GPX -- "
-            f"install the 'geo' extra (fiona, pyproj) to read it"
-        )
-    raise UnsupportedFormat(f"{path}: archive holds no GPX (members: {', '.join(others) or 'none'})")
+    raise UnsupportedFormat(f"{path}: not a GPX file and not a ZIP archive")

@@ -1,0 +1,102 @@
+{
+ "type": "FeatureCollection",
+ "exceededTransferLimit": false,
+ "features": [
+  {
+   "type": "Feature",
+   "id": 707947,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      173.07413,
+      -42.19781
+     ],
+     [
+      173.07326,
+      -42.19819
+     ],
+     [
+      173.07191,
+      -42.19822
+     ],
+     [
+      173.0712,
+      -42.19848
+     ],
+     [
+      173.07019,
+      -42.19861
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 707947,
+    "name": "Pudding Hill Track",
+    "introduction": "A 2 hour walk to the summit of Pudding Hill.",
+    "difficulty": "Intermediate",
+    "completionTime": "4 hr",
+    "hasAlerts": "Refer to DOC website for current alerts",
+    "introductionThumbnail": "https://www.doc.govt.nz/images/no-photo/no-photo-220x140.jpg",
+    "walkingAndTrampingWebPage": "https://www.doc.govt.nz/link/d7a3a8ec03804341b8bc15c23e21a722.aspx",
+    "dateLoadedToGIS": 1764664454000,
+    "Shape__Length": 4748.450237746269
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 707948,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      175.47867,
+      -40.83155
+     ],
+     [
+      175.47773,
+      -40.83137
+     ],
+     [
+      175.47686,
+      -40.83091
+     ],
+     [
+      175.47601,
+      -40.83026
+     ],
+     [
+      175.47555,
+      -40.82952
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 707948,
+    "name": "Mitre Peak Track",
+    "introduction": "Tramp from Mitre Flats to the bush line of Pukeamoamo/Mitre Peak.",
+    "difficulty": "Advanced",
+    "completionTime": null,
+    "hasAlerts": "Refer to DOC website for current alerts",
+    "introductionThumbnail": "https://www.doc.govt.nz/images/no-photo/no-photo-220x140.jpg",
+    "walkingAndTrampingWebPage": "https://www.doc.govt.nz/link/d40c32bd3ee3433ba6da94ec7295c995.aspx",
+    "dateLoadedToGIS": 1764664454000,
+    "Shape__Length": 2654.0253831817176
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     170.0,
+     -43.0
+    ]
+   },
+   "properties": {
+    "OBJECTID": 999,
+    "name": "A hut, not a track"
+   }
+  }
+ ]
+}

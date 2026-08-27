@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1">
+<trk><name>001: Nordkapp – Honningsvåg (Developed + Not Signed)</name><trkseg>
+<trkpt lat="71.169416996" lon="25.783315022"/>
+<trkpt lat="71.166519036" lon="25.779920015"/>
+<trkpt lat="71.166119974" lon="25.779712982"/>
+<trkpt lat="71.163963981" lon="25.77747602"/>
+</trkseg></trk>
+<trk><name>002: Honningsvåg – Repvåg (Developed + Not Signed)</name><trkseg>
+<trkpt lat="71.001780022" lon="25.965892989"/>
+<trkpt lat="71.001798965" lon="25.965525024"/>
+<trkpt lat="71.001760995" lon="25.965125039"/>
+<trkpt lat="71.001320023" lon="25.963356961"/>
+</trkseg></trk>
+</gpx>

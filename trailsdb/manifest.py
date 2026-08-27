@@ -27,6 +27,10 @@ class PullManifest:
     retrieved_on: str = ""
     files: list[FileRecord] = field(default_factory=list)
     errors: list[str] = field(default_factory=list)
+    #: Things a human should see that are not failures -- a source flagged
+    #: deprecated by its publisher, an instance skipped for want of a licence.
+    #: A warning must never make ``ok`` false, or CI learns to ignore red.
+    warnings: list[str] = field(default_factory=list)
     notes: str = ""
 
     # Set by adapters whose license or attribution is only knowable at ingest
@@ -93,5 +97,6 @@ class PullManifest:
         raw = json.loads(path.read_text(encoding="utf-8"))
         raw.pop("total_bytes", None)
         raw.pop("changed_files", None)
+        raw.setdefault("warnings", [])
         raw["files"] = [FileRecord(**f) for f in raw.get("files", [])]
         return cls(**raw)

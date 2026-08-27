@@ -60,7 +60,8 @@ CREATE TABLE IF NOT EXISTS pulls (
     changed_files  INTEGER NOT NULL DEFAULT 0,
     total_bytes    INTEGER NOT NULL DEFAULT 0,
     ok             INTEGER NOT NULL DEFAULT 1,
-    errors         TEXT
+    errors         TEXT,
+    warnings       TEXT
 );
 CREATE INDEX IF NOT EXISTS pulls_source_idx ON pulls(source_id, started_at);
 
@@ -189,8 +190,8 @@ class Catalog:
         cursor = self.db.execute(
             """
             INSERT INTO pulls(source_id, started_at, finished_at, retrieved_on,
-                              file_count, changed_files, total_bytes, ok, errors)
-            VALUES(?,?,?,?,?,?,?,?,?)
+                              file_count, changed_files, total_bytes, ok, errors, warnings)
+            VALUES(?,?,?,?,?,?,?,?,?,?)
             """,
             (
                 manifest.source,
@@ -202,6 +203,7 @@ class Catalog:
                 manifest.total_bytes,
                 1 if manifest.ok else 0,
                 json.dumps(manifest.errors) if manifest.errors else None,
+                json.dumps(manifest.warnings) if manifest.warnings else None,
             ),
         )
         self.db.commit()

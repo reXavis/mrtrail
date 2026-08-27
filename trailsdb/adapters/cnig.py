@@ -1,33 +1,45 @@
-"""CNIG: the Spanish trio, and the pipeline's first real pull.
+"""CNIG: the Spanish series, and the pipeline's fiddliest pull.
 
-Three series come off the same Centro de Descargas flow and share one adapter:
+The plan named this the first concrete step, and it was right about why: it is
+the most involved download flow in the whole project, and Spanish data lights up
+the already-live Galicia pack immediately.
 
-============================  ==========  ===================================
-series                        est. km     what it is
-============================  ==========  ===================================
-``fedme``                     50,000      FEDME homologated GR/PR/SL senderos
-``camino``                    25,000      Camino de Santiago, ~2,221 stages
-``caminos_naturales``         10,300      the national Caminos Naturales network
-============================  ==========  ===================================
+The Centro de Descargas flow, as it actually works:
 
-Chosen first deliberately: it is the fiddliest pull in the whole plan (a POST
-flow behind a free account, ~9,900 individual files, one request per 1.5 s for
-4-6 hours) and it is the one that makes the feature visible in the already-live
-Galicia pack on day one. Everything after this is easier.
+1. ``POST archivosTotalesSerie`` with ``codSerie`` returns an HTML listing and a
+   hidden ``totalArchivos`` count. ``numPagina`` walks the pages.
+2. Each row carries a file id in its ``tdAcciones_{id}`` cell, plus a name, a
+   format and a date. Every route is published twice, as GPX and as KML.
+3. ``POST descargaDir`` with ``secDescDirLA={id}`` returns the file.
 
-Discovery -- turning a series into a list of downloadable files -- is the one
-piece that depends on CNIG's exact request shape, and that shape is not stable
-enough to hard-code blind. So it has two paths:
+Two corrections to what the plan assumed. **No account is needed** -- direct
+download works unauthenticated. And the file count is a little lower than
+estimated, because half of every listing is KML duplicates we skip:
 
-``files.json`` in the source's raw directory
-    A committed index of ``{"id": ..., "name": ...}`` entries. Deterministic,
-    offline, and what the tests and CI use.
+======  ======================  =============  ===========
+code    series                  files          GPX routes
+======  ======================  =============  ===========
+FEDME   Senderos homologados            6,923       ~3,461
+CSANT   Caminos de Santiago             2,221       ~1,110
+CACID   Camino del Cid                    299         ~149
+RTPAS   Rutas de Pasion                    29          ~14
+======  ======================  =============  ===========
 
-live discovery
-    Queries the download centre and parses whatever it returns -- JSON or HTML.
-    The endpoint constants below are marked UNVERIFIED and must be confirmed
-    against the live site before a production pull; the health check and the
-    loud failure on an empty result are what surface it when they drift.
+CSANT's 2,221 is exactly the stage count the plan predicted.
+
+Caminos Naturales is deliberately absent: it is not in the download centre under
+any of these codes. It is published by the Ministerio de Agricultura separately,
+so it gets its own adapter rather than a wrong guess here.
+
+Licensing: the download centre's legal notice puts these products under an IGN
+use licence "compatible con CC-BY 4.0" (Orden FOM/2807/2015), and the licence
+document prescribes the exact citation form::
+
+    <identificador del producto> <fecha> CC-BY 4.0 <atribucion de productores>
+
+with the example ``BTN25 2014-2015 CC-BY 4.0 ign.es``. That template is what the
+registry stores; the product identifier and date come from the series and the
+listing.
 """
 
 from __future__ import annotations
@@ -44,40 +56,59 @@ from ..manifest import PullManifest
 from ..schema import Feature
 from .base import Adapter
 
-# --- UNVERIFIED: confirm against centrodedescargas.cnig.es before a real pull ---
-# The download centre's search is a POST that returns a list of downloadable
-# files for a catalogue "series". Both the endpoint and the direct-download URL
-# template are recorded here so drift is a one-line fix rather than a hunt.
-SEARCH_ENDPOINT = "https://centrodedescargas.cnig.es/CentroDescargas/buscarFicheros"
-DOWNLOAD_TEMPLATE = "https://centrodedescargas.cnig.es/CentroDescargas/descargaDir?secDescDirLA={id}"
-# -------------------------------------------------------------------------------
+BASE = "https://centrodedescargas.cnig.es/CentroDescargas/"
+HOME_URL = BASE + "home"
+LISTING_URL = BASE + "archivosTotalesSerie"
+DOWNLOAD_URL = BASE + "descargaDir"
+DETAIL_URL = BASE + "detalleArchivo?sec={file_id}"
+LICENCE_DOCUMENT = "https://www.ign.es/resources/licencia/Condiciones_licenciaUso_IGN.pdf"
 
 INDEX_NAME = "files.json"
 
 #: Spanish waymarking codes. GR = gran recorrido (>50 km), PR = pequeno
-#: recorrido, SL = sendero local; the middle group is the region letter(s), e.g.
+#: recorrido, SL = sendero local; the middle group is the region letter(s), so
 #: "PR-G 100" is a Galician pequeno recorrido.
 _REF_RE = re.compile(r"\b(GR|PR|SL)[\s\-_]?([A-Z]{1,2})?[\s\-_]?(\d+)\b", re.IGNORECASE)
 
-#: "Etapa 12", "Etapa 12 de 31", "E12", "12 -"
+#: "Etapa 12", "Etapa 12 de 31", "E12"
 _STAGE_RE = re.compile(r"\b(?:etapa|stage|e)[\s\-_.]*(\d{1,3})\b", re.IGNORECASE)
+
+_TOTAL_RE = re.compile(r'id="totalArchivos"[^>]*value="(\d+)"')
+_ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S)
+_FILE_ID_RE = re.compile(r'id="tdAcciones_(\d+)"')
+# The listing marks its cells by class rather than position: the route name is
+# left-aligned, every other value is centred. Reading them by class survives a
+# column being added or reordered, which a positional parser would not.
+_NAME_CELL_RE = re.compile(r'txtLeftCenterTablas">([^<]*)<')
+_VALUE_CELL_RE = re.compile(r'centrarCamposTablaTd[^"]*">([^<]*)<')
 
 
 @dataclass(frozen=True, slots=True)
 class Series:
     key: str
-    catalog_id: str
+    code: str
+    product_id: str
     official_status: str
     kind: str
 
 
 SERIES: dict[str, Series] = {
-    "fedme": Series("fedme", "senderos-homologados", "homologado", "hiking"),
-    "camino": Series("camino", "camino-santiago", "camino_oficial", "hiking"),
-    "caminos_naturales": Series(
-        "caminos_naturales", "caminos-naturales", "camino_natural", "mixed"
-    ),
+    "fedme": Series("fedme", "FEDME", "Senderos FEDME", "homologado", "hiking"),
+    "camino": Series("camino", "CSANT", "Caminos de Santiago", "camino_oficial", "hiking"),
+    "camino_cid": Series("camino_cid", "CACID", "Camino del Cid", "camino_del_cid", "mixed"),
+    "rutas_pasion": Series("rutas_pasion", "RTPAS", "Rutas de Pasion", "ruta_tematica", "mixed"),
 }
+
+
+@dataclass(frozen=True, slots=True)
+class ListedFile:
+    file_id: str
+    name: str
+    fmt: str
+    date: str = ""
+
+    def as_dict(self) -> dict[str, str]:
+        return {"id": self.file_id, "name": self.name, "format": self.fmt, "date": self.date}
 
 
 class CnigAdapter(Adapter):
@@ -104,48 +135,96 @@ class CnigAdapter(Adapter):
             # Empty is never "this series has no data" -- it means the flow broke.
             raise FetchError(
                 f"{self.source.id}: discovery returned no files. Either "
-                f"{INDEX_NAME} is missing from {self.raw_dir} or the CNIG search "
-                f"flow has changed (see SEARCH_ENDPOINT in this module)."
+                f"{INDEX_NAME} is missing from {self.raw_dir} or the Centro de "
+                f"Descargas listing has changed (see LISTING_URL in this module)."
             )
+
+        # Every route is published as both GPX and KML; GPX alone halves the pull.
+        gpx_files = [f for f in files if f.fmt.upper() == "GPX"] or files
         if limit is not None:
-            files = files[:limit]
+            gpx_files = gpx_files[:limit]
 
         target = self.raw_dir / "files"
-        for entry in files:
-            url = entry.get("url") or DOWNLOAD_TEMPLATE.format(id=entry["id"])
-            filename = _safe_filename(entry.get("name") or f"{entry['id']}.zip")
-            manifest.add(self.session.download(url, target / filename, force=force))
+        for entry in gpx_files:
+            manifest.add(
+                self.session.download(
+                    DOWNLOAD_URL,
+                    target / _safe_filename(f"{entry.file_id}_{entry.name}.gpx"),
+                    method="POST",
+                    data={"secDescDirLA": entry.file_id},
+                    force=force,
+                )
+            )
 
         manifest.notes = (
-            f"series={self.series.key} files={len(files)} "
-            f"(pacing {self.session.rate_limit_s}s/request)"
+            f"series={self.series.key} code={self.series.code} "
+            f"files={len(gpx_files)} of {len(files)} listed (GPX only, KML skipped) "
+            f"pacing={self.session.rate_limit_s}s"
         )
 
-    def discover(self) -> list[dict[str, Any]]:
-        """The file list for this series: committed index first, live query second."""
+    def discover(self) -> list[ListedFile]:
+        """The file list for this series: cached index first, live listing second."""
         index_path = self.raw_dir / INDEX_NAME
         if index_path.exists():
-            entries = json.loads(index_path.read_text(encoding="utf-8"))
-            return entries.get("files", entries) if isinstance(entries, dict) else entries
+            raw = json.loads(index_path.read_text(encoding="utf-8"))
+            rows = raw.get("files", raw) if isinstance(raw, dict) else raw
+            return [
+                ListedFile(r["id"], r.get("name", ""), r.get("format", ""), r.get("date", ""))
+                for r in rows
+            ]
         return self.discover_live()
 
-    def discover_live(self) -> list[dict[str, Any]]:
-        """Query the download centre. UNVERIFIED request shape -- see module docstring."""
-        response = self.session.post(
-            SEARCH_ENDPOINT,
-            data={"serie": self.series.catalog_id, "pagina": 1},
-        )
-        if response.status_code != 200:
-            raise FetchError(
-                f"{self.source.id}: CNIG search returned HTTP {response.status_code}"
+    def discover_live(self, *, max_pages: int = 500) -> list[ListedFile]:
+        """Walk the paginated listing for this series.
+
+        The download centre keeps listing state in a session, so the home page is
+        fetched once first. Pagination stops when a page repeats what the last one
+        gave -- the listing happily serves the final page forever past the end.
+        """
+        self.session.get(HOME_URL)
+        series = self.series
+        found: dict[str, ListedFile] = {}
+        total: int | None = None
+
+        for page in range(1, max_pages + 1):
+            response = self.session.post(
+                LISTING_URL,
+                data={
+                    "codSerie": series.code,
+                    "numPagina": str(page),
+                    "totalArchivos": str(total or ""),
+                },
             )
-        entries = parse_discovery(response)
-        # Cache it so a resumed pull does not re-query, and so the exact file list
-        # of a pull is auditable afterwards.
+            if response.status_code != 200:
+                raise FetchError(
+                    f"{self.source.id}: listing page {page} returned HTTP {response.status_code}"
+                )
+            html_text = getattr(response, "text", "") or ""
+            if total is None:
+                total = parse_total(html_text)
+
+            before = len(found)
+            for listed in parse_rows(html_text):
+                found.setdefault(listed.file_id, listed)
+            if len(found) == before:
+                break  # the listing has stopped yielding anything new
+            if total and len(found) >= total:
+                break
+
+        entries = list(found.values())
         if entries:
             self.raw_dir.mkdir(parents=True, exist_ok=True)
             (self.raw_dir / INDEX_NAME).write_text(
-                json.dumps({"series": self.series.key, "files": entries}, indent=2),
+                json.dumps(
+                    {
+                        "series": series.key,
+                        "code": series.code,
+                        "total_listed": total,
+                        "files": [e.as_dict() for e in entries],
+                    },
+                    indent=2,
+                    ensure_ascii=False,
+                ),
                 encoding="utf-8",
             )
         return entries
@@ -154,17 +233,14 @@ class CnigAdapter(Adapter):
 
     def normalize(self, manifest: PullManifest) -> Iterator[Feature]:
         series = self.series
+        listed = {f.file_id: f for f in self.discover()}
         for path in sorted((self.raw_dir / "files").glob("*")):
-            if path.suffix.lower() == ".json" or path.name.endswith(".meta.json"):
+            if path.name.endswith(".meta.json") or path.suffix.lower() == ".json":
                 continue
-            try:
-                payloads = list(archive.iter_gpx(path))
-            except archive.UnsupportedFormat:
-                # Shapefile-only series need the optional geo extra; skipping
-                # silently would understate coverage, so let it surface.
-                raise
-            for member, data in payloads:
-                yield from self._features_from_gpx(path, member, data, series, manifest)
+            file_id = path.name.split("_", 1)[0]
+            meta = listed.get(file_id)
+            for member, data in archive.iter_gpx(path):
+                yield from self._features_from_gpx(path, member, data, series, meta, manifest)
 
     def _features_from_gpx(
         self,
@@ -172,25 +248,32 @@ class CnigAdapter(Adapter):
         member: str,
         data: bytes,
         series: Series,
+        meta: ListedFile | None,
         manifest: PullManifest,
     ) -> Iterator[Feature]:
         tracks = gpx.parse(data)
         stem = Path(member).stem or path.stem
+        listed_name = meta.name if meta else None
+
         for index, track in enumerate(tracks):
-            label = track.name or stem
+            label = listed_name or track.name or stem
             ref = extract_ref(label) or extract_ref(stem)
-            # The file stem is the stable part: CNIG file names outlive track
-            # names, so ids survive a re-publish that only retitles a track.
-            local_id = stem if len(tracks) == 1 else f"{stem}-{index + 1}"
+            # The download-centre file id is the stable anchor: it outlives the
+            # published file name, which carries the route title.
+            local_id = (
+                meta.file_id if meta and len(tracks) == 1
+                else f"{meta.file_id}-{index + 1}" if meta
+                else (stem if len(tracks) == 1 else f"{stem}-{index + 1}")
+            )
 
             fields: dict[str, Any] = {
                 "ref": ref,
                 "name": label,
                 "official_status": series.official_status,
                 "country": "ES",
-                "source_url": self.source.homepage or None,
+                "source_url": DETAIL_URL.format(file_id=meta.file_id) if meta else None,
             }
-            if series.key == "camino":
+            if series.key in ("camino", "camino_cid"):
                 stage = extract_stage(label) or extract_stage(stem)
                 variant = variant_name(label, stem)
                 if stage is not None:
@@ -199,13 +282,15 @@ class CnigAdapter(Adapter):
                     fields["parent_id"] = self.make_id(_slug(variant))
                     fields["parent_name"] = variant
 
-            extras = {"source_file": path.name}
+            extras = {"source_file": path.name, "cnig_product": series.product_id}
+            if meta and meta.date:
+                extras["published_on"] = meta.date
             if member != path.name:
                 extras["archive_member"] = member
+            if track.name and track.name != label:
+                extras["track_name"] = track.name
             if track.description:
                 extras["description"] = track.description
-            if track.track_type:
-                extras["source_type"] = track.track_type
 
             yield self.feature(
                 local_id,
@@ -220,68 +305,31 @@ class CnigAdapter(Adapter):
 # -- parsing helpers (module level so they are testable without an adapter) ----
 
 
-def parse_discovery(response: Any) -> list[dict[str, Any]]:
-    """Extract ``{"id", "name"}`` entries from whatever the search returns.
-
-    The download centre has served both JSON and HTML for this over time, so
-    both are handled rather than assumed.
-    """
-    content_type = ""
-    headers = getattr(response, "headers", None)
-    if headers is not None and hasattr(headers, "get"):
-        content_type = (headers.get("Content-Type") or "").lower()
-
-    if "json" in content_type:
-        try:
-            return _entries_from_json(response.json())
-        except ValueError:
-            pass
-    text = getattr(response, "text", "") or ""
-    if text.lstrip()[:1] in "[{":
-        try:
-            return _entries_from_json(json.loads(text))
-        except ValueError:
-            pass
-    return _entries_from_html(text)
+def parse_total(html_text: str) -> int | None:
+    match = _TOTAL_RE.search(html_text)
+    return int(match.group(1)) if match else None
 
 
-def _entries_from_json(payload: Any) -> list[dict[str, Any]]:
-    rows = payload
-    if isinstance(payload, dict):
-        for key in ("data", "ficheros", "files", "results", "rows"):
-            if isinstance(payload.get(key), list):
-                rows = payload[key]
-                break
-    if not isinstance(rows, list):
-        raise ValueError("no file list in JSON payload")
-
-    entries: list[dict[str, Any]] = []
-    for row in rows:
-        if not isinstance(row, dict):
+def parse_rows(html_text: str) -> list[ListedFile]:
+    """Extract one entry per listing row: file id, name, format, publication date."""
+    out: list[ListedFile] = []
+    for row in _ROW_RE.findall(html_text):
+        id_match = _FILE_ID_RE.search(row)
+        if not id_match:
             continue
-        file_id = _first(row, ("id", "idFichero", "secDescDirLA", "codigo"))
-        name = _first(row, ("name", "nombre", "nombreFichero", "fichero", "titulo"))
-        if file_id is None and name is None:
-            continue
-        entries.append({"id": str(file_id or name), "name": str(name or file_id)})
-    return entries
+        name_match = _NAME_CELL_RE.search(row)
+        values = [c.strip() for c in _VALUE_CELL_RE.findall(row) if c.strip()]
+        fmt = next((v for v in values if v.upper() in ("GPX", "KML", "ZIP", "SHP")), "")
+        date = next((v for v in values if re.fullmatch(r"\d{2}/\d{2}/\d{4}", v)), "")
+        name = _unescape(name_match.group(1)) if name_match else ""
+        out.append(ListedFile(id_match.group(1), name, fmt, date))
+    return out
 
 
-_HREF_RE = re.compile(r"secDescDirLA=(\d+)[^\"']*[\"'][^>]*>\s*([^<]{1,200}?)\s*<", re.IGNORECASE)
+def _unescape(text: str) -> str:
+    import html as _html
 
-
-def _entries_from_html(html: str) -> list[dict[str, Any]]:
-    seen: dict[str, dict[str, Any]] = {}
-    for file_id, label in _HREF_RE.findall(html):
-        seen.setdefault(file_id, {"id": file_id, "name": label.strip() or f"{file_id}.zip"})
-    return list(seen.values())
-
-
-def _first(row: dict[str, Any], keys: tuple[str, ...]) -> Any:
-    for key in keys:
-        if row.get(key) not in (None, ""):
-            return row[key]
-    return None
+    return _html.unescape(text).strip()
 
 
 def extract_ref(text: str | None) -> str | None:
@@ -293,9 +341,7 @@ def extract_ref(text: str | None) -> str | None:
         return None
     prefix, region, number = match.groups()
     prefix = prefix.upper()
-    if region:
-        return f"{prefix}-{region.upper()} {number}"
-    return f"{prefix} {number}"
+    return f"{prefix}-{region.upper()} {number}" if region else f"{prefix} {number}"
 
 
 def extract_stage(text: str | None) -> int | None:
@@ -306,16 +352,11 @@ def extract_stage(text: str | None) -> int | None:
 
 
 def variant_name(label: str, stem: str) -> str | None:
-    """The Camino variant a stage belongs to -- 'Camino Frances', 'Via de la Plata'.
-
-    Stage labels are usually ``"<variant>. Etapa 12: A -> B"`` or
-    ``"<variant> - Etapa 12"``. Take everything before the stage marker.
-    """
+    """The Camino variant a stage belongs to -- 'Camino Frances', 'Via de la Plata'."""
     for text in (label, stem):
         if not text:
             continue
-        head = _STAGE_RE.split(text)[0]
-        head = head.strip(" -_.:;,")
+        head = _STAGE_RE.split(text)[0].strip(" -_.:;,")
         if len(head) >= 4 and head.lower() != text.lower():
             return head
     return None
@@ -327,4 +368,4 @@ def _slug(text: str) -> str:
 
 def _safe_filename(name: str) -> str:
     cleaned = re.sub(r"[^\w.\-]+", "_", Path(str(name)).name).strip("._")
-    return cleaned or "download.bin"
+    return (cleaned or "download.gpx")[:150]

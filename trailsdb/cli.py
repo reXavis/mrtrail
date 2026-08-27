@@ -192,6 +192,8 @@ def cmd_pull(args, registry, paths: Paths) -> int:
                 f"  {status:<6} {len(manifest.files)} files, {manifest.changed_files} changed, "
                 f"{manifest.total_bytes / 1024 / 1024:.1f} MB  {manifest.notes}"
             )
+            for warning in manifest.warnings:
+                print(f"  warn   {warning}")
             for error in manifest.errors:
                 failures += 1
                 print(f"  error  {error}")

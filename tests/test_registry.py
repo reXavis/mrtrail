@@ -165,7 +165,7 @@ class TestSelection(unittest.TestCase):
     def test_adapter_name_expands_to_its_sources(self):
         self.assertEqual(
             sorted(s.id for s in self.registry.select(["cnig"])),
-            ["cnig_camino", "cnig_caminos_naturales", "cnig_fedme"],
+            ["cnig_camino", "cnig_camino_cid", "cnig_fedme"],
         )
 
     def test_source_ids_and_adapters_can_be_mixed_without_duplicates(self):

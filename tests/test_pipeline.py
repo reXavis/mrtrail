@@ -198,7 +198,9 @@ class TestExport(PipelineCase):
         out_dir = self.paths.export_dir("galicia")
         attribution = json.loads((out_dir / "attribution.json").read_text())
         credits = {row["source"]: row["attribution"] for row in attribution["sources"]}
-        self.assertEqual(credits["cnig_fedme"], "(c) Instituto Geografico Nacional de Espana")
+        # The IGN-prescribed citation form: product, licence, producer.
+        self.assertIn("CC-BY 4.0", credits["cnig_fedme"])
+        self.assertIn("Senderos FEDME", credits["cnig_fedme"])
 
         export = json.loads((out_dir / "export.json").read_text())
         self.assertEqual(export["pack"], "galicia")
@@ -224,7 +226,7 @@ class TestHealth(unittest.TestCase):
 
     def test_reports_reachable_and_moved_endpoints(self):
         def handler(_method, url, _kwargs):
-            return FakeResponse(404 if "doc-deptconservation" in url else 200)
+            return FakeResponse(404 if "DOC_Walking_Experiences" in url else 200)
 
         session = session_for(FakeTransport(handler))
         results = pipeline.health_check(

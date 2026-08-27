@@ -51,6 +51,9 @@ licenses:
     family: share-alike
     attribution_required: true
     share_alike: true
+    # The ECF's prescribed ODbL notice names the date the tracks were
+    # downloaded, so attribution is templated at pull time.
+    dated_attribution: true
 
   nlod-2.0:
     name: "Norwegian Licence for Open Government Data (NLOD) 2.0"
@@ -79,16 +82,6 @@ licenses:
     family: attribution
     attribution_required: true
     share_alike: false
-
-  eurovelo-terms:
-    name: "European Cyclists' Federation EuroVelo data terms"
-    url: "https://eurovelo.com/"
-    family: attribution
-    attribution_required: true
-    share_alike: false
-    # The ECF notice must carry the date the data was retrieved, so this
-    # attribution string is templated at pull time, not fixed here.
-    dated_attribution: true
 
   per-instance:
     name: "Determined per instance at ingest"
@@ -123,17 +116,22 @@ sources:
     km_confidence: official
     cadence: quarterly
     license: cc-by-4.0
-    attribution: "(c) Instituto Geografico Nacional de Espana"
-    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/senderos-homologados"
+    attribution: "Senderos FEDME CC-BY 4.0 ign.es"
+    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/home"
     health_check:
       url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
       expect_status: 200
     legal:
       verified_on: null
       notes: >-
-        CNIG prescribes an exact attribution formula; confirm the current wording
-        on the download page before this source ships in a pack. Homologated
-        route geometry is FEDME's, redistributed by CNIG.
+        Licence confirmed: the download centre's aviso legal puts these products
+        under the IGN use licence (Orden FOM/2807/2015), "compatible con CC-BY
+        4.0". The licence document prescribes the citation form "<identificador
+        del producto> <fecha> CC-BY 4.0 <atribucion de productores>", example
+        "BTN25 2014-2015 CC-BY 4.0 ign.es". OPEN ITEM: confirm the exact
+        <atribucion de productores> value for this product against the SCNE
+        product table (scne.es/productos.html) -- FEDME is a co-producer, so
+        "ign.es" alone may be incomplete. 6,923 files listed (GPX + KML pairs).
 
   cnig_camino:
     name: "Camino de Santiago (all variants)"
@@ -148,59 +146,116 @@ sources:
     km_confidence: assumed
     cadence: quarterly
     license: cc-by-4.0
-    attribution: "(c) Instituto Geografico Nacional de Espana"
-    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/camino-santiago"
+    attribution: "Caminos de Santiago CC-BY 4.0 ign.es"
+    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/home"
     health_check:
       url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
       expect_status: 200
     legal:
       verified_on: null
-      notes: "~2,221 stages across all variants; stages group under a parent route."
+      notes: >-
+        Same IGN licence as cnig_fedme, same open item on the exact producer
+        attribution. The download centre lists exactly 2,221 files for this
+        series -- the stage count the plan predicted.
 
-  cnig_caminos_naturales:
-    name: "Caminos Naturales"
-    publisher: "Ministerio de Agricultura, Pesca y Alimentacion / CNIG"
+  cnig_camino_cid:
+    name: "Camino del Cid"
+    publisher: "Consorcio Camino del Cid / CNIG"
     countries: ["ES"]
     adapter: cnig
-    series: caminos_naturales
+    series: camino_cid
     rate_limit_s: 1.5
+    feature_class: route
+    default_kind: mixed
+    estimated_km: 2500
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "Camino del Cid CC-BY 4.0 ign.es"
+    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/home"
+    health_check:
+      url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: >-
+        Found in the download centre alongside the other series (code CACID, 299
+        files). Walking and cycling variants of the same historic route.
+
+  caminos_naturales:
+    name: "Caminos Naturales"
+    publisher: "Ministerio de Agricultura, Pesca y Alimentacion"
+    countries: ["ES"]
+    adapter: mapa_caminos_naturales
     feature_class: route
     default_kind: mixed
     estimated_km: 10300
     km_confidence: official
     cadence: quarterly
     license: cc-by-4.0
-    attribution: "(c) Instituto Geografico Nacional de Espana"
-    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/caminos-naturales"
+    attribution: "(c) Ministerio de Agricultura, Pesca y Alimentacion"
+    homepage: "https://www.mapa.gob.es/es/desarrollo-rural/temas/caminos-naturales/"
     health_check:
-      url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
-      expect_status: 200
-    legal:
-      verified_on: null
-      notes: "Mixed-use (walking and cycling) national network."
-
-  # ------------------------------------------------------------ New Zealand -
-  nz_doc:
-    name: "DOC tracks"
-    publisher: "New Zealand Department of Conservation"
-    countries: ["NZ"]
-    adapter: nz_doc
-    feature_class: route
-    default_kind: hiking
-    estimated_km: 14000
-    km_confidence: official
-    cadence: quarterly
-    license: cc-by-4.0
-    attribution: "Sourced from the New Zealand Department of Conservation"
-    homepage: "https://doc-deptconservation.opendata.arcgis.com/"
-    health_check:
-      url: "https://doc-deptconservation.opendata.arcgis.com/"
+      url: "https://www.mapa.gob.es/es/desarrollo-rural/temas/caminos-naturales/"
       expect_status: 200
     legal:
       verified_on: null
       notes: >-
-        DOC announced endpoint changes for 2026 -- the health check is what
-        catches that drift at the quarterly refresh rather than at bake time.
+        NOT in the CNIG download centre -- checked, it is absent under every
+        series code there. Published by the Ministerio de Agricultura separately,
+        so it needs its own adapter rather than being folded into the CNIG one.
+
+  # ------------------------------------------------------------ New Zealand -
+  # DOC's two shapes, sharing one adapter: named experiences a user browses, and
+  # the EAM asset network behind them.
+  nz_doc:
+    name: "DOC walking, tramping and mountain bike routes"
+    publisher: "New Zealand Department of Conservation"
+    countries: ["NZ"]
+    adapter: nz_doc
+    series: experiences
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 8000
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "Crown copyright (c) Department of Conservation (DOC) and the New Zealand Government"
+    homepage: "https://doc-deptconservation.opendata.arcgis.com/"
+    health_check:
+      url: "https://services1.arcgis.com/3JjYDyG3oajxU6HO/arcgis/rest/services/DOC_Walking_Experiences/FeatureServer/1?f=json"
+      expect_status: 200
+    legal:
+      verified_on: 2026-08-27
+      notes: >-
+        Licence and attribution read from DOC's own item metadata: "Crown
+        copyright (c) Department of Conservation (DOC) and the New Zealand
+        Government... licensed under the Creative Commons Attribution 4.0
+        International License". DOC has flagged these datasets deprecated with no
+        replacement published yet; the adapter re-reads that notice on every pull.
+
+  nz_doc_network:
+    name: "DOC track network (EAM asset system)"
+    publisher: "New Zealand Department of Conservation"
+    countries: ["NZ"]
+    adapter: nz_doc
+    series: network
+    feature_class: segment
+    default_kind: hiking
+    estimated_km: 12000
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "Crown copyright (c) Department of Conservation (DOC) and the New Zealand Government"
+    homepage: "https://doc-deptconservation.opendata.arcgis.com/"
+    health_check:
+      url: "https://services1.arcgis.com/3JjYDyG3oajxU6HO/arcgis/rest/services/DOC_Tracks_EAM/FeatureServer/0?f=json"
+      expect_status: 200
+    legal:
+      verified_on: 2026-08-27
+      notes: >-
+        Same licence as nz_doc. Full asset network including tracks with no
+        browsable web page, so it renders as infrastructure rather than routes.
 
   # ---------------------------------------------------------------- Europe --
   eurovelo:
@@ -213,17 +268,21 @@ sources:
     estimated_km: 60000
     km_confidence: assumed
     cadence: quarterly
-    license: eurovelo-terms
-    attribution: "(c) European Cyclists' Federation - EuroVelo, retrieved {retrieved_on}"
-    homepage: "https://eurovelo.com/"
+    license: odbl-1.0
+    attribution: "Contains information from EuroVelo GPX tracks downloaded from www.EuroVelo.com on {retrieved_on}, which is made available here under the Open Database License (ODbL)."
+    homepage: "https://en.eurovelo.com/"
     health_check:
-      url: "https://eurovelo.com/"
+      url: "https://en.eurovelo.com/ev1"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-08-27
       notes: >-
-        The ECF notice is dated: the retrieval date is substituted into the
-        attribution at pull time and stored per feature.
+        Licence read from the ECF's own "License and disclaimer for the use of
+        EuroVelo GPX tracks" (December 2025): ODbL, share-alike, with the exact
+        dated notice reproduced above verbatim. Share-alike means EuroVelo takes
+        its own tile layer and is never merged with the CC BY sources. The ODbL
+        keep-open clause applies to any pack carrying it -- the packs are
+        DRM-free, which is what makes this shippable.
 
   swisstopo_wanderwege:
     name: "Wanderwege (Swiss hiking network)"
