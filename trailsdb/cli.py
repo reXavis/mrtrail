@@ -81,6 +81,11 @@ def _build_parser() -> argparse.ArgumentParser:
     p_pull.add_argument("sources", nargs="*")
     p_pull.add_argument("--force", action="store_true", help="re-download even if unchanged")
     p_pull.add_argument("--limit", type=int, help="stop after N files (for smoke tests)")
+    p_pull.add_argument(
+        "--resume",
+        action="store_true",
+        help="trust files already on disk instead of revalidating them with the server",
+    )
     p_pull.set_defaults(handler=cmd_pull)
 
     p_norm = sub.add_parser("normalize", help="raw tier -> master database + catalog")
@@ -185,7 +190,12 @@ def cmd_pull(args, registry, paths: Paths) -> int:
                 continue
             print(f"pull    {source.id:<24} (pacing {source.rate_limit_s}s/request)", flush=True)
             manifest = pipeline.pull_source(
-                source, paths, force=args.force, limit=args.limit, catalog=catalog
+                source,
+                paths,
+                force=args.force,
+                limit=args.limit,
+                resume=args.resume,
+                catalog=catalog,
             )
             status = "ok" if manifest.ok else "ERRORS"
             print(

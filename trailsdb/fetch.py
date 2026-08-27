@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import time
 from dataclasses import asdict, dataclass
 from pathlib import Path
@@ -95,6 +96,7 @@ class PoliteSession:
         *,
         rate_limit_s: float = 1.5,
         timeout: float = 60.0,
+        revalidate: bool = True,
         retries: int = 4,
         backoff_s: float = 2.0,
         user_agent: str = USER_AGENT,
@@ -105,6 +107,10 @@ class PoliteSession:
     ) -> None:
         self.rate_limit_s = rate_limit_s
         self.timeout = timeout
+        #: Whether downloads re-check the server for a file already on disk.
+        #: ``pull --resume`` turns this off so an interrupted multi-gigabyte pull
+        #: picks up where it stopped instead of re-fetching what it has.
+        self.revalidate = revalidate
         self.retries = retries
         self.backoff_s = backoff_s
         self.user_agent = user_agent
@@ -192,7 +198,7 @@ class PoliteSession:
         dest: Path,
         *,
         method: str = "GET",
-        revalidate: bool = True,
+        revalidate: bool | None = None,
         force: bool = False,
         **kwargs: Any,
     ) -> FileRecord:
@@ -204,6 +210,8 @@ class PoliteSession:
         """
         dest = Path(dest)
         dest.parent.mkdir(parents=True, exist_ok=True)
+        if revalidate is None:
+            revalidate = self.revalidate
         previous = None if force else read_record(dest)
 
         headers = dict(kwargs.pop("headers", None) or {})
@@ -226,17 +234,25 @@ class PoliteSession:
         if response.status_code != 200:
             raise FetchError(f"{method} {url} returned HTTP {response.status_code}, expected 200")
 
-        part = dest.with_name(dest.name + ".part")
+        # The temp name carries the writing process's pid. A fixed ".part" is
+        # shared state: two pulls of the same source, or a resumed one racing a
+        # survivor of the last run, will each rename it and the loser fails with
+        # a bewildering FileNotFoundError on a file it just wrote.
+        part = dest.with_name(f"{dest.name}.{os.getpid()}.part")
         digest = hashlib.sha256()
         size = 0
-        with open(part, "wb") as fh:
-            for chunk in _iter_content(response):
-                if not chunk:
-                    continue
-                fh.write(chunk)
-                digest.update(chunk)
-                size += len(chunk)
-        part.replace(dest)
+        try:
+            with open(part, "wb") as fh:
+                for chunk in _iter_content(response):
+                    if not chunk:
+                        continue
+                    fh.write(chunk)
+                    digest.update(chunk)
+                    size += len(chunk)
+            part.replace(dest)
+        except BaseException:
+            part.unlink(missing_ok=True)
+            raise
 
         response_headers = getattr(response, "headers", {}) or {}
         record = FileRecord(

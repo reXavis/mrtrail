@@ -49,10 +49,16 @@ def pull_source(
     *,
     force: bool = False,
     limit: int | None = None,
+    resume: bool = False,
     session: PoliteSession | None = None,
     catalog: Catalog | None = None,
 ) -> PullManifest:
-    adapter = build(AdapterContext(source=source, paths=paths, session=session or make_session(source)))
+    session = session or make_session(source)
+    if resume:
+        # Skip anything already on disk rather than re-checking it with the
+        # server. A USFS page is ~12 MB and there are 87 of them.
+        session.revalidate = False
+    adapter = build(AdapterContext(source=source, paths=paths, session=session))
     manifest = adapter.pull(force=force, limit=limit)
     if catalog is not None:
         catalog.upsert_source(source)

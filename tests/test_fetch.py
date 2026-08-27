@@ -152,6 +152,49 @@ class TestDownload(unittest.TestCase):
         self.assertFalse((self.dir / "f.gpx").exists())
         self.assertFalse((self.dir / "f.gpx.part").exists())
 
+    def test_temp_files_are_unique_per_process(self):
+        # A fixed ".part" is shared state: a second writer renames it away and
+        # the first fails with FileNotFoundError on a file it had just written.
+        transport = FakeTransport(default=FakeResponse(200, b"payload"))
+        session, _ = make_session(transport, rate_limit_s=0)
+        session.download("https://example.invalid/f.gpx", self.dir / "f.gpx")
+        leftovers = list(self.dir.glob("*.part"))
+        self.assertEqual(leftovers, [])
+        self.assertNotIn(".part", (self.dir / "f.gpx").read_text())
+
+    def test_a_failed_write_removes_its_own_temp_file(self):
+        class Exploding(FakeResponse):
+            def iter_content(self, chunk_size=65536):
+                yield b"half"
+                raise ConnectionError("dropped mid-stream")
+
+        session, _ = make_session(FakeTransport(default=Exploding(200, b"x")), rate_limit_s=0)
+        with self.assertRaises(ConnectionError):
+            session.download("https://example.invalid/f.gpx", self.dir / "f.gpx")
+        self.assertEqual(list(self.dir.glob("*.part")), [])
+        self.assertFalse((self.dir / "f.gpx").exists())
+
+    def test_session_revalidate_false_skips_files_already_on_disk(self):
+        # What `pull --resume` relies on: an interrupted multi-gigabyte pull must
+        # not re-fetch the pages it already has.
+        transport = FakeTransport(default=FakeResponse(200, b"payload"))
+        session, _ = make_session(transport, rate_limit_s=0)
+        session.download("https://example.invalid/f.gpx", self.dir / "f.gpx")
+        before = len(transport.calls)
+
+        session.revalidate = False
+        record = session.download("https://example.invalid/f.gpx", self.dir / "f.gpx")
+        self.assertEqual(len(transport.calls), before)
+        self.assertEqual(record.size, 7)
+
+    def test_an_explicit_revalidate_argument_still_wins(self):
+        transport = FakeTransport(default=FakeResponse(200, b"payload"))
+        session, _ = make_session(transport, rate_limit_s=0, revalidate=False)
+        session.download("https://example.invalid/f.gpx", self.dir / "f.gpx")
+        before = len(transport.calls)
+        session.download("https://example.invalid/f.gpx", self.dir / "f.gpx", revalidate=True)
+        self.assertEqual(len(transport.calls), before + 1)
+
     def test_user_agent_identifies_the_pipeline(self):
         transport = FakeTransport(default=FakeResponse(200, b"x"))
         session, _ = make_session(transport, rate_limit_s=0)
