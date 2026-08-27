@@ -18,10 +18,19 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-#: Enriched GeoJSONL in the master database. Geometry-dominated: attributes are
-#: a rounding error next to coordinate arrays, which is why the figure holds
-#: across sources with very different attribute richness.
-KB_PER_KM_MASTER = 1.56
+#: Galicia baseline: enriched GeoJSONL, measured 25 Aug 2026.
+KB_PER_KM_MASTER_GALICIA = 1.56
+
+#: What the pipeline actually produces, measured 27 Aug 2026 across 315,767 km
+#: of pulled official data (USFS, NZ DOC x2, EuroVelo) -- 39 % of the plan's
+#: whole worldwide inventory, so this is a broad sample rather than one region.
+#:
+#: The Galicia baseline's reasoning holds up: geometry is 87 % of the bytes, and
+#: the spread between sources tracks point density almost exactly (EuroVelo at
+#: 10.5 points/km costs 0.24 KB/km; USFS at 87.0 costs 2.50). The blended figure
+#: sits above Galicia's because the pulled mix is denser than Galicia's
+#: 51.5 points/km, not because the model is wrong.
+KB_PER_KM_MASTER = 1.98
 
 #: z8-14 vector tiles, including the zoom pyramid and gzip.
 KB_PER_KM_TILES = 3.5

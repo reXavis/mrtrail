@@ -103,6 +103,31 @@ def bbox_pad(box: BBox, km: float) -> BBox:
     )
 
 
+#: Decimal places kept when a geometry is written out. Six is about 11 cm at the
+#: equator -- an order of magnitude finer than consumer GPS, and far finer than a
+#: z14 tile can resolve. Sources that hand back full IEEE doubles (every ArcGIS
+#: service does) spend roughly 39 bytes per position storing 17 significant
+#: digits of a measurement good to a few metres; at six places that is 23. Since
+#: geometry is ~87 % of the master database, this is the single largest lever on
+#: its size, and it discards nothing a map can draw.
+COORDINATE_PRECISION = 6
+
+
+def round_geometry(geometry: dict[str, Any], precision: int = COORDINATE_PRECISION) -> dict[str, Any]:
+    """Return the geometry with coordinates rounded to ``precision`` decimals."""
+    gtype = geometry.get("type")
+    coords = geometry.get("coordinates")
+    if gtype == "LineString":
+        return {"type": gtype, "coordinates": _round_line(coords, precision)}
+    if gtype == "MultiLineString":
+        return {"type": gtype, "coordinates": [_round_line(ln, precision) for ln in coords or []]}
+    return geometry
+
+
+def _round_line(line: Any, precision: int) -> list[list[float]]:
+    return [[round(float(p[0]), precision), round(float(p[1]), precision)] for p in line or []]
+
+
 def simplify(line: Sequence[Sequence[float]], tolerance_m: float) -> list[Sequence[float]]:
     """Douglas-Peucker in degrees-scaled-to-metres.
 

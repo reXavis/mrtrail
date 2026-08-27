@@ -52,6 +52,20 @@ class TestRoundTrip(unittest.TestCase):
             list(geojsonl.read(path))
         self.assertIn("bad.geojsonl:1", str(ctx.exception))
 
+    def test_written_coordinates_are_rounded(self):
+        # Full IEEE doubles are ~39 bytes a position for data good to a few
+        # metres; geometry is ~87% of the master database, so this is its
+        # largest single size lever.
+        path = self.dir / "out.geojsonl"
+        feature = make(1)
+        feature.geometry = {
+            "type": "LineString",
+            "coordinates": [[-110.98106526395314, 34.33856768862416], [-110.9811, 34.3386]],
+        }
+        geojsonl.write(path, [feature])
+        self.assertIn("-110.981065", path.read_text())
+        self.assertNotIn("-110.98106526395314", path.read_text())
+
     def test_count_of_missing_file_is_zero(self):
         self.assertEqual(geojsonl.count(self.dir / "nope.geojsonl"), 0)
 

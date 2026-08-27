@@ -229,6 +229,18 @@ def validate_all(features: Iterable[Feature]) -> list[Feature]:
     return out
 
 
-def dumps(feature: Feature) -> str:
-    """Compact single-line GeoJSON, the GeoJSONL wire format."""
-    return json.dumps(feature.to_geojson(), ensure_ascii=False, separators=(",", ":"))
+def dumps(feature: Feature, *, precision: int | None = None) -> str:
+    """Compact single-line GeoJSON, the GeoJSONL wire format.
+
+    Coordinates are rounded on the way out. Doing it here rather than in each
+    adapter means no source can accidentally write 17 significant digits of a
+    measurement good to a few metres -- the same reasoning that puts license
+    stamping in one place.
+    """
+    from .geo import COORDINATE_PRECISION, round_geometry
+
+    obj = feature.to_geojson()
+    obj["geometry"] = round_geometry(
+        obj["geometry"], COORDINATE_PRECISION if precision is None else precision
+    )
+    return json.dumps(obj, ensure_ascii=False, separators=(",", ":"))
