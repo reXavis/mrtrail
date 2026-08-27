@@ -29,13 +29,22 @@ trailsdb status
 
 ### Data actually pulled
 
-| source | features | km | notes |
-| --- | ---: | ---: | --- |
-| EuroVelo (developed) | 1,337 | 55,409 | all 17 corridors; plan estimated 60,000 km |
-| NZ DOC routes | 1,547 | 13,696 | walking, tramping and mountain bike experiences |
-| NZ DOC network | 3,248 | 13,895 | EAM asset network; overlaps the above almost entirely |
-| CNIG Camino de Santiago | — | — | 2,221 files listed, pull running |
-| USFS National Forest System Trails | 86,303 | — | pull running; official figure 160,000 miles |
+**340,621 km normalized — 42 % of the plan's entire worldwide inventory.**
+
+| source | features | km | plan estimated |
+| --- | ---: | ---: | ---: |
+| USFS National Forest System Trails | 80,966 | 232,766 | 257,000 |
+| EuroVelo (developed sections) | 1,337 | 55,409 | 60,000 |
+| CNIG Camino de Santiago | 1,074 | 24,854 | 25,000 |
+| NZ DOC network | 3,248 | 13,896 | 14,000 |
+| NZ DOC routes | 1,547 | 13,696 | — |
+
+Every estimate the plan made about *volume* landed within 10 %. The Camino
+pulled 1,074 stages across 80 route variants in three countries; USFS dropped
+5,337 of 86,303 raw features, all of them null-geometry attribute rows.
+
+A Galicia cut — the pack that ships today — comes to **+11.2 MB of tiles,
++0.6 % of the pack**, against the plan's predicted ~1 %.
 
 Four sources are legally verified (NZ DOC ×2, EuroVelo, USFS). The rest are
 refused by `trailsdb export` until a human confirms their terms — see
@@ -170,13 +179,18 @@ database, **~2.7 GB** of tiles spread across *all* packs combined. A typical
 pack grows a few percent, because routes are vector lines and packs are
 dominated by elevation rasters.
 
-**The coefficient survived contact with real data.** NZ DOC's two layers
-measure 1.61 KB/km uncompressed against the 1.56 baseline, and the spread
-between them tracks point density exactly as the geometry-dominated reasoning
-predicts: the sparse experience layer (10.1 points/km) costs 0.48 KB/km, the
-dense asset network (68.3 points/km) costs 2.72, and the blend lands on the
-baseline. Stored gzipped, as the pipeline does, it is about a third of that
-again.
+**The coefficient survived contact with real data, and the reasoning behind it
+held up better than the number.** Measured across 315,767 km of pulled official
+data, the master database runs at 1.98 KB/km uncompressed against the 1.56
+baseline. The gap is point density, not a flaw: EuroVelo at 10.5 points/km costs
+0.24 KB/km, USFS at 87.0 costs 2.50, and geometry is 87 % of every file exactly
+as the plan argues.
+
+That last fact is also the biggest lever available. Sources hand back full IEEE
+doubles — about 39 bytes per position to store 17 significant digits of a
+measurement good to a few metres. Rounding to six decimal places (~11 cm, finer
+than consumer GPS and finer than a z14 tile resolves) **cut the master database
+by 57 %**, from 322 MB to 140 MB, with nothing lost that a map can draw.
 
 The worst cases (Alps ≈ +12 %, a US mountain-state pack ≈ +10 %) are dominated
 by network segments. Two levers, both implemented: segments stop at z13 rather
