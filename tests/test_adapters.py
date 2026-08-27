@@ -100,6 +100,32 @@ class TestCnigParsers(unittest.TestCase):
         self.assertEqual(cnig_module.extract_stage("Etapa 12: Burgos - Hontanas"), 12)
         self.assertIsNone(cnig_module.extract_stage("Camino Frances"))
 
+    def test_parses_the_real_camino_naming_scheme(self):
+        parsed = cnig_module.parse_camino_name(
+            "Caminos del Norte - Camino Primitivo - ES05a-03b-grado-salas"
+        )
+        self.assertEqual(parsed["group"], "Caminos del Norte - Camino Primitivo")
+        self.assertEqual(parsed["code"], "ES05a")
+        self.assertEqual(parsed["stage"], 3)
+        self.assertEqual(parsed["variant"], "b")
+        self.assertEqual(parsed["section"], "grado-salas")
+
+    def test_the_route_code_carries_the_country(self):
+        # 200 of the published stages are in France and 123 in Portugal, so
+        # stamping the whole series "ES" would be wrong for a third of it.
+        self.assertEqual(
+            cnig_module.parse_camino_name("Caminos en Francia - X - FR03a-12-le-puy")["country"],
+            "FR",
+        )
+        self.assertEqual(
+            cnig_module.parse_camino_name("Caminos Portugueses - Y - PT01a-03-porto")["country"],
+            "PT",
+        )
+
+    def test_a_name_that_does_not_fit_falls_back_rather_than_mis_grouping(self):
+        self.assertIsNone(cnig_module.parse_camino_name("GR 123. Etapa 10. Ondarroa"))
+        self.assertIsNone(cnig_module.parse_camino_name(""))
+
     def test_variant_name_is_everything_before_the_stage(self):
         self.assertEqual(
             cnig_module.variant_name("Camino Frances. Etapa 12: Burgos", "x"), "Camino Frances"
@@ -192,17 +218,34 @@ class TestCnigAdapter(AdapterCase):
         self.assertEqual(feature.extras["published_on"], "31/03/2026")
         self.assertIn("detalleArchivo", feature.source_url)
 
-    def test_camino_stages_group_under_a_parent(self):
+    def test_camino_stages_group_under_their_route_code(self):
         self.seed_index(
             "cnig_camino",
-            [{"id": "500", "name": "Camino Frances. Etapa 12: Burgos - Hontanas", "format": "GPX"}],
+            [{"id": "500", "name": "Camino Francés - ES01c-05a-puente-la-reina-estella",
+              "format": "GPX"}],
         )
         transport = FakeTransport(default=FakeResponse(200, gpx_bytes("trk", line((-3.7, 42.3)))))
         adapter = self.adapter("cnig_camino", transport)
         feature = next(iter(adapter.normalize(adapter.pull())))
         feature.validate()
-        self.assertEqual(feature.stage_no, 12)
-        self.assertEqual(feature.parent_id, "cnig_camino:camino-frances")
+        self.assertEqual(feature.stage_no, 5)
+        self.assertEqual(feature.parent_id, "cnig_camino:es01c")
+        self.assertEqual(feature.parent_name, "Camino Francés")
+        self.assertEqual(feature.country, "ES")
+        self.assertEqual(feature.extras["stage_code"], "05a")
+        self.assertEqual(feature.extras["section"], "puente-la-reina-estella")
+
+    def test_a_french_camino_stage_is_not_stamped_spanish(self):
+        self.seed_index(
+            "cnig_camino",
+            [{"id": "501", "name": "Caminos en Francia - Via Podiensis - FR03a-12-le-puy",
+              "format": "GPX"}],
+        )
+        transport = FakeTransport(default=FakeResponse(200, gpx_bytes("trk", line((2.0, 45.0)))))
+        adapter = self.adapter("cnig_camino", transport)
+        feature = next(iter(adapter.normalize(adapter.pull())))
+        feature.validate()
+        self.assertEqual(feature.country, "FR")
 
     def test_reads_gpx_out_of_a_zip(self):
         self.seed_index("cnig_camino_cid", [{"id": "7", "name": "cid", "format": "GPX"}])

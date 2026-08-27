@@ -70,8 +70,21 @@ INDEX_NAME = "files.json"
 #: "PR-G 100" is a Galician pequeno recorrido.
 _REF_RE = re.compile(r"\b(GR|PR|SL)[\s\-_]?([A-Z]{1,2})?[\s\-_]?(\d+)\b", re.IGNORECASE)
 
-#: "Etapa 12", "Etapa 12 de 31", "E12"
+#: "Etapa 12", "Etapa 12 de 31", "E12" -- how the FEDME series labels stages.
 _STAGE_RE = re.compile(r"\b(?:etapa|stage|e)[\s\-_.]*(\d{1,3})\b", re.IGNORECASE)
+
+#: The Camino series names files as
+#: ``"<group> - <CODE>-<stage><variant>-<from>-<to>"``, e.g.
+#: ``"Caminos del Norte - Camino Primitivo - ES05a-03b-grado-salas"``. This
+#: matches all 1,073 published GPX names, and the code's country prefix is what
+#: gets each stage its right country: 200 of them are in France and 123 in
+#: Portugal, not Spain.
+_CAMINO_RE = re.compile(
+    r"^(?P<group>.+?)\s+-\s+"
+    r"(?P<code>(?P<country>[A-Z]{2})\d{2}[a-z]?)-"
+    r"(?P<stage>\d{1,3})(?P<variant>[a-z]?)-"
+    r"(?P<section>.*)$"
+)
 
 _TOTAL_RE = re.compile(r'id="totalArchivos"[^>]*value="(\d+)"')
 _ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S)
@@ -273,7 +286,15 @@ class CnigAdapter(Adapter):
                 "country": "ES",
                 "source_url": DETAIL_URL.format(file_id=meta.file_id) if meta else None,
             }
-            if series.key in ("camino", "camino_cid"):
+            camino = parse_camino_name(label) if series.key == "camino" else None
+            if camino:
+                # The route code is the stable grouping key; the group name is
+                # what a user recognises ("Caminos del Norte - Camino Primitivo").
+                fields["parent_id"] = self.make_id(camino["code"].lower())
+                fields["parent_name"] = camino["group"]
+                fields["stage_no"] = camino["stage"]
+                fields["country"] = camino["country"]
+            elif series.key in ("camino", "camino_cid"):
                 stage = extract_stage(label) or extract_stage(stem)
                 variant = variant_name(label, stem)
                 if stage is not None:
@@ -283,6 +304,14 @@ class CnigAdapter(Adapter):
                     fields["parent_name"] = variant
 
             extras = {"source_file": path.name, "cnig_product": series.product_id}
+            if camino:
+                extras.update(
+                    route_code=camino["code"],
+                    stage_code=f"{camino['stage']:02d}{camino['variant']}",
+                    section=camino["section"],
+                )
+                if camino["variant"]:
+                    extras["variant"] = camino["variant"]
             if meta and meta.date:
                 extras["published_on"] = meta.date
             if member != path.name:
@@ -342,6 +371,27 @@ def extract_ref(text: str | None) -> str | None:
     prefix, region, number = match.groups()
     prefix = prefix.upper()
     return f"{prefix}-{region.upper()} {number}" if region else f"{prefix} {number}"
+
+
+def parse_camino_name(name: str | None) -> dict | None:
+    """Split a Camino file name into group, route code, stage and section.
+
+    Returns ``None`` for anything that does not fit, so an unexpected name falls
+    back to the generic heuristics rather than being silently mis-grouped.
+    """
+    if not name:
+        return None
+    match = _CAMINO_RE.match(name.strip())
+    if not match:
+        return None
+    return {
+        "group": match.group("group").strip(),
+        "code": match.group("code"),
+        "country": match.group("country"),
+        "stage": int(match.group("stage")),
+        "variant": match.group("variant") or "",
+        "section": match.group("section"),
+    }
 
 
 def extract_stage(text: str | None) -> int | None:
