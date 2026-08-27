@@ -1,0 +1,26 @@
+# Region-pack bounding boxes, for cutting the master database into pack-sized
+# exports. Approximate by design -- the pipeline pads them and tippecanoe clips
+# at tile edges, so a few tenths of a degree either way costs nothing. Override
+# any of them with `trailsdb export --bbox W,S,E,N`.
+#
+# `pack_gb` is the pack's current shipped size, used to report growth as a
+# percentage rather than a bare megabyte count.
+
+packs:
+  galicia:
+    name: "Galicia"
+    bbox: [-9.35, 41.80, -6.70, 43.80]
+    pack_gb: 1.96
+    status: live
+
+  pyrenees:
+    name: "Pyrenees"
+    bbox: [-1.80, 42.20, 3.20, 43.40]
+    pack_gb: 0.95
+    status: planned
+
+  alps:
+    name: "Alps"
+    bbox: [5.00, 43.50, 16.50, 48.00]
+    pack_gb: 3.15
+    status: planned

@@ -1,0 +1,492 @@
+# The source registry.
+#
+# Everything legal in this project reads from this file: the per-feature
+# license/attribution stamps, the app's "Data sources & licenses" screen, and the
+# export gate that keeps unverified sources out of shipped packs. Adding a
+# country means adding an entry here -- never new legal UI work.
+#
+# Rules encoded by the loader (trailsdb/registry.py):
+#   * every source names a license that exists in `licenses:` below;
+#   * every source carries a verbatim `attribution` string, reproduced exactly as
+#     the publisher prescribes it -- these are not paraphrases;
+#   * `legal.verified_on` is null until a human has read the publisher's terms and
+#     confirmed both the license id and the attribution wording. `trailsdb export`
+#     refuses unverified sources unless explicitly overridden, so nothing
+#     unconfirmed can reach a shipped pack.
+
+version: 1
+
+licenses:
+  cc0-1.0:
+    name: "Creative Commons Zero v1.0 Universal"
+    url: "https://creativecommons.org/publicdomain/zero/1.0/"
+    family: public-domain
+    attribution_required: false
+    share_alike: false
+
+  us-public-domain:
+    name: "U.S. Government work, not subject to domestic copyright (17 U.S.C. 105)"
+    url: "https://www.usa.gov/government-works"
+    family: public-domain
+    attribution_required: false
+    share_alike: false
+
+  cc-by-4.0:
+    name: "Creative Commons Attribution 4.0 International"
+    url: "https://creativecommons.org/licenses/by/4.0/"
+    family: attribution
+    attribution_required: true
+    share_alike: false
+
+  cc-by-sa-4.0:
+    name: "Creative Commons Attribution-ShareAlike 4.0 International"
+    url: "https://creativecommons.org/licenses/by-sa/4.0/"
+    family: share-alike
+    attribution_required: true
+    share_alike: true
+
+  odbl-1.0:
+    name: "Open Data Commons Open Database License v1.0"
+    url: "https://opendatacommons.org/licenses/odbl/1-0/"
+    family: share-alike
+    attribution_required: true
+    share_alike: true
+
+  nlod-2.0:
+    name: "Norwegian Licence for Open Government Data (NLOD) 2.0"
+    url: "https://data.norge.no/nlod/en/2.0"
+    family: attribution
+    attribution_required: true
+    share_alike: false
+
+  ogl-ontario-1.0:
+    name: "Open Government Licence - Ontario"
+    url: "https://www.ontario.ca/page/open-government-licence-ontario"
+    family: attribution
+    attribution_required: true
+    share_alike: false
+
+  ogl-uk-3.0:
+    name: "Open Government Licence v3.0 (United Kingdom)"
+    url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+    family: attribution
+    attribution_required: true
+    share_alike: false
+
+  opendata-swiss-by:
+    name: "Open use with attribution (opendata.swiss / swisstopo terms)"
+    url: "https://www.geocatalog.ch/terms-of-use"
+    family: attribution
+    attribution_required: true
+    share_alike: false
+
+  eurovelo-terms:
+    name: "European Cyclists' Federation EuroVelo data terms"
+    url: "https://eurovelo.com/"
+    family: attribution
+    attribution_required: true
+    share_alike: false
+    # The ECF notice must carry the date the data was retrieved, so this
+    # attribution string is templated at pull time, not fixed here.
+    dated_attribution: true
+
+  per-instance:
+    name: "Determined per instance at ingest"
+    url: ""
+    family: unknown
+    attribution_required: true
+    share_alike: false
+    # Geotrek is ~60 independently operated portals. The adapter reads each
+    # instance's declared license, records it, and skips anything that is not an
+    # open licence already present in this registry.
+    resolved_at_ingest: true
+
+
+sources:
+
+  # ---------------------------------------------------------------- Spain ---
+  # The CNIG trio share one adapter and one download flow (a scripted POST
+  # against the Centro de Descargas, free account, ~9,900 files). They are the
+  # plan's first concrete step: fiddliest pull, and they light up the live
+  # Galicia pack immediately.
+
+  cnig_fedme:
+    name: "Senderos homologados FEDME"
+    publisher: "Centro Nacional de Informacion Geografica (CNIG) / FEDME"
+    countries: ["ES"]
+    adapter: cnig
+    series: fedme
+    rate_limit_s: 1.5
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 50000
+    km_confidence: official
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "(c) Instituto Geografico Nacional de Espana"
+    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/senderos-homologados"
+    health_check:
+      url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: >-
+        CNIG prescribes an exact attribution formula; confirm the current wording
+        on the download page before this source ships in a pack. Homologated
+        route geometry is FEDME's, redistributed by CNIG.
+
+  cnig_camino:
+    name: "Camino de Santiago (all variants)"
+    publisher: "Centro Nacional de Informacion Geografica (CNIG)"
+    countries: ["ES", "FR", "PT"]
+    adapter: cnig
+    series: camino
+    rate_limit_s: 1.5
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 25000
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "(c) Instituto Geografico Nacional de Espana"
+    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/camino-santiago"
+    health_check:
+      url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "~2,221 stages across all variants; stages group under a parent route."
+
+  cnig_caminos_naturales:
+    name: "Caminos Naturales"
+    publisher: "Ministerio de Agricultura, Pesca y Alimentacion / CNIG"
+    countries: ["ES"]
+    adapter: cnig
+    series: caminos_naturales
+    rate_limit_s: 1.5
+    feature_class: route
+    default_kind: mixed
+    estimated_km: 10300
+    km_confidence: official
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "(c) Instituto Geografico Nacional de Espana"
+    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/caminos-naturales"
+    health_check:
+      url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "Mixed-use (walking and cycling) national network."
+
+  # ------------------------------------------------------------ New Zealand -
+  nz_doc:
+    name: "DOC tracks"
+    publisher: "New Zealand Department of Conservation"
+    countries: ["NZ"]
+    adapter: nz_doc
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 14000
+    km_confidence: official
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "Sourced from the New Zealand Department of Conservation"
+    homepage: "https://doc-deptconservation.opendata.arcgis.com/"
+    health_check:
+      url: "https://doc-deptconservation.opendata.arcgis.com/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: >-
+        DOC announced endpoint changes for 2026 -- the health check is what
+        catches that drift at the quarterly refresh rather than at bake time.
+
+  # ---------------------------------------------------------------- Europe --
+  eurovelo:
+    name: "EuroVelo cycle route network"
+    publisher: "European Cyclists' Federation"
+    countries: ["EU"]
+    adapter: eurovelo
+    feature_class: route
+    default_kind: cycling
+    estimated_km: 60000
+    km_confidence: assumed
+    cadence: quarterly
+    license: eurovelo-terms
+    attribution: "(c) European Cyclists' Federation - EuroVelo, retrieved {retrieved_on}"
+    homepage: "https://eurovelo.com/"
+    health_check:
+      url: "https://eurovelo.com/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: >-
+        The ECF notice is dated: the retrieval date is substituted into the
+        attribution at pull time and stored per feature.
+
+  swisstopo_wanderwege:
+    name: "Wanderwege (Swiss hiking network)"
+    publisher: "swisstopo"
+    countries: ["CH"]
+    adapter: swisstopo
+    feature_class: segment
+    default_kind: hiking
+    estimated_km: 65000
+    km_confidence: official
+    cadence: quarterly
+    license: opendata-swiss-by
+    attribution: "(c) swisstopo"
+    homepage: "https://www.swisstopo.admin.ch/"
+    health_check:
+      url: "https://www.swisstopo.admin.ch/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "~351k segments; network infrastructure, not browsable routes."
+
+  kartverket_turrutebasen:
+    name: "Turrutebasen"
+    publisher: "Kartverket"
+    countries: ["NO"]
+    adapter: kartverket
+    feature_class: segment
+    default_kind: mixed
+    estimated_km: 80000
+    km_confidence: assumed
+    cadence: quarterly
+    license: nlod-2.0
+    attribution: "Contains data under the Norwegian licence for Open Government data (NLOD), made available by Kartverket"
+    homepage: "https://www.geonorge.no/"
+    health_check:
+      url: "https://www.geonorge.no/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "Includes ski, bike and paddle routes alongside foot trails."
+
+  naturvardsverket:
+    name: "Vandringsleder"
+    publisher: "Naturvardsverket"
+    countries: ["SE"]
+    adapter: naturvardsverket
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 15000
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "(c) Naturvardsverket"
+    homepage: "https://www.naturvardsverket.se/"
+    health_check:
+      url: "https://www.naturvardsverket.se/"
+      expect_status: 200
+    legal:
+      verified_on: null
+
+  uk_national_trails:
+    name: "National Trails"
+    publisher: "Natural England / Natural Resources Wales"
+    countries: ["GB"]
+    adapter: uk_national_trails
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 5000
+    km_confidence: assumed
+    cadence: quarterly
+    license: ogl-uk-3.0
+    attribution: "Contains public sector information licensed under the Open Government Licence v3.0"
+    homepage: "https://www.nationaltrail.co.uk/"
+    health_check:
+      url: "https://www.nationaltrail.co.uk/"
+      expect_status: 200
+    legal:
+      verified_on: null
+
+  geotrek:
+    name: "Geotrek public instances"
+    publisher: "~60 independent French territorial operators"
+    countries: ["FR"]
+    adapter: geotrek
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 65000
+    km_confidence: assumed
+    cadence: quarterly
+    license: per-instance
+    attribution: "{instance_attribution}"
+    homepage: "https://geotrek.fr/"
+    health_check:
+      url: "https://geotrek.fr/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: >-
+        License is read per instance at ingest and recorded in the pull manifest.
+        Instances that do not declare an open licence present in this registry
+        are skipped automatically -- silence is not permission.
+
+  refuges_info:
+    name: "refuges.info huts and shelters"
+    publisher: "refuges.info"
+    countries: ["FR", "ES", "IT", "CH"]
+    adapter: refuges_info
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 0
+    km_confidence: official
+    cadence: quarterly
+    license: cc-by-sa-4.0
+    attribution: "(c) refuges.info contributors, CC BY-SA"
+    homepage: "https://www.refuges.info/"
+    health_check:
+      url: "https://www.refuges.info/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: >-
+        Share-alike. Stays in its own layer and its own spots file; it must never
+        be combined with any other source's geometry or attributes.
+
+  # --------------------------------------------------------------- Americas -
+  # US sources are pulled from government endpoints only. Esri-hosted mirrors of
+  # the same data attach Esri's terms of use, which the public-domain status of
+  # the underlying work does not override.
+  usfs_trails:
+    name: "National Forest System Trails"
+    publisher: "USDA Forest Service"
+    countries: ["US"]
+    adapter: usfs
+    feature_class: segment
+    default_kind: hiking
+    estimated_km: 257000
+    km_confidence: official
+    cadence: quarterly
+    license: us-public-domain
+    attribution: "USDA Forest Service"
+    homepage: "https://data.fs.usda.gov/geodata/edw/datasets.php"
+    health_check:
+      url: "https://data.fs.usda.gov/geodata/edw/datasets.php"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "Official figure 160,000 miles. Bulk file geodatabase, ~118 MB."
+
+  nps_trails:
+    name: "National Park Service trails"
+    publisher: "US National Park Service"
+    countries: ["US"]
+    adapter: nps
+    feature_class: segment
+    default_kind: hiking
+    estimated_km: 40000
+    km_confidence: assumed
+    cadence: quarterly
+    license: us-public-domain
+    attribution: "US National Park Service"
+    homepage: "https://public-nps.opendata.arcgis.com/"
+    health_check:
+      url: "https://public-nps.opendata.arcgis.com/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "Heavy overlap with USFS; deduplicated against it at normalize time."
+
+  usgs_ndt:
+    name: "National Digital Trails"
+    publisher: "US Geological Survey"
+    countries: ["US"]
+    adapter: usgs_ndt
+    feature_class: segment
+    default_kind: hiking
+    estimated_km: 35000
+    km_confidence: assumed
+    cadence: quarterly
+    license: us-public-domain
+    attribution: "US Geological Survey"
+    homepage: "https://www.usgs.gov/"
+    health_check:
+      url: "https://www.usgs.gov/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "Third leg of the US dedup triangle with USFS and NPS."
+
+  ontario_otn:
+    name: "Ontario Trail Network"
+    publisher: "Government of Ontario"
+    countries: ["CA"]
+    adapter: ontario_otn
+    feature_class: segment
+    default_kind: mixed
+    estimated_km: 35000
+    km_confidence: assumed
+    cadence: quarterly
+    license: ogl-ontario-1.0
+    attribution: "Contains information licensed under the Open Government Licence - Ontario"
+    homepage: "https://geohub.lio.gov.on.ca/"
+    health_check:
+      url: "https://geohub.lio.gov.on.ca/"
+      expect_status: 200
+    legal:
+      verified_on: null
+
+  bc_recreation:
+    name: "Recreation trails"
+    publisher: "Province of British Columbia"
+    countries: ["CA"]
+    adapter: bc_recreation
+    feature_class: segment
+    default_kind: hiking
+    estimated_km: 15000
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "Contains information licensed under the Open Government Licence - British Columbia"
+    homepage: "https://catalogue.data.gov.bc.ca/"
+    health_check:
+      url: "https://catalogue.data.gov.bc.ca/"
+      expect_status: 200
+    legal:
+      verified_on: null
+
+  spain_regional:
+    name: "Regional sendero networks (autonomous communities)"
+    publisher: "Spanish autonomous communities"
+    countries: ["ES"]
+    adapter: spain_regional
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 10000
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "{instance_attribution}"
+    homepage: "https://datos.gob.es/"
+    health_check:
+      url: "https://datos.gob.es/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "Catch-all for regional portals; attribution differs per community."
+
+  # --------------------------------------------------------------- Oceania --
+  australia_states:
+    name: "State walking track datasets"
+    publisher: "Australian state governments (NSW, VIC, QLD, WA, SA, TAS)"
+    countries: ["AU"]
+    adapter: australia_states
+    feature_class: segment
+    default_kind: hiking
+    estimated_km: 30000
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "{instance_attribution}"
+    homepage: "https://data.gov.au/"
+    health_check:
+      url: "https://data.gov.au/"
+      expect_status: 200
+    legal:
+      verified_on: null
+      notes: "4-6 portals, mixed schemas; attribution differs per state."

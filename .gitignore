@@ -1,0 +1,32 @@
+# Pipeline working data — never committed, it is 8-20 GB of source pulls.
+/data/
+raw/
+normalized/
+*.pmtiles
+*.gpkg
+*.gdb/
+*.zip
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# SQLite catalogs produced by the pipeline
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

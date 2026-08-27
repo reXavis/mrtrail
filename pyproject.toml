@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trailsdb"
+version = "0.1.0"
+description = "World trail database: joins every legally usable official trail source into one normalized dataset for offline region packs."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+
+# Deliberately thin. Everything geometric is stdlib maths on GeoJSON coordinate
+# arrays -- no GDAL/shapely, so the pipeline runs anywhere the packs are baked.
+dependencies = [
+    "requests>=2.28",
+    "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+# Only needed by adapters whose sources publish binary geo formats.
+geo = ["fiona>=1.9", "pyproj>=3.5"]
+dev = ["ruff>=0.4"]
+
+[project.scripts]
+trailsdb = "trailsdb.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["trailsdb*"]
+
+[tool.setuptools.package-data]
+trailsdb = ["sources.yaml", "packs.yaml"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"

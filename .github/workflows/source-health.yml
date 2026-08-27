@@ -1,0 +1,24 @@
+# Source drift is the plan's first named risk: endpoints move, and finding out
+# during a pack bake is far more expensive than finding out here.
+#
+# Manual for now. Once sources are legally verified and pulls run on the
+# quarterly cadence, switch this to a schedule so drift surfaces between
+# refreshes rather than at the start of one.
+name: source health
+
+on:
+  workflow_dispatch:
+  # schedule:
+  #   - cron: "0 6 1 */3 *"   # quarterly, matching the refresh cadence
+
+jobs:
+  health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -e .
+      - name: Check every source endpoint
+        run: trailsdb health
