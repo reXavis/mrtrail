@@ -20,10 +20,10 @@ trailsdb status
 
 | built | not yet |
 | --- | --- |
-| Source registry for all 20 planned sources | 14 of 17 adapters (each tagged with the wave it lands in) |
+| Source registry for all 20 planned sources | 13 of 17 adapters (each tagged with the wave it lands in) |
 | Normalized schema, master-database format, SQLite catalog | Cross-link matcher against OSM relations |
 | Polite/resumable/revalidating fetch layer | Shapefile + file-geodatabase readers (the `geo` extra) |
-| CNIG (FEDME · Camino · Camino del Cid), NZ DOC ×2, EuroVelo | App-side overlay toggle, source badges, licenses screen |
+| CNIG ×3, NZ DOC ×2, EuroVelo, USFS | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
 | Size model, validated against real pulled data | Legal verification of 17 of 20 sources |
 
@@ -34,11 +34,29 @@ trailsdb status
 | EuroVelo (developed) | 1,337 | 55,409 | all 17 corridors; plan estimated 60,000 km |
 | NZ DOC routes | 1,547 | 13,696 | walking, tramping and mountain bike experiences |
 | NZ DOC network | 3,248 | 13,895 | EAM asset network; overlaps the above almost entirely |
-| CNIG Camino de Santiago | — | — | 2,221 files listed, pull in progress |
+| CNIG Camino de Santiago | — | — | 2,221 files listed, pull running |
+| USFS National Forest System Trails | 86,303 | — | pull running; official figure 160,000 miles |
 
-Three sources are legally verified (NZ DOC ×2, EuroVelo). The rest are refused
-by `trailsdb export` until a human confirms their terms — see
+Four sources are legally verified (NZ DOC ×2, EuroVelo, USFS). The rest are
+refused by `trailsdb export` until a human confirms their terms — see
 [Legal architecture](#legal-architecture).
+
+### What contact with the real services changed
+
+The plan's size estimates held up. Its assumptions about *access* mostly did not:
+
+- **CNIG needs no account.** Direct download is unauthenticated, and half of
+  every listing is KML duplicates of the GPX, so the pull is about 4,700 files
+  rather than the ~9,900 budgeted.
+- **EuroVelo is ODbL and share-alike**, not the bespoke ECF terms assumed. That
+  makes it a second share-alike source alongside refuges.info, and a far bigger
+  one — it now takes its own tile layer automatically.
+- **USFS needs no GDAL.** The plan reserved geodatabase parsing for its 118 MB
+  `.gdb`; the same data comes back as GeoJSON from the EDW REST service.
+- **DOC's 2026 drift is real.** Its datasets are flagged deprecated with no
+  replacement published; the adapter re-reads that notice on every pull.
+- **Caminos Naturales isn't a CNIG dataset at all.** It's published separately
+  by the Ministerio de Agricultura.
 
 ## Install
 
