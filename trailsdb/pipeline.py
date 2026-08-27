@@ -130,7 +130,18 @@ class LayerExport:
 
     @property
     def estimated_tiles_mb(self) -> float:
-        return sizing.estimate(self.length_km, feature_class=self.feature_class).tiles_mb
+        """Estimated tile bytes for this layer, on the settings it is actually baked with.
+
+        ``tippecanoe_args`` stops segment layers at z13, so the estimate has to
+        assume the same lever -- charging them the z14 rate would overstate every
+        segment-heavy pack by a factor of two, which is exactly the number the
+        Alps and US cases turn on.
+        """
+        return sizing.estimate(
+            self.length_km,
+            feature_class=self.feature_class,
+            cap_segments_at_z13=True,
+        ).tiles_mb
 
 
 @dataclass(slots=True)

@@ -28,16 +28,36 @@ size model from the registry.
 
 | adapter | state |
 | --- | --- |
-| CNIG trio (FEDME · Camino · Caminos Naturales) | built — normalization tested end to end; the live discovery flow is marked UNVERIFIED and needs confirming against the download centre |
-| NZ DOC | built — paginated ArcGIS pull, category→kind mapping, point assets skipped |
+| CNIG (FEDME · Camino · Camino del Cid) | built against the verified live flow; Camino series pulled |
+| NZ DOC (routes + network) | built and pulled: 4,795 features, 27,591 km |
 | USFS | not started — needs the `geo` extra for file geodatabases |
 
 EuroVelo was pulled forward from phase 4 because it is the only source with a
 dated attribution notice, and building it early is what forced the attribution
-machinery to be right rather than merely present.
+machinery to be right rather than merely present. That paid off immediately: it
+turned out to be ODbL and share-alike, not the bespoke licence assumed.
 
-Not done: baking the Galicia pack with the `official` layer, and a small NZ or
-Colorado proof pack.
+Real data now flows end to end — pull, normalize, catalog, bbox cut, tippecanoe
+settings. A New Zealand cut comes to 70.4 MB of tiles across both layers.
+
+Not done: baking the Galicia pack with the `official` layer (it needs the FEDME
+pull, which is the long one).
+
+### What contact with the real services changed
+
+The plan's estimates held up well; its assumptions about *access* did not.
+
+| the plan said | reality |
+| --- | --- |
+| CNIG needs a free account | No account needed; direct download is unauthenticated |
+| ~9,900 CNIG files | 9,472 listed, and half are KML duplicates of the GPX — so ~4,700 to fetch |
+| Camino has 2,221 stages | Exactly 2,221 files listed |
+| EuroVelo has bespoke ECF terms | ODbL, share-alike, with a verbatim dated notice |
+| refuges.info is the only share-alike source | EuroVelo is a second, and a far bigger one |
+| DOC endpoints change in 2026 | Correct — flagged deprecated, replacement not yet published |
+| NZ DOC ≈ 14,000 km | 13,895 km, but only counting the network once |
+| EuroVelo developed ≈ 60,000 km | 55,409 km |
+| Caminos Naturales comes from CNIG | Not in the download centre at all; it is a MAPA dataset |
 
 ### 3. App integration — **not started**
 

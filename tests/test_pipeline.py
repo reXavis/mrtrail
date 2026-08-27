@@ -129,6 +129,17 @@ class TestLayerAssignment(unittest.TestCase):
         self.assertIn("--maximum-zoom=14", pipeline.tippecanoe_args(route_layer))
         self.assertIn("--maximum-zoom=13", pipeline.tippecanoe_args(segment_layer))
 
+    def test_the_size_estimate_assumes_the_zoom_the_layer_is_baked_at(self):
+        # An estimate that charges segments the z14 rate while tippecanoe bakes
+        # them at z13 overstates every segment-heavy pack twofold.
+        route_layer = pipeline.LayerExport("official", Path("x"), 1, 1000.0, "route")
+        segment_layer = pipeline.LayerExport("official_net", Path("x"), 1, 1000.0, "segment")
+        self.assertAlmostEqual(
+            segment_layer.estimated_tiles_mb,
+            route_layer.estimated_tiles_mb * sizing.SEGMENT_Z13_FACTOR,
+            places=4,
+        )
+
 
 class TestExport(PipelineCase):
     def normalize_galicia_and_nz(self):

@@ -20,15 +20,25 @@ trailsdb status
 
 | built | not yet |
 | --- | --- |
-| Source registry for all 18 planned sources | 13 of 16 adapters (each tagged with the wave it lands in) |
+| Source registry for all 20 planned sources | 14 of 17 adapters (each tagged with the wave it lands in) |
 | Normalized schema, master-database format, SQLite catalog | Cross-link matcher against OSM relations |
 | Polite/resumable/revalidating fetch layer | Shapefile + file-geodatabase readers (the `geo` extra) |
-| CNIG (FEDME · Camino · Caminos Naturales), NZ DOC, EuroVelo | App-side overlay toggle, source badges, licenses screen |
+| CNIG (FEDME · Camino · Camino del Cid), NZ DOC ×2, EuroVelo | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
-| Size model reproducing the plan's numbers | Legal verification of every source (all 18 unverified) |
+| Size model, validated against real pulled data | Legal verification of 17 of 20 sources |
 
-**No source is legally verified yet**, so `trailsdb export` refuses all of them
-by default. That gate is deliberate — see [Legal architecture](#legal-architecture).
+### Data actually pulled
+
+| source | features | km | notes |
+| --- | ---: | ---: | --- |
+| EuroVelo (developed) | 1,337 | 55,409 | all 17 corridors; plan estimated 60,000 km |
+| NZ DOC routes | 1,547 | 13,696 | walking, tramping and mountain bike experiences |
+| NZ DOC network | 3,248 | 13,895 | EAM asset network; overlaps the above almost entirely |
+| CNIG Camino de Santiago | — | — | 2,221 files listed, pull in progress |
+
+Three sources are legally verified (NZ DOC ×2, EuroVelo). The rest are refused
+by `trailsdb export` until a human confirms their terms — see
+[Legal architecture](#legal-architecture).
 
 ## Install
 
@@ -141,6 +151,14 @@ Applied to ~810,000 km of official trails worldwide: **~1.2 GB** of master
 database, **~2.7 GB** of tiles spread across *all* packs combined. A typical
 pack grows a few percent, because routes are vector lines and packs are
 dominated by elevation rasters.
+
+**The coefficient survived contact with real data.** NZ DOC's two layers
+measure 1.61 KB/km uncompressed against the 1.56 baseline, and the spread
+between them tracks point density exactly as the geometry-dominated reasoning
+predicts: the sparse experience layer (10.1 points/km) costs 0.48 KB/km, the
+dense asset network (68.3 points/km) costs 2.72, and the blend lands on the
+baseline. Stored gzipped, as the pipeline does, it is about a third of that
+again.
 
 The worst cases (Alps ≈ +12 %, a US mountain-state pack ≈ +10 %) are dominated
 by network segments. Two levers, both implemented: segments stop at z13 rather
