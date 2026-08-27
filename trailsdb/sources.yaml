@@ -425,11 +425,18 @@ sources:
     attribution: "USDA Forest Service"
     homepage: "https://data.fs.usda.gov/geodata/edw/datasets.php"
     health_check:
-      url: "https://data.fs.usda.gov/geodata/edw/datasets.php"
+      url: "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_TrailNFSPublish_01/MapServer/0?f=json"
       expect_status: 200
     legal:
-      verified_on: null
-      notes: "Official figure 160,000 miles. Bulk file geodatabase, ~118 MB."
+      verified_on: 2026-08-27
+      notes: >-
+        A work of the US federal government, not subject to domestic copyright
+        (17 U.S.C. 105). Pulled from the USDA EDW endpoint only -- Esri-hosted
+        mirrors of the same data attach Esri terms of use that the underlying
+        public-domain status does not override. 86,303 segments; official figure
+        160,000 miles. The plan budgeted a 118 MB file geodatabase and the GDAL
+        dependency it implies, but the EDW REST service serves the same data as
+        GeoJSON, so no such dependency is needed.
 
   nps_trails:
     name: "National Park Service trails"

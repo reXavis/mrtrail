@@ -8,15 +8,18 @@ failing with an opaque KeyError.
 
 from __future__ import annotations
 
+from .arcgis import ArcGisAdapter, ArcGisLayer
 from .base import Adapter, AdapterContext, AdapterNotImplemented
 from .cnig import CnigAdapter
 from .eurovelo import EuroVeloAdapter
 from .nz_doc import NzDocAdapter
+from .usfs import UsfsAdapter
 
 IMPLEMENTED: dict[str, type[Adapter]] = {
     CnigAdapter.name: CnigAdapter,
     NzDocAdapter.name: NzDocAdapter,
     EuroVeloAdapter.name: EuroVeloAdapter,
+    UsfsAdapter.name: UsfsAdapter,
 }
 
 #: adapter name -> the execution-order phase that builds it.
@@ -29,7 +32,6 @@ PLANNED: dict[str, str] = {
     "refuges_info": "4 - Europe wave",
     "spain_regional": "4 - Europe wave",
     "mapa_caminos_naturales": "4 - Europe wave",
-    "usfs": "2 - prove it on three continents",
     "nps": "5 - Americas & Oceania wave",
     "usgs_ndt": "5 - Americas & Oceania wave",
     "ontario_otn": "5 - Americas & Oceania wave",
@@ -62,6 +64,9 @@ def build(ctx: AdapterContext) -> Adapter:
 
 __all__ = [
     "Adapter",
+    "ArcGisAdapter",
+    "ArcGisLayer",
+    "UsfsAdapter",
     "AdapterContext",
     "AdapterNotImplemented",
     "CnigAdapter",

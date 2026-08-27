@@ -31,56 +31,58 @@ will be made available soon, and this item will be updated with a link to the
 replacement." No replacement was published as of the last check. This is exactly
 the source drift the plan flagged, and it is handled rather than ignored: the
 layers still serve current data under the same licence, so we pull them, and
-:func:`check_for_replacement` re-reads the notice on every refresh so the
-migration is caught the day it lands instead of at a pack bake.
+:meth:`NzDocAdapter.check_for_replacement` re-reads the notice on every pull so
+the migration is caught the day it lands instead of at a pack bake.
 """
 
 from __future__ import annotations
 
-import json
 import re
-from dataclasses import dataclass
-from pathlib import Path
-from typing import Any, Iterator
+from typing import Any
 
-from ..fetch import FetchError
-from ..formats import geojson
 from ..manifest import PullManifest
 from ..schema import Feature
-from .base import Adapter
+from .arcgis import ArcGisAdapter, ArcGisLayer
 
 ORG = "3JjYDyG3oajxU6HO"
 SERVICE_ROOT = f"https://services1.arcgis.com/{ORG}/arcgis/rest/services"
-
-#: ArcGIS item ids behind each service, used to re-read the deprecation notice.
-ITEM_IDS = {
-    "DOC_Walking_Experiences": "e3f63067394a46238c92f9aed63ff78b",
-    "DOC_Mountain_Bike_Tracks": "0fdd22944b1b42ec87f54c11790208f6",
-    "DOC_Tracks_EAM": "5cba3b0a2e1041c9ad02ec694f3f3d37",
-}
 ITEM_URL = "https://www.arcgis.com/sharing/rest/content/items/{item_id}?f=json"
 
-#: Server maxRecordCount is 1000-2000 depending on the layer; stay under both.
-PAGE_SIZE = 1000
-MAX_PAGES = 400  # runaway-pagination backstop, far above any real layer
+#: ArcGIS item ids behind each layer, used to re-read the deprecation notice.
+ITEM_IDS = {
+    "walking": "e3f63067394a46238c92f9aed63ff78b",
+    "mtb": "0fdd22944b1b42ec87f54c11790208f6",
+    "tracks": "5cba3b0a2e1041c9ad02ec694f3f3d37",
+}
 
-
-@dataclass(frozen=True, slots=True)
-class Layer:
-    key: str
-    service: str
-    layer_id: int
-    kind: str
-    official_status: str
-
-
-LAYERS: dict[str, tuple[Layer, ...]] = {
+LAYERS: dict[str, tuple[ArcGisLayer, ...]] = {
     "experiences": (
-        Layer("walking", "DOC_Walking_Experiences", 1, "hiking", "doc_walking_experience"),
-        Layer("mtb", "DOC_Mountain_Bike_Tracks", 1, "mtb", "doc_mountain_bike_route"),
+        ArcGisLayer(
+            key="walking",
+            url=f"{SERVICE_ROOT}/DOC_Walking_Experiences/FeatureServer/1",
+            kind="hiking",
+            official_status="doc_walking_experience",
+            id_fields=("FlocID", "GlobalID"),
+            name_fields=("name", "TechObjectName"),
+        ),
+        ArcGisLayer(
+            key="mtb",
+            url=f"{SERVICE_ROOT}/DOC_Mountain_Bike_Tracks/FeatureServer/1",
+            kind="mtb",
+            official_status="doc_mountain_bike_route",
+            id_fields=("FlocID", "GlobalID"),
+            name_fields=("name", "TechObjectName"),
+        ),
     ),
     "network": (
-        Layer("tracks", "DOC_Tracks_EAM", 0, "hiking", "doc_track_asset"),
+        ArcGisLayer(
+            key="tracks",
+            url=f"{SERVICE_ROOT}/DOC_Tracks_EAM/FeatureServer/0",
+            kind="hiking",
+            official_status="doc_track_asset",
+            id_fields=("FlocID", "GlobalID"),
+            name_fields=("TechObjectName", "name"),
+        ),
     ),
 }
 
@@ -88,28 +90,27 @@ LAYERS: dict[str, tuple[Layer, ...]] = {
 _KIND_BY_SUBOBJECT = {
     "tramping track": "hiking",
     "walking track": "hiking",
-    "route": "hiking",
     "short walk": "hiking",
     "great walk": "hiking",
     "mountain bike": "mtb",
     "cycle": "cycling",
     "bridle": "horse",
     "horse": "horse",
+    "route": "hiking",
 }
 
-#: Identifiers that survive a republish, best first. OBJECTID is deliberately
-#: absent -- it is a row number in disguise and churns on every reload.
-_STABLE_ID_KEYS = ("FlocID", "GlobalID")
-_NAME_KEYS = ("name", "TechObjectName")
+_REGION_KEYS = ("region", "REGION", "conservancy", "district")
+_PAGE_KEYS = ("walkingAndTrampingWebPage", "mountainBikingTrackWebPage")
 _GUID_RE = re.compile(r"([0-9a-f]{32})", re.I)
 
 
-class NzDocAdapter(Adapter):
+class NzDocAdapter(ArcGisAdapter):
     name = "nz_doc"
     phase = "2 - prove it on three continents"
+    country = "NZ"
 
     @property
-    def layers(self) -> tuple[Layer, ...]:
+    def layers(self) -> tuple[ArcGisLayer, ...]:
         key = self.source.series or "experiences"
         if key not in LAYERS:
             raise ValueError(
@@ -118,157 +119,59 @@ class NzDocAdapter(Adapter):
             )
         return LAYERS[key]
 
-    # -- fetch ---------------------------------------------------------------
-
     def fetch(
         self, manifest: PullManifest, *, force: bool = False, limit: int | None = None
     ) -> None:
-        total = 0
-        for layer in self.layers:
-            total += self._fetch_layer(layer, manifest, force=force, limit=limit)
-        if total == 0:
-            raise FetchError(
-                f"{self.source.id}: every layer returned zero features. DOC is "
-                f"migrating these datasets -- check {SERVICE_ROOT} for the replacement."
-            )
-
+        super().fetch(manifest, force=force, limit=limit)
         # Not errors: the data is still current and still CC BY. They are
-        # warnings that have to survive into the manifest and the catalog.
+        # warnings that must survive into the manifest and the catalog, because
+        # a warning that fails the build teaches everyone to ignore the build.
         manifest.warnings.extend(self.check_for_replacement())
-        manifest.notes = f"series={self.source.series} features={total}"
-
-    def _fetch_layer(
-        self, layer: Layer, manifest: PullManifest, *, force: bool, limit: int | None
-    ) -> int:
-        target = self.raw_dir / layer.key
-        target.mkdir(parents=True, exist_ok=True)
-        query = f"{SERVICE_ROOT}/{layer.service}/FeatureServer/{layer.layer_id}/query"
-        max_pages = MAX_PAGES if limit is None else max(1, limit)
-
-        total = 0
-        for page in range(max_pages):
-            url = (
-                f"{query}?where=1%3D1&outFields=*&outSR=4326&f=geojson"
-                f"&resultOffset={page * PAGE_SIZE}&resultRecordCount={PAGE_SIZE}"
-            )
-            record = self.session.download(
-                url, target / f"page-{page:04d}.geojson", force=force
-            )
-            manifest.add(record)
-
-            payload = json.loads(Path(record.path).read_text(encoding="utf-8"))
-            if "error" in payload:
-                raise FetchError(f"{self.source.id}/{layer.key}: {payload['error']}")
-            features = payload.get("features") or []
-            total += len(features)
-
-            # ArcGIS says explicitly when there is another page; trusting only a
-            # short page would silently truncate a layer whose count is an exact
-            # multiple of the page size.
-            if not payload.get("exceededTransferLimit") and len(features) < PAGE_SIZE:
-                break
-        else:
-            raise FetchError(
-                f"{self.source.id}/{layer.key}: hit the {max_pages}-page backstop "
-                f"-- resultOffset may not be honoured"
-            )
-        return total
+        manifest.notes = f"series={self.source.series} {manifest.notes}"
 
     def check_for_replacement(self) -> list[str]:
         """Re-read DOC's deprecation notices and report any that name a successor.
 
-        Cheap (one request per service) and run on every pull, because the whole
+        Cheap -- one request per layer -- and run on every pull, because the whole
         cost of this migration is finding out about it late.
         """
         notices: list[str] = []
         for layer in self.layers:
-            item_id = ITEM_IDS.get(layer.service)
+            item_id = ITEM_IDS.get(layer.key)
             if not item_id:
                 continue
             try:
                 payload = self.session.get_json(ITEM_URL.format(item_id=item_id))
             except Exception as exc:  # a notice check must never fail a pull
-                notices.append(f"{layer.service}: could not re-read the item notice ({exc})")
+                notices.append(f"{layer.key}: could not re-read the item notice ({exc})")
                 continue
             text = f"{payload.get('snippet') or ''} {payload.get('description') or ''}"
             if "deprecat" in text.lower():
                 notices.append(
-                    f"{layer.service}: still flagged deprecated by DOC"
-                    + (" -- REPLACEMENT LINKED, migrate this adapter" if _links_replacement(text) else "")
+                    f"{layer.key}: still flagged deprecated by DOC"
+                    + (
+                        " -- REPLACEMENT LINKED, migrate this adapter"
+                        if _links_replacement(text)
+                        else ""
+                    )
                 )
         return notices
 
-    # -- normalize -----------------------------------------------------------
+    # -- normalization specifics ---------------------------------------------
 
-    def normalize(self, manifest: PullManifest) -> Iterator[Feature]:
-        seen: set[str] = set()
-        for layer in self.layers:
-            directory = self.raw_dir / layer.key
-            if not directory.exists():
-                continue
-            for path in sorted(directory.glob("page-*.geojson")):
-                for raw in geojson.load_features(path):
-                    feature = self._normalize_one(raw, layer, manifest, path)
-                    if feature is not None and feature.id not in seen:
-                        seen.add(feature.id)
-                        yield feature
-
-    def _normalize_one(
-        self, raw: dict[str, Any], layer: Layer, manifest: PullManifest, path: Path
-    ) -> Feature | None:
-        geometry = geojson.line_geometry(raw.get("geometry"))
-        if geometry is None:
-            return None
-
-        props = raw.get("properties") or {}
-        local_id = self._stable_id(props, layer)
-        if local_id is None:
-            return None
-
-        name = _pick(props, _NAME_KEYS)
-        web_page = _pick(props, ("walkingAndTrampingWebPage", "mountainBikingTrackWebPage"))
-        chars = _characteristics(props)
-
-        extras = {
-            k: v
-            for k, v in props.items()
-            if v not in (None, "", " ")
-            and not k.startswith(("CharName", "CharValue", "Shape__"))
-            and k not in ("OBJECTID", "SortField")
-        }
-        if chars:
-            extras["characteristics"] = chars
-        extras["doc_layer"] = layer.key
-        extras["source_file"] = path.name
-
-        return self.feature(
-            local_id,
-            geometry,
-            manifest=manifest,
-            kind=_kind_for(props, layer),
-            name=str(name) if name else None,
-            official_status=layer.official_status,
-            country="NZ",
-            source_url=str(web_page) if web_page else self.source.homepage or None,
-            extras=extras,
-        )
-
-    def _stable_id(self, props: dict[str, Any], layer: Layer) -> str | None:
+    def stable_id(self, props: dict[str, Any], layer: ArcGisLayer) -> str | None:
         """Prefer an identifier that survives a republish over ArcGIS's OBJECTID.
 
         The asset network has FlocID (a functional-location code) and a GlobalID
         GUID. The experience layers have neither, so their DOC web-page GUID is
         used instead. OBJECTID is the last resort and is prefixed, so an id that
-        rests on a row number is visible as such.
+        rests on a row number is visible as one.
         """
-        for key in _STABLE_ID_KEYS:
-            value = props.get(key)
-            if value not in (None, "", " "):
-                return str(value).strip("{}")
+        found = super().stable_id(props, layer)
+        if found is not None:
+            return found
 
-        # The experience layers carry neither, but their DOC web-page URL ends in
-        # a stable content GUID, which is a far better anchor than a row number.
-        page = _pick(props, ("walkingAndTrampingWebPage", "mountainBikingTrackWebPage"))
+        page = _pick(props, _PAGE_KEYS)
         if page:
             match = _GUID_RE.search(str(page))
             if match:
@@ -277,10 +180,32 @@ class NzDocAdapter(Adapter):
         objectid = props.get("OBJECTID")
         return f"{layer.key}-oid{objectid}" if objectid not in (None, "") else None
 
+    def build_feature(self, local_id, geometry, props, layer, manifest, path) -> Feature:
+        feature = super().build_feature(local_id, geometry, props, layer, manifest, path)
+        feature.kind = _kind_for(props, layer)
+        feature.admin = _pick(props, _REGION_KEYS)
+
+        web_page = _pick(props, _PAGE_KEYS)
+        if web_page:
+            feature.source_url = str(web_page)
+
+        # DOC spreads metadata across CharName1/CharValue1... pairs. Folding them
+        # into one mapping keeps extras readable instead of forty loose keys.
+        chars = _characteristics(props)
+        feature.extras = {
+            k: v
+            for k, v in feature.extras.items()
+            if not k.startswith(("CharName", "CharValue", "Shape__")) and k != "SortField"
+        }
+        if chars:
+            feature.extras["characteristics"] = chars
+        feature.extras["doc_layer"] = layer.key
+        return feature
+
 
 def _links_replacement(text: str) -> bool:
     lowered = text.lower()
-    return "replacement" in lowered and ("http" in lowered and "will be made available" not in lowered)
+    return "replacement" in lowered and "http" in lowered and "will be made available" not in lowered
 
 
 def _characteristics(props: dict[str, Any]) -> dict[str, str]:
@@ -302,7 +227,7 @@ def _pick(props: dict[str, Any], keys: tuple[str, ...]) -> Any:
     return None
 
 
-def _kind_for(props: dict[str, Any], layer: Layer) -> str:
+def _kind_for(props: dict[str, Any], layer: ArcGisLayer) -> str:
     text = " ".join(
         str(props.get(key) or "")
         for key in ("SubObjectType", "ObjectType", "CharValue3", "CharValue7")
