@@ -49,6 +49,7 @@ from the normalized data.
 | South Australia: DEW Recreation Trails | 7,113 | 9,461 | 30,000 (all states) |
 | Tasmania: the LIST tracks | 12,057 | 4,181 | — |
 | Victoria: DEECA Recreation Tracks (walkable) | 292 | 1,139 | — |
+| refuges.info huts, shelters and water points | 8,467 spots | — | — |
 | Norway: Kartverket Turrutebasen | 166,434 | 83,824 | 80,000 |
 | CNIG FEDME senderos | 3,780 | 49,780 | 50,000 |
 
@@ -225,42 +226,57 @@ and hoped for.
 `trailsdb estimate` is not a guess. The plan's coefficients came from the
 Galicia pack pipeline: 550 routes / 11,176 km / 51.5 points per km → 17.5 MB of
 enriched GeoJSONL (**1.56 KB/km**) → 39.1 MB of z8–14 PMTiles (**3.5 KB/km**),
-2.0 % of the 1.96 GB pack. Both coefficients have since been re-measured on the
-real data with `trailsdb bake`, which runs tippecanoe over an export and reports
-bytes per km per layer:
+2.0 % of the 1.96 GB pack. Both have since been re-measured on the real data
+with `trailsdb bake`, which runs tippecanoe over an export and reports bytes per
+km — and per feature — per layer:
 
-| pack | layer | class | features | km | PMTiles | KB/km |
-| --- | --- | --- | ---: | ---: | ---: | ---: |
-| Switzerland | official_net | segment | 409,276 | 66,926 | 110.6 MB | 1.61 |
-| Colorado | official_net | segment | 7,358 | 22,987 | 8.3 MB | 0.35 |
-| New Zealand | official_net | segment | 3,230 | 13,819 | 5.2 MB | 0.37 |
-| New Zealand | official | route | 1,543 | 13,687 | 5.2 MB | 0.37 |
-| Pyrenees | official | route | 1,281 | 20,851 | 6.6 MB | 0.31 |
-| Galicia | official | route | 119 | 2,386 | 1.2 MB | 0.50 |
-| Switzerland / Pyrenees / Galicia | eurovelo | route | 65 / 19 / 17 | 2,176 / 767 / 904 | 1.0 / 0.4 / 0.4 MB | 0.43–0.45 |
+| pack | layer | class · zooms | features | km | PMTiles | KB/km | KB/feature |
+| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |
+| Alps | official_net (swisstopo) | segment · z8–13 | 409,276 | 66,926 | 105.5 MB | 1.61 | 0.26 |
+| Southern Norway | official (Turrutebasen, as routes) | route · z8–14 | 143,703 | 68,940 | 88.2 MB | 1.31 | 0.63 |
+| Southern Norway | official_net (Turrutebasen, as segments) | segment · z8–13 | 141,833 | 66,592 | 59.1 MB | 0.91 | 0.43 |
+| Colorado | official_net (USFS + NPS) | segment · z8–13 | 7,358 | 22,987 | 7.9 MB | 0.35 | 1.10 |
+| New Zealand | official_net | segment · z8–13 | 3,230 | 13,819 | 5.0 MB | 0.37 | 1.58 |
+| New Zealand | official | route · z8–14 | 1,543 | 13,687 | 5.0 MB | 0.37 | 3.31 |
+| Pyrenees | official (FEDME + Camino) | route · z8–14 | 589 | 8,962 | 4.3 MB | 0.50 | 7.5 |
+| Galicia | official (FEDME + Camino) | route · z8–14 | 192 | 3,301 | 1.6 MB | 0.51 | 8.7 |
+| Alps / Pyrenees / Galicia | eurovelo | route · z8–14 | 176 / 19 / 17 | 6,960 / 767 / 904 | 3.0 / 0.3 / 0.4 MB | 0.43–0.45 | 14–24 |
+| Alps / Pyrenees | refuges_info | spot · z8–14 | 5,346 / 1,112 | — | 1.7 / 0.4 MB | — | 0.33 / 0.37 |
 
-Named routes cost **0.3–0.5 KB/km** of tiles and network segments
-**0.35–1.6 KB/km** — a third to a tenth of the 3.5 the plan carried, because
-tippecanoe's simplification and `--drop-densest-as-needed` do most of their
-work below z12, and because the export only carries the nine tile attributes.
-The model now uses one coefficient per feature class, **0.4 KB/km for routes
-and 1.2 KB/km for segments**, both set just above the measurements' middle.
-Switzerland is the honest worst case: 409,276 short segments averaging 164 m
-each, so every tile at z13 carries far more feature headers per km than a
-long named route does.
+Two things fall out. First, everything costs **a third to a tenth of the 3.5
+KB/km the plan carried**, because tippecanoe's simplification and
+`--drop-densest-as-needed` do most of their work below z12 and the export only
+carries the ten tile attributes. Second, **the per-km coefficient is the wrong
+shape**: Norway's route pieces cost 1.31 KB/km and a FEDME sendero 0.5, on the
+same settings, because a tile carries a header per feature and Norway has one
+feature every half kilometre. Fitting every bake gives two terms:
 
-Applied to ~800,000 km of official trails worldwide: **~1.5 GB** of master
-database, **~0.7 GB** of tiles spread across *all* packs combined. A typical
-pack grows well under one percent, because routes are vector lines and packs
-are dominated by elevation rasters; the 110 MB Swiss network is the outlier,
-and it is 3.5 % of the 3.15 GB Alps pack.
+    z8–14 routes    KB ≈ 0.4 × km + 0.45 × features
+    z8–13 segments  KB ≈ 0.3 × km + 0.22 × features
+    spots           KB ≈ 0.4 × features
 
-**The coefficient survived contact with real data, and the reasoning behind it
-held up better than the number.** Measured across 315,767 km of pulled official
-data, the master database runs at 1.98 KB/km uncompressed against the 1.56
-baseline. The gap is point density, not a flaw: EuroVelo at 10.5 points/km costs
-0.24 KB/km, USFS at 87.0 costs 2.50, and geometry is 87 % of every file exactly
-as the plan argues.
+which reproduces the two layers that dominate any pack (Norway 88 MB, the
+Swiss network 106 MB) within 3 % and the sparse ones within about 20 %.
+`estimate` uses the two-term form whenever a feature count is known — every
+layer export, every normalized source — and the per-km fallback (0.4 KB/km
+for routes, 1.2 for segments, the Swiss density) for sources not yet pulled.
+The per-feature term is also why Turrutebasen is a *segment* source despite
+carrying route names: its pieces are network-shaped, and stopping them at z13
+takes southern Norway from 88 MB to 59 MB with the name and parent intact.
+
+Applied worldwide: **~1.5 GB** of master database and **~0.5 GB** of tiles
+across *all* packs combined. A typical pack grows well under one percent,
+because routes are vector lines and packs are dominated by elevation rasters.
+The Alps pack is the honest worst case: the Swiss network, EuroVelo and 5,346
+huts come to **110 MB, 3.5 % of its 3.15 GB**, and Norway's network would be
+about the same again for a pack that covered it.
+
+**The master coefficient survived contact with real data, and the reasoning
+behind it held up better than the number.** Measured across 315,767 km of
+pulled official data, the master database runs at 1.98 KB/km uncompressed
+against the 1.56 baseline. The gap is point density, not a flaw: EuroVelo at
+10.5 points/km costs 0.24 KB/km, USFS at 87.0 costs 2.50, and geometry is 87 %
+of every file exactly as the plan argues. Spots cost 0.52 KB each.
 
 That last fact is also the biggest lever available. Sources hand back full IEEE
 doubles — about 39 bytes per position to store 17 significant digits of a
@@ -268,15 +284,13 @@ measurement good to a few metres. Rounding to six decimal places (~11 cm, finer
 than consumer GPS and finer than a z14 tile resolves) **cut the master database
 by 57 %**, from 322 MB to 140 MB, with nothing lost that a map can draw.
 
-The worst cases are dominated by network segments, and two levers keep them
-small: segments stop at z13 rather than z14, and they carry no profile
-attributes at all. Both are already inside the measured segment coefficient
-(every segment bake above ran z8–13), so `--cap-segments-at-z13` is accepted
-for compatibility and changes nothing.
+Segments carry no profile attributes at all, and every segment bake above ran
+z8–13, so `--cap-segments-at-z13` is accepted for compatibility and changes
+nothing.
 
 Once a source has actually been normalized, `estimate` uses its measured length
-from the catalog instead of the registry's estimate, and labels the row
-`measured`.
+and feature count from the catalog instead of the registry's estimate, and
+labels the row `measured`.
 
 ## Adding a source
 

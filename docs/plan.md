@@ -11,11 +11,12 @@ typical pack grows a few percent. The first full pull is 1–2 days of automated
 wall-clock. The real cost is the adapters: roughly 4–6 focused weeks for ~15
 sources.
 
-Measured since: **~0.7 GB** of tiles worldwide, not 2–3.5, because real
-tippecanoe bakes come in at 0.3–0.5 KB/km for routes and 0.35–1.6 KB/km for
-network segments against the 3.5 the prototype suggested. Galicia grows by
-1.6 MB (0.08 %) before FEDME; the worst pack measured, Switzerland's 67,000 km
-network, adds 111 MB. The pull estimate held: the long pulls (USFS, Norway,
+Measured since: **~0.5 GB** of tiles worldwide, not 2–3.5, because real
+tippecanoe bakes come in at 0.3–0.5 KB/km for named routes and, once the
+per-feature overhead is modelled, 0.3 KB/km + 0.22 KB/feature for network
+segments — against the 3.5 KB/km the prototype suggested. Galicia with FEDME
+and the Camino grows by 2.0 MB (0.1 %); the worst pack, the Alps with the Swiss
+network and 5,346 huts, grows by 110 MB (3.5 %). The pull estimate held: the long pulls (USFS, Norway,
 FEDME) each run most of a day at polite pacing. The adapter estimate was
 pessimistic: 15 adapters landed in this one session, all stdlib.
 
