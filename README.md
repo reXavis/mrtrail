@@ -52,14 +52,17 @@ from the normalized data.
 | refuges.info huts, shelters and water points | 8,467 spots | — | — |
 | Norway: Kartverket Turrutebasen | 166,434 | 83,824 | 80,000 |
 | CNIG FEDME senderos | 3,780 | 49,780 | 50,000 |
+| Caminos Naturales (MAPA, via CNIG) | 741 | 10,915 | 10,300 |
 
 The Camino pulled 1,074 stages across 80 route variants in three countries.
 USFS dropped 5,337 of 86,303 raw features, all null-geometry attribute rows;
 NPS drops trails it marks Proposed or Abandoned; the Coast Path drops sections
 not yet opened.
 
-A Galicia cut — the pack that ships today — bakes to **1.6 MB of PMTiles,
-+0.08 % of the pack**, against the plan's predicted ~1 %, before FEDME. Five
+A Galicia cut — the pack that ships today — bakes to **2.4 MB of PMTiles,
++0.12 % of the pack**, against the plan's predicted ~1 %: 263 FEDME, Camino
+and Caminos Naturales routes over 3,975 km in the `official` layer, plus
+EuroVelo, all legally verified and exported without any override. Seven
 packs have been baked with tippecanoe; see [The size model](#the-size-model).
 
 **Nineteen of 23 sources are legally verified** from their publishers' own
@@ -239,7 +242,7 @@ km — and per feature — per layer:
 | New Zealand | official_net | segment · z8–13 | 3,230 | 13,819 | 5.0 MB | 0.37 | 1.58 |
 | New Zealand | official | route · z8–14 | 1,543 | 13,687 | 5.0 MB | 0.37 | 3.31 |
 | Pyrenees | official (FEDME + Camino) | route · z8–14 | 589 | 8,962 | 4.3 MB | 0.50 | 7.5 |
-| Galicia | official (FEDME + Camino) | route · z8–14 | 192 | 3,301 | 1.6 MB | 0.51 | 8.7 |
+| Galicia | official (FEDME + Camino + Caminos Naturales) | route · z8–14 | 263 | 3,975 | 2.0 MB | 0.51 | 7.8 |
 | Alps / Pyrenees / Galicia | eurovelo | route · z8–14 | 176 / 19 / 17 | 6,960 / 767 / 904 | 3.0 / 0.3 / 0.4 MB | 0.43–0.45 | 14–24 |
 | Alps / Pyrenees | refuges_info | spot · z8–14 | 5,346 / 1,112 | — | 1.7 / 0.4 MB | — | 0.33 / 0.37 |
 

@@ -37,7 +37,7 @@ size model from the registry.
 
 | adapter | state |
 | --- | --- |
-| CNIG (FEDME · Camino · Camino del Cid) | built against the verified live flow; Camino pulled (1,074 stages, 24,854 km); FEDME and Camino del Cid pull running |
+| CNIG (FEDME · Camino · Camino del Cid · Caminos Naturales) | built against the live flow; Camino 1,074 stages / 24,854 km, FEDME 3,780 senderos / 49,780 km, Caminos Naturales 741 stages / 10,915 km pulled and normalized |
 | NZ DOC (routes + network) | built and pulled: 4,795 features, 27,591 km |
 | USFS | built and pulled from the ArcGIS GeoJSON endpoint: 80,966 features, 232,766 km — no `geo` extra needed |
 
@@ -50,8 +50,9 @@ Real data now flows end to end — pull, normalize, catalog, bbox cut, tippecano
 bake. A New Zealand cut bakes to 10.5 MB of tiles across both layers; the model
 had said 70 MB.
 
-Not done: the Galicia pack with FEDME in its `official` layer (the pull is the
-long one). Galicia with the Camino and EuroVelo bakes today at 1.6 MB.
+Done: the Galicia pack with FEDME, the Camino and Caminos Naturales in its
+`official` layer bakes at 2.4 MB of tiles, 0.12 % of the pack, from verified
+sources only.
 
 ### What contact with the real services changed
 
