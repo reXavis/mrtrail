@@ -26,7 +26,7 @@ from .config import Paths
 from .fetch import PoliteSession
 from .geo import BBox
 from .manifest import PullManifest
-from .registry import Registry, Source
+from .registry import Registry, RegistryError, Source
 from .schema import TILE_ATTRIBUTES
 
 #: Packs are cut with a small pad so a route that briefly leaves the box does not
@@ -177,6 +177,21 @@ class ExportResult:
         return sum(layer.estimated_tiles_mb for layer in self.layers)
 
 
+def resolved_attribution(source: Source, paths: Paths) -> str:
+    """The credit line as it must be shown, with the template filled from the pull.
+
+    EuroVelo's ODbL notice must carry the date the data was retrieved, and the
+    multi-operator sources carry the operator's own wording; both live in the
+    pull manifest. A pack's credits therefore come from the same pull as its
+    features, never from the day the pack was baked.
+    """
+    manifest = PullManifest.read(paths.raw_dir(source.id))
+    return source.attribution_for(
+        retrieved_on=(manifest.retrieved_on or None) if manifest else None,
+        instance_attribution=manifest.instance_attribution if manifest else None,
+    )
+
+
 def layer_for(source: Source) -> str:
     """Which tile source-layer a source's features belong to.
 
@@ -225,6 +240,13 @@ def export_pack(
             if not path.exists():
                 skipped.append((source.id, "not normalized yet"))
                 continue
+            try:
+                credit = resolved_attribution(source, paths)
+            except RegistryError as exc:
+                # A templated notice with nothing to fill it (EuroVelo's needs
+                # the retrieval date) cannot be shown, so its data cannot ship.
+                skipped.append((source.id, str(exc)))
+                continue
 
             layer = layer_for(source)
             if layer not in writers:
@@ -254,7 +276,7 @@ def export_pack(
                     "license": source.license.id,
                     "license_name": source.license.name,
                     "license_url": source.license.url,
-                    "attribution": source.attribution,
+                    "attribution": credit,
                     "layer": layer,
                 }
     except BaseException:
@@ -501,12 +523,23 @@ def health_check(
 # ----------------------------------------------------------------- licenses --
 
 
-def licenses_document(registry: Registry) -> dict[str, Any]:
+def licenses_document(registry: Registry, paths: Paths | None = None) -> dict[str, Any]:
     """The payload the app's "Data sources & licenses" screen renders.
 
     Generated from the registry, which is the whole point: adding a country is a
-    registry entry and a rebuild, never new legal UI work.
+    registry entry and a rebuild, never new legal UI work. With ``paths``, each
+    source also carries ``attribution_resolved``: the template filled from its
+    last pull, or null when that pull has not happened.
     """
+
+    def resolved(source: Source) -> str | None:
+        if paths is None:
+            return None
+        try:
+            return resolved_attribution(source, paths)
+        except RegistryError:
+            return None
+
     return {
         "generated_from": "trailsdb/sources.yaml",
         "licenses": [
@@ -528,6 +561,7 @@ def licenses_document(registry: Registry) -> dict[str, Any]:
                 "license": source.license.id,
                 "attribution": source.attribution,
                 "attribution_is_templated": bool(source.attribution_placeholders),
+                "attribution_resolved": resolved(source),
                 "homepage": source.homepage,
                 "layer": layer_for(source),
                 "verified_on": (

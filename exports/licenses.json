@@ -1,0 +1,448 @@
+{
+  "generated_from": "trailsdb/sources.yaml",
+  "licenses": [
+    {
+      "id": "cc-by-3.0-au",
+      "name": "Creative Commons Attribution 3.0 Australia",
+      "url": "https://creativecommons.org/licenses/by/3.0/au/",
+      "family": "attribution",
+      "share_alike": false
+    },
+    {
+      "id": "cc-by-4.0",
+      "name": "Creative Commons Attribution 4.0 International",
+      "url": "https://creativecommons.org/licenses/by/4.0/",
+      "family": "attribution",
+      "share_alike": false
+    },
+    {
+      "id": "cc-by-sa-2.0",
+      "name": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+      "url": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "family": "share-alike",
+      "share_alike": true
+    },
+    {
+      "id": "cc-by-sa-4.0",
+      "name": "Creative Commons Attribution-ShareAlike 4.0 International",
+      "url": "https://creativecommons.org/licenses/by-sa/4.0/",
+      "family": "share-alike",
+      "share_alike": true
+    },
+    {
+      "id": "cc0-1.0",
+      "name": "Creative Commons Zero v1.0 Universal",
+      "url": "https://creativecommons.org/publicdomain/zero/1.0/",
+      "family": "public-domain",
+      "share_alike": false
+    },
+    {
+      "id": "nlod-2.0",
+      "name": "Norwegian Licence for Open Government Data (NLOD) 2.0",
+      "url": "https://data.norge.no/nlod/en/2.0",
+      "family": "attribution",
+      "share_alike": false
+    },
+    {
+      "id": "odbl-1.0",
+      "name": "Open Data Commons Open Database License v1.0",
+      "url": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "family": "share-alike",
+      "share_alike": true
+    },
+    {
+      "id": "ogl-bc-2.0",
+      "name": "Open Government Licence - British Columbia",
+      "url": "https://www2.gov.bc.ca/gov/content?id=A519A56BC2BF44E4A008B33FCF527F61",
+      "family": "attribution",
+      "share_alike": false
+    },
+    {
+      "id": "ogl-ontario-1.0",
+      "name": "Open Government Licence - Ontario",
+      "url": "https://www.ontario.ca/page/open-government-licence-ontario",
+      "family": "attribution",
+      "share_alike": false
+    },
+    {
+      "id": "ogl-uk-3.0",
+      "name": "Open Government Licence v3.0 (United Kingdom)",
+      "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      "family": "attribution",
+      "share_alike": false
+    },
+    {
+      "id": "opendata-swiss-by",
+      "name": "Open use with attribution (opendata.swiss / swisstopo terms)",
+      "url": "https://www.geocatalog.ch/terms-of-use",
+      "family": "attribution",
+      "share_alike": false
+    },
+    {
+      "id": "per-instance",
+      "name": "Determined per instance at ingest",
+      "url": "",
+      "family": "unknown",
+      "share_alike": false
+    },
+    {
+      "id": "us-public-domain",
+      "name": "U.S. Government work, not subject to domestic copyright (17 U.S.C. 105)",
+      "url": "https://www.usa.gov/government-works",
+      "family": "public-domain",
+      "share_alike": false
+    }
+  ],
+  "sources": [
+    {
+      "id": "au_sa_trails",
+      "name": "Recreation Trails (South Australia)",
+      "publisher": "Government of South Australia, Department for Environment and Water",
+      "countries": [
+        "AU"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "Recreation Trails © Government of South Australia (Department for Environment and Water), CC BY 4.0",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Recreation Trails © Government of South Australia (Department for Environment and Water), CC BY 4.0",
+      "homepage": "https://data.sa.gov.au/data/dataset/recreation-trails",
+      "layer": "official",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "au_tas_tracks",
+      "name": "Tracks (Tasmania, the LIST)",
+      "publisher": "State of Tasmania (the LIST, Land Tasmania)",
+      "countries": [
+        "AU"
+      ],
+      "license": "cc-by-3.0-au",
+      "attribution": "Transport Segments from theLIST ©State of Tasmania",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Transport Segments from theLIST ©State of Tasmania",
+      "homepage": "https://listdata.thelist.tas.gov.au/opendata/",
+      "layer": "official_net",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "au_vic_tracks",
+      "name": "Recreation Tracks (Victoria)",
+      "publisher": "State of Victoria, Department of Energy, Environment and Climate Action",
+      "countries": [
+        "AU"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "Recreation Tracks © State of Victoria (Department of Energy, Environment and Climate Action), CC BY 4.0",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Recreation Tracks © State of Victoria (Department of Energy, Environment and Climate Action), CC BY 4.0",
+      "homepage": "https://discover.data.vic.gov.au/dataset/recreation-tracks",
+      "layer": "official",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "australia_states",
+      "name": "State walking track datasets (NSW, QLD, WA)",
+      "publisher": "Australian state governments (NSW, QLD, WA)",
+      "countries": [
+        "AU"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "{instance_attribution}",
+      "attribution_is_templated": true,
+      "attribution_resolved": null,
+      "homepage": "https://data.gov.au/",
+      "layer": "official_net",
+      "verified_on": null
+    },
+    {
+      "id": "bc_recreation",
+      "name": "Recreation trails",
+      "publisher": "Province of British Columbia",
+      "countries": [
+        "CA"
+      ],
+      "license": "ogl-bc-2.0",
+      "attribution": "Contains information licensed under the Open Government Licence - British Columbia.",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Contains information licensed under the Open Government Licence - British Columbia.",
+      "homepage": "https://catalogue.data.gov.bc.ca/dataset/recreation-line",
+      "layer": "official_net",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "caminos_naturales",
+      "name": "Caminos Naturales",
+      "publisher": "Ministerio de Agricultura, Pesca y Alimentacion (MAPA), via the CNIG download centre",
+      "countries": [
+        "ES"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "Obra derivada de CNT 2024 CC-BY 4.0 MAPA",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Obra derivada de CNT 2024 CC-BY 4.0 MAPA",
+      "homepage": "https://centrodedescargas.cnig.es/CentroDescargas/caminos-naturales",
+      "layer": "official",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "cnig_camino",
+      "name": "Camino de Santiago (all variants)",
+      "publisher": "Centro Nacional de Informacion Geografica (CNIG) / FEAACS",
+      "countries": [
+        "ES",
+        "FR",
+        "PT"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "Obra derivada de Rutas de Caminos de Santiago 2020-2026 CC-BY 4.0 FEAACS",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Obra derivada de Rutas de Caminos de Santiago 2020-2026 CC-BY 4.0 FEAACS",
+      "homepage": "https://centrodedescargas.cnig.es/CentroDescargas/home",
+      "layer": "official",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "cnig_camino_cid",
+      "name": "Camino del Cid",
+      "publisher": "Consorcio Camino del Cid / CNIG",
+      "countries": [
+        "ES"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "Obra derivada de RCE_CDC 2018-2020 CC-BY 4.0 Camino del CID",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Obra derivada de RCE_CDC 2018-2020 CC-BY 4.0 Camino del CID",
+      "homepage": "https://centrodedescargas.cnig.es/CentroDescargas/home",
+      "layer": "official",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "cnig_fedme",
+      "name": "Senderos homologados FEDME",
+      "publisher": "Centro Nacional de Informacion Geografica (CNIG) / FEDME",
+      "countries": [
+        "ES"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "Obra derivada de FEDME 2020-2026 CC-BY 4.0 FEDME",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Obra derivada de FEDME 2020-2026 CC-BY 4.0 FEDME",
+      "homepage": "https://centrodedescargas.cnig.es/CentroDescargas/home",
+      "layer": "official",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "eurovelo",
+      "name": "EuroVelo cycle route network",
+      "publisher": "European Cyclists' Federation",
+      "countries": [
+        "EU"
+      ],
+      "license": "odbl-1.0",
+      "attribution": "Contains information from EuroVelo GPX tracks downloaded from www.EuroVelo.com on {retrieved_on}, which is made available here under the Open Database License (ODbL).",
+      "attribution_is_templated": true,
+      "attribution_resolved": "Contains information from EuroVelo GPX tracks downloaded from www.EuroVelo.com on 2026-08-27, which is made available here under the Open Database License (ODbL).",
+      "homepage": "https://en.eurovelo.com/",
+      "layer": "eurovelo",
+      "verified_on": "2026-08-27"
+    },
+    {
+      "id": "geotrek",
+      "name": "Geotrek public instances",
+      "publisher": "~60 independent French territorial operators",
+      "countries": [
+        "FR"
+      ],
+      "license": "per-instance",
+      "attribution": "{instance_attribution}",
+      "attribution_is_templated": true,
+      "attribution_resolved": null,
+      "homepage": "https://geotrek.fr/",
+      "layer": "official",
+      "verified_on": null
+    },
+    {
+      "id": "kartverket_turrutebasen",
+      "name": "Turrutebasen",
+      "publisher": "Kartverket",
+      "countries": [
+        "NO"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "© Kartverket",
+      "attribution_is_templated": false,
+      "attribution_resolved": "© Kartverket",
+      "homepage": "https://kartkatalog.geonorge.no/metadata/turrutebasen/d1422d17-6d95-4ef1-96ab-8af31744dd63",
+      "layer": "official_net",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "naturvardsverket",
+      "name": "Vandringsleder",
+      "publisher": "Naturvardsverket",
+      "countries": [
+        "SE"
+      ],
+      "license": "cc0-1.0",
+      "attribution": "Naturvardsverket (CC0)",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Naturvardsverket (CC0)",
+      "homepage": "https://geodata.naturvardsverket.se/nedladdning/friluftsliv/",
+      "layer": "official",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "nps_trails",
+      "name": "National Park Service trails",
+      "publisher": "US National Park Service",
+      "countries": [
+        "US"
+      ],
+      "license": "us-public-domain",
+      "attribution": "US National Park Service",
+      "attribution_is_templated": false,
+      "attribution_resolved": "US National Park Service",
+      "homepage": "https://public-nps.opendata.arcgis.com/",
+      "layer": "official_net",
+      "verified_on": "2026-08-27"
+    },
+    {
+      "id": "nz_doc",
+      "name": "DOC walking, tramping and mountain bike routes",
+      "publisher": "New Zealand Department of Conservation",
+      "countries": [
+        "NZ"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "Crown copyright (c) Department of Conservation (DOC) and the New Zealand Government",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Crown copyright (c) Department of Conservation (DOC) and the New Zealand Government",
+      "homepage": "https://doc-deptconservation.opendata.arcgis.com/",
+      "layer": "official",
+      "verified_on": "2026-08-27"
+    },
+    {
+      "id": "nz_doc_network",
+      "name": "DOC track network (EAM asset system)",
+      "publisher": "New Zealand Department of Conservation",
+      "countries": [
+        "NZ"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "Crown copyright (c) Department of Conservation (DOC) and the New Zealand Government",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Crown copyright (c) Department of Conservation (DOC) and the New Zealand Government",
+      "homepage": "https://doc-deptconservation.opendata.arcgis.com/",
+      "layer": "official_net",
+      "verified_on": "2026-08-27"
+    },
+    {
+      "id": "ontario_otn",
+      "name": "Ontario Trail Network",
+      "publisher": "Government of Ontario",
+      "countries": [
+        "CA"
+      ],
+      "license": "ogl-ontario-1.0",
+      "attribution": "Contains information licensed under the Open Government Licence - Ontario.",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Contains information licensed under the Open Government Licence - Ontario.",
+      "homepage": "https://geohub.lio.gov.on.ca/",
+      "layer": "official_net",
+      "verified_on": "2026-08-27"
+    },
+    {
+      "id": "refuges_info",
+      "name": "refuges.info huts and shelters",
+      "publisher": "refuges.info",
+      "countries": [
+        "FR",
+        "ES",
+        "IT",
+        "CH"
+      ],
+      "license": "cc-by-sa-2.0",
+      "attribution": "© refuges.info contributors, CC BY-SA 2.0",
+      "attribution_is_templated": false,
+      "attribution_resolved": "© refuges.info contributors, CC BY-SA 2.0",
+      "homepage": "https://www.refuges.info/",
+      "layer": "refuges_info",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "spain_regional",
+      "name": "Regional sendero networks (autonomous communities)",
+      "publisher": "Spanish autonomous communities",
+      "countries": [
+        "ES"
+      ],
+      "license": "cc-by-4.0",
+      "attribution": "{instance_attribution}",
+      "attribution_is_templated": true,
+      "attribution_resolved": null,
+      "homepage": "https://datos.gob.es/",
+      "layer": "official",
+      "verified_on": null
+    },
+    {
+      "id": "swisstopo_wanderwege",
+      "name": "Wanderwege (Swiss hiking network)",
+      "publisher": "swisstopo",
+      "countries": [
+        "CH"
+      ],
+      "license": "opendata-swiss-by",
+      "attribution": "Federal Office of Topography swisstopo",
+      "attribution_is_templated": false,
+      "attribution_resolved": "Federal Office of Topography swisstopo",
+      "homepage": "https://www.swisstopo.admin.ch/en/landscape-model-swisstlm3d",
+      "layer": "official_net",
+      "verified_on": "2026-09-04"
+    },
+    {
+      "id": "uk_national_trails",
+      "name": "National Trails",
+      "publisher": "Natural England / Natural Resources Wales",
+      "countries": [
+        "GB"
+      ],
+      "license": "ogl-uk-3.0",
+      "attribution": "(c) Natural England. Contains public sector information licensed under the Open Government Licence v3.0.",
+      "attribution_is_templated": false,
+      "attribution_resolved": "(c) Natural England. Contains public sector information licensed under the Open Government Licence v3.0.",
+      "homepage": "https://www.nationaltrail.co.uk/",
+      "layer": "official",
+      "verified_on": "2026-08-27"
+    },
+    {
+      "id": "usfs_trails",
+      "name": "National Forest System Trails",
+      "publisher": "USDA Forest Service",
+      "countries": [
+        "US"
+      ],
+      "license": "us-public-domain",
+      "attribution": "USDA Forest Service",
+      "attribution_is_templated": false,
+      "attribution_resolved": "USDA Forest Service",
+      "homepage": "https://data.fs.usda.gov/geodata/edw/datasets.php",
+      "layer": "official_net",
+      "verified_on": "2026-08-27"
+    },
+    {
+      "id": "usgs_ndt",
+      "name": "National Digital Trails",
+      "publisher": "US Geological Survey",
+      "countries": [
+        "US"
+      ],
+      "license": "us-public-domain",
+      "attribution": "US Geological Survey",
+      "attribution_is_templated": false,
+      "attribution_resolved": "US Geological Survey",
+      "homepage": "https://www.usgs.gov/",
+      "layer": "official_net",
+      "verified_on": null
+    }
+  ]
+}

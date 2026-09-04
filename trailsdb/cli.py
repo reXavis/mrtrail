@@ -321,7 +321,7 @@ def cmd_bake(args, registry, paths: Paths) -> int:
 
 
 def cmd_licenses(args, registry, paths: Paths) -> int:
-    document = pipeline.licenses_document(registry)
+    document = pipeline.licenses_document(registry, paths)
     text = json.dumps(document, indent=2, ensure_ascii=False)
     if args.output:
         Path(args.output).write_text(text + "\n", encoding="utf-8")

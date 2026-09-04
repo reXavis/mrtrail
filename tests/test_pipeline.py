@@ -12,6 +12,7 @@ from trailsdb import geojsonl, pipeline, registry as registry_module, sizing
 from trailsdb.catalog import Catalog
 from trailsdb.config import Paths
 from trailsdb.fetch import PoliteSession
+from trailsdb.manifest import PullManifest
 from trailsdb.registry import Legal, Registry
 
 GALICIA = (-9.35, 41.80, -6.70, 43.80)
@@ -265,6 +266,41 @@ class TestExport(PipelineCase):
         self.assertEqual(export["pack"], "galicia")
         self.assertIn("--maximum-zoom=14", export["layers"][0]["tippecanoe"])
         self.assertGreater(result.estimated_tiles_mb, 0)
+
+    def test_a_dated_notice_is_filled_from_the_pull_it_credits(self):
+        self.normalize_galicia_and_nz()
+        registry = verified(self.registry, "cnig_fedme", "cnig_camino")
+        dated = dataclasses.replace(
+            registry.sources["cnig_fedme"],
+            attribution="Contains data downloaded on {retrieved_on}, under the ODbL.",
+        )
+        registry = Registry(licenses=registry.licenses, sources={**registry.sources, "cnig_fedme": dated})
+
+        result = pipeline.export_pack(registry, self.paths, pack="galicia", bbox=GALICIA)
+        credits = {row["source"]: row["attribution"] for row in result.attributions}
+        # The credit line carries the date the pull manifest recorded, which is
+        # the date the data was retrieved, not the day the pack was cut.
+        pulled_on = PullManifest.read(self.paths.raw_dir("cnig_fedme")).retrieved_on
+        self.assertRegex(pulled_on, r"^\d{4}-\d{2}-\d{2}$")
+        self.assertEqual(credits["cnig_fedme"], f"Contains data downloaded on {pulled_on}, under the ODbL.")
+        self.assertNotIn("{retrieved_on}", json.dumps(result.attributions))
+
+        document = pipeline.licenses_document(registry, self.paths)
+        row = next(s for s in document["sources"] if s["id"] == "cnig_fedme")
+        self.assertTrue(row["attribution_is_templated"])
+        self.assertEqual(row["attribution_resolved"], f"Contains data downloaded on {pulled_on}, under the ODbL.")
+        self.assertIsNone(next(s for s in document["sources"] if s["id"] == "eurovelo")["attribution_resolved"])
+
+    def test_a_dated_notice_without_a_pull_to_date_it_keeps_the_source_out(self):
+        self.normalize_galicia_and_nz()
+        registry = verified(self.registry, "cnig_fedme", "cnig_camino")
+        dated = dataclasses.replace(registry.sources["cnig_fedme"], attribution="Retrieved {retrieved_on}")
+        registry = Registry(licenses=registry.licenses, sources={**registry.sources, "cnig_fedme": dated})
+        (self.paths.raw_dir("cnig_fedme") / "_pull.json").unlink()
+
+        result = pipeline.export_pack(registry, self.paths, pack="galicia", bbox=GALICIA)
+        self.assertIn("retrieval date", dict(result.skipped)["cnig_fedme"])
+        self.assertEqual(sorted(layer.sources[0] for layer in result.layers), ["cnig_camino"])
 
     def test_a_source_contributing_nothing_leaves_no_empty_layer_file(self):
         self.normalize_galicia_and_nz()

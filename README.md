@@ -298,6 +298,14 @@ Once a source has actually been normalized, `estimate` uses its measured length
 and feature count from the catalog instead of the registry's estimate, and
 labels the row `measured`.
 
+## Handing the layers to the app
+
+`exports/` holds the pack inputs for Galicia and the Pyrenees (tile-shaped
+GeoJSONL per layer, the tippecanoe arguments, the credit lines) and
+`licenses.json` for the licences screen. [docs/handoff.md](docs/handoff.md) is
+the contract: layer names and zooms, the attributes, the three rules, and how
+to regenerate any pack.
+
 ## Adding a source
 
 1. Add an entry to `trailsdb/sources.yaml` — license, verbatim attribution,
