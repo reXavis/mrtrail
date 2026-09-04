@@ -79,8 +79,9 @@ last one is ready: `trailsdb licenses` emits the payload the screen renders.
 
 Built and pulled: EuroVelo (55,409 km), swisstopo (66,926 km), Naturvårdsverket
 (17,652 km), England's National Trails and Coast Path (7,604 km), Geotrek across
-ten of France's ~80 operators (56,301 km), and Kartverket's Turrutebasen (pull
-in progress, ~166k route pieces). Caminos Naturales, a Ministerio de
+ten of France's ~80 operators (56,301 km, since dropped: every operator's own
+terms are closed or silent), and Kartverket's Turrutebasen (pull in progress,
+~166k route pieces). Caminos Naturales, a Ministerio de
 Agricultura dataset whose own download sits behind a reCAPTCHA this pipeline
 will not bypass, turned out to be redistributed by the CNIG download centre
 from S3, so it is a fourth series of the CNIG adapter (pull queued).
@@ -94,7 +95,13 @@ Geotrek's per-instance licensing is modelled and exercised: the registry marks
 its licence `resolved_at_ingest`, each instance's attribution is read from its
 own `source/` vocabulary endpoint at pull time, and an instance that declares no
 attribution raises rather than shipping a blank credit line. The ten instances'
-*licence* terms are still to be read one by one before any of them exports.
+licence terms have been read one by one, through each portal's own legal
+flatpages: three reserve all rights, seven publish nothing about the data, and
+`geotrek_instances.yaml` records the quote and date for each. All ten are
+closed and skipped, exactly the outcome the plan's "silence is not permission"
+rule was written for. data.gouv.fr carries the Gard's PDIPR trails "(source
+Géotrek)" under the Licence Ouverte 2.0 — an open distribution by the same
+operator, and the model for reopening an instance.
 
 ### 5. Americas & Oceania wave — **3 of 6**
 
@@ -146,5 +153,6 @@ wording, then set the date. It is the one part of this that cannot be
 automated, and the export gate is there so it cannot be skipped by accident
 either. Reading the text paid for itself immediately: the IGN licence takes
 the producer credit from the SCNE product table, and every Spanish series had
-the wrong one. The open items are Geotrek's ten per-instance terms and the
-four sources that have no adapter yet.
+the wrong one; and all ten Geotrek operators turned out closed. The open items
+are an open Geotrek distribution and the four sources that have no adapter
+yet.

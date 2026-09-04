@@ -23,9 +23,9 @@ trailsdb status
 | Source registry for all 20 planned sources | 4 sources without an adapter (Australia, Spain regional, refuges.info; USGS NDT has no endpoint) |
 | Normalized schema, master-database format, SQLite catalog | Cross-link matcher against OSM relations |
 | Polite fetch layer; stdlib readers for ArcGIS, WFS (JSON and GML), GeoPackage/WKB, GPX; LV95 and transverse-Mercator transforms | Shapefile + file-geodatabase readers (the `geo` extra) |
-| CNIG ×4 (FEDME, Camino, Camino del Cid, Caminos Naturales), NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC, Geotrek ×10 | App-side overlay toggle, source badges, licenses screen |
+| CNIG ×4 (FEDME, Camino, Camino del Cid, Caminos Naturales), NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC, Geotrek fleet (ten operators pulled, all ten closed on their own terms) | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
-| Size model, validated against real pulled data and five tippecanoe bakes | Legal verification of 5 of 20 sources (Geotrek's ten operators, refuges.info, USGS, Australia, Spain regional) |
+| Size model, validated against real pulled data and five tippecanoe bakes | An open Geotrek operator (all ten read so far refuse or say nothing); refuges.info, USGS, Australia, Spain regional |
 
 ### Data actually pulled
 
@@ -44,7 +44,7 @@ close.** Figures are measured from the normalized data.
 | NZ DOC network | 3,248 | 13,896 | 14,000 |
 | NZ DOC routes | 1,547 | 13,696 | — |
 | England: National Trails + Coast Path | 16,457 | 7,604 | 5,000 |
-| France: Geotrek, 10 of ~80 operators | 3,321 | 56,301 | 65,000 (all of France) |
+| France: Geotrek, 10 of ~80 operators — pulled, then dropped: every operator's terms are closed | 3,321 | 56,301 | 65,000 (all of France) |
 | Sweden: Naturvårdsverket leder | 12,013 | 17,652 | 15,000 |
 | Norway: Kartverket Turrutebasen | — | — | 80,000 (pull running) |
 | CNIG FEDME senderos | — | — | 50,000 (pull running) |
@@ -93,10 +93,17 @@ The plan's size estimates held up. Its assumptions about *access* mostly did not
   are dropped. Sweden's 12,013 rows are pieces of 3,657 trails; Norway's WFS
   speaks only GML, which is why there is a GML reader. USGS's National Digital
   Trails has no public endpoint anywhere it was looked for.
-- **Geotrek is a fleet, not a source.** ~80 operators run it; ten answered with
-  working APIs and are pulled as one source with per-instance attribution. The
-  API carries no licence and the one operator legal page read so far is silent
-  on the data, so no instance ships until its terms are read.
+- **Geotrek is a fleet, not a source, and none of it is open.** ~80 operators
+  run it; ten answered with working APIs and were pulled as one source with
+  per-instance attribution. The API carries no licence, so each operator's
+  own legal page was read through its API: three reserve all rights in writing
+  (Écrins: "tous les droits de reproduction sont réservés"), seven say nothing
+  about the data. Silence is not permission, so all ten are marked closed with
+  the quote and date on each, and their 56,301 km left the master database.
+  The way back in is an open publication by the same operator: data.gouv.fr
+  carries the Gard's PDIPR trails "(source Géotrek)" under the Licence Ouverte
+  2.0, which is a different distribution to read and record before that
+  instance reopens.
 - **The plan's attribution strings were wrong for every Spanish series.**
   The IGN licence takes the producer from a published product table; FEDME,
   the Camino federations, the Camino del Cid consortium and MAPA are each
