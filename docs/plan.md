@@ -11,6 +11,14 @@ typical pack grows a few percent. The first full pull is 1–2 days of automated
 wall-clock. The real cost is the adapters: roughly 4–6 focused weeks for ~15
 sources.
 
+Measured since: **~0.7 GB** of tiles worldwide, not 2–3.5, because real
+tippecanoe bakes come in at 0.3–0.5 KB/km for routes and 0.35–1.6 KB/km for
+network segments against the 3.5 the prototype suggested. Galicia grows by
+1.6 MB (0.08 %) before FEDME; the worst pack measured, Switzerland's 67,000 km
+network, adds 111 MB. The pull estimate held: the long pulls (USFS, Norway,
+FEDME) each run most of a day at polite pacing. The adapter estimate was
+pessimistic: 15 adapters landed in this one session, all stdlib.
+
 ## Execution order
 
 ### 1. Scaffold — **done**
@@ -28,9 +36,9 @@ size model from the registry.
 
 | adapter | state |
 | --- | --- |
-| CNIG (FEDME · Camino · Camino del Cid) | built against the verified live flow; Camino series pulled |
+| CNIG (FEDME · Camino · Camino del Cid) | built against the verified live flow; Camino pulled (1,074 stages, 24,854 km); FEDME and Camino del Cid pull running |
 | NZ DOC (routes + network) | built and pulled: 4,795 features, 27,591 km |
-| USFS | not started — needs the `geo` extra for file geodatabases |
+| USFS | built and pulled from the ArcGIS GeoJSON endpoint: 80,966 features, 232,766 km — no `geo` extra needed |
 
 EuroVelo was pulled forward from phase 4 because it is the only source with a
 dated attribution notice, and building it early is what forced the attribution
@@ -38,10 +46,11 @@ machinery to be right rather than merely present. That paid off immediately: it
 turned out to be ODbL and share-alike, not the bespoke licence assumed.
 
 Real data now flows end to end — pull, normalize, catalog, bbox cut, tippecanoe
-settings. A New Zealand cut comes to 70.4 MB of tiles across both layers.
+bake. A New Zealand cut bakes to 10.5 MB of tiles across both layers; the model
+had said 70 MB.
 
-Not done: baking the Galicia pack with the `official` layer (it needs the FEDME
-pull, which is the long one).
+Not done: the Galicia pack with FEDME in its `official` layer (the pull is the
+long one). Galicia with the Camino and EuroVelo bakes today at 1.6 MB.
 
 ### What contact with the real services changed
 
@@ -68,18 +77,22 @@ last one is ready: `trailsdb licenses` emits the payload the screen renders.
 ### 4. Europe wave — **5 of 7**
 
 Built and pulled: EuroVelo (55,409 km), swisstopo (66,926 km), Naturvårdsverket
-(17,652 km), England's National Trails and Coast Path (7,604 km), and
-Kartverket's Turrutebasen (pull in progress, ~166k route pieces). Geotrek and
-refuges.info remain; so do the Spanish regional networks and Caminos Naturales,
-which turned out to be a Ministerio de Agricultura dataset rather than CNIG's.
+(17,652 km), England's National Trails and Coast Path (7,604 km), Geotrek across
+ten of France's ~80 operators (56,301 km), and Kartverket's Turrutebasen (pull
+in progress, ~166k route pieces). refuges.info remains; so do the Spanish
+regional networks and Caminos Naturales, which turned out to be a Ministerio de
+Agricultura dataset rather than CNIG's, and one whose download sits behind a
+reCAPTCHA that this pipeline will not bypass.
 
 Each of these needed a different reader, and all of them are stdlib: ArcGIS
 GeoJSON paging, WFS with GML, a GeoPackage in LV95, plain GeoJSON in SWEREF99
 TM. The `geo` extra (GDAL) has not been needed for any source so far.
 
-Geotrek's per-instance licensing is already modelled: the registry marks its
-licence `resolved_at_ingest`, and an instance that declares no attribution
-raises rather than shipping a blank credit line.
+Geotrek's per-instance licensing is modelled and exercised: the registry marks
+its licence `resolved_at_ingest`, each instance's attribution is read from its
+own `source/` vocabulary endpoint at pull time, and an instance that declares no
+attribution raises rather than shipping a blank credit line. The ten instances'
+*licence* terms are still to be read one by one before any of them exports.
 
 ### 5. Americas & Oceania wave — **3 of 6**
 
@@ -91,10 +104,12 @@ and the USFS/NPS dedup pass is still to do.
 
 ### 6. Cross-links & refresh automation — **not started**
 
-The ref/name/proximity matcher against OSM relations, quarterly re-pull
-automation, source health checks in CI. The pieces those depend on exist: pull
-manifests record per-file hashes and ETags so a re-pull only re-downloads what
-changed, and `trailsdb health` checks all 18 endpoints.
+The ref/name/proximity matcher against OSM relations and quarterly re-pull
+automation. Source health checks in CI are half done: `.github/workflows/
+source-health.yml` runs `trailsdb health` across all 20 endpoints on demand,
+with the quarterly cron written but commented out until the refresh cadence is
+settled. The pieces the rest depends on exist: pull manifests record per-file
+hashes and ETags so a re-pull only re-downloads what changed.
 
 ## The first concrete step
 
@@ -102,20 +117,19 @@ The plan named the CNIG adapter: the fiddliest pull (POST flow, free account,
 ~9,900 files) and the one that makes the feature visible in the live Galicia
 pack immediately.
 
-It is built, and its normalization is tested against GPX, zipped GPX,
-multi-track files, ref extraction and Camino stage grouping. What is *not*
-settled is discovery — turning a series into a list of downloadable files —
-because that depends on the download centre's exact request shape. So it has two
-paths: a committed `files.json` index (deterministic, offline, what the tests
-use), and a live query whose endpoint constants are marked UNVERIFIED in
-`trailsdb/adapters/cnig.py`. Discovery returning nothing is a hard failure, not
-an empty series, so drift surfaces immediately.
+It is built and running against the live download centre. Discovery — turning
+a series into a list of downloadable files — parses the centre's paginated HTML
+listing (tested against a page cut from the real response), and the flow turned
+out simpler than the plan feared: no account, no POST, a plain GET per file.
+Discovery returning nothing is a hard failure, not an empty series, so drift
+surfaces immediately. The Camino series is pulled and normalized; FEDME's
+~3,460 GPX files and the Camino del Cid are downloading at 1.5 s per request.
 
 ## Risks, and what is in place for each
 
 | risk | mitigation | state |
 | --- | --- | --- |
-| Source drift — endpoints move (DOC announced 2026 URL changes) | Per-source health check; adapters fail loudly rather than yielding a quietly smaller dataset | built (`trailsdb health`); CI wiring not done |
+| Source drift — endpoints move (DOC announced 2026 URL changes) | Per-source health check; adapters fail loudly rather than yielding a quietly smaller dataset | built (`trailsdb health`; CI workflow on demand, schedule not yet enabled) |
 | Attribute heterogeneity — 15 schemas into one | Deliberately small normalized schema; everything else into per-source `extras`, kept out of tiles | built |
 | Double rendering — official routes often also exist in OSM | Separate layers (not a legal problem), distinct styling, cross-link matcher for a merged info card | not started (phase 6) |
 | Coverage honesty — Germany, Portugal, South America, Asia have no official datasets | OSM stays primary everywhere; official is enrichment where states publish | by design |
@@ -123,8 +137,10 @@ an empty series, so drift surfaces immediately.
 
 ## Before any of this ships
 
-Every one of the 18 sources has `legal.verified_on: null`, and `trailsdb export`
-refuses them all by default. Clearing that means, per source: read the
-publisher's terms, confirm the license id, confirm the exact attribution
-wording, then set the date. It is the one part of this that cannot be automated,
-and the export gate is there so it cannot be skipped by accident either.
+Ten of the 20 sources carry a `legal.verified_on` date; `trailsdb export`
+refuses the other ten by default. Clearing each one means: read the publisher's
+terms, confirm the license id, confirm the exact attribution wording, then set
+the date. It is the one part of this that cannot be automated, and the export
+gate is there so it cannot be skipped by accident either. The open items are
+CNIG's producer-attribution string, Kartverket's licence name, Geotrek's ten
+per-instance terms, and Caminos Naturales' manual download.

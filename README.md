@@ -25,7 +25,7 @@ trailsdb status
 | Polite fetch layer; stdlib readers for ArcGIS, WFS (JSON and GML), GeoPackage/WKB, GPX; LV95 and transverse-Mercator transforms | Shapefile + file-geodatabase readers (the `geo` extra) |
 | CNIG ×3, NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC, Geotrek ×10 | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
-| Size model, validated against real pulled data | Legal verification of 17 of 20 sources |
+| Size model, validated against real pulled data and five tippecanoe bakes | Legal verification of 10 of 20 sources |
 
 ### Data actually pulled
 
@@ -54,8 +54,9 @@ USFS dropped 5,337 of 86,303 raw features, all null-geometry attribute rows;
 NPS drops trails it marks Proposed or Abandoned; the Coast Path drops sections
 not yet opened.
 
-A Galicia cut — the pack that ships today — comes to **+11.2 MB of tiles,
-+0.6 % of the pack**, against the plan's predicted ~1 %, before FEDME.
+A Galicia cut — the pack that ships today — bakes to **1.6 MB of PMTiles,
++0.08 % of the pack**, against the plan's predicted ~1 %, before FEDME. Five
+packs have been baked with tippecanoe; see [The size model](#the-size-model).
 
 **Ten sources are legally verified** (USFS, swisstopo, EuroVelo, Ontario, NPS,
 England, BC, Sweden, NZ DOC ×2). CNIG and Norway stay refused by
@@ -195,15 +196,38 @@ and hoped for.
 
 ## The size model
 
-`trailsdb estimate` is not a guess. Its coefficients were measured on the live
+`trailsdb estimate` is not a guess. The plan's coefficients came from the
 Galicia pack pipeline: 550 routes / 11,176 km / 51.5 points per km → 17.5 MB of
 enriched GeoJSONL (**1.56 KB/km**) → 39.1 MB of z8–14 PMTiles (**3.5 KB/km**),
-2.0 % of the 1.96 GB pack.
+2.0 % of the 1.96 GB pack. Both coefficients have since been re-measured on the
+real data with `trailsdb bake`, which runs tippecanoe over an export and reports
+bytes per km per layer:
 
-Applied to ~810,000 km of official trails worldwide: **~1.2 GB** of master
-database, **~2.7 GB** of tiles spread across *all* packs combined. A typical
-pack grows a few percent, because routes are vector lines and packs are
-dominated by elevation rasters.
+| pack | layer | class | features | km | PMTiles | KB/km |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| Switzerland | official_net | segment | 409,276 | 66,926 | 110.6 MB | 1.61 |
+| Colorado | official_net | segment | 7,358 | 22,987 | 8.3 MB | 0.35 |
+| New Zealand | official_net | segment | 3,230 | 13,819 | 5.2 MB | 0.37 |
+| New Zealand | official | route | 1,543 | 13,687 | 5.2 MB | 0.37 |
+| Pyrenees | official | route | 1,281 | 20,851 | 6.6 MB | 0.31 |
+| Galicia | official | route | 119 | 2,386 | 1.2 MB | 0.50 |
+| Switzerland / Pyrenees / Galicia | eurovelo | route | 65 / 19 / 17 | 2,176 / 767 / 904 | 1.0 / 0.4 / 0.4 MB | 0.43–0.45 |
+
+Named routes cost **0.3–0.5 KB/km** of tiles and network segments
+**0.35–1.6 KB/km** — a third to a tenth of the 3.5 the plan carried, because
+tippecanoe's simplification and `--drop-densest-as-needed` do most of their
+work below z12, and because the export only carries the nine tile attributes.
+The model now uses one coefficient per feature class, **0.4 KB/km for routes
+and 1.2 KB/km for segments**, both set just above the measurements' middle.
+Switzerland is the honest worst case: 409,276 short segments averaging 164 m
+each, so every tile at z13 carries far more feature headers per km than a
+long named route does.
+
+Applied to ~800,000 km of official trails worldwide: **~1.5 GB** of master
+database, **~0.7 GB** of tiles spread across *all* packs combined. A typical
+pack grows well under one percent, because routes are vector lines and packs
+are dominated by elevation rasters; the 110 MB Swiss network is the outlier,
+and it is 3.5 % of the 3.15 GB Alps pack.
 
 **The coefficient survived contact with real data, and the reasoning behind it
 held up better than the number.** Measured across 315,767 km of pulled official
@@ -218,10 +242,11 @@ measurement good to a few metres. Rounding to six decimal places (~11 cm, finer
 than consumer GPS and finer than a z14 tile resolves) **cut the master database
 by 57 %**, from 322 MB to 140 MB, with nothing lost that a map can draw.
 
-The worst cases (Alps ≈ +12 %, a US mountain-state pack ≈ +10 %) are dominated
-by network segments. Two levers, both implemented: segments stop at z13 rather
-than z14, which roughly halves their tile cost and pulls the worst case under
-~7 %, and segments carry no profile attributes at all.
+The worst cases are dominated by network segments, and two levers keep them
+small: segments stop at z13 rather than z14, and they carry no profile
+attributes at all. Both are already inside the measured segment coefficient
+(every segment bake above ran z8–13), so `--cap-segments-at-z13` is accepted
+for compatibility and changes nothing.
 
 Once a source has actually been normalized, `estimate` uses its measured length
 from the catalog instead of the registry's estimate, and labels the row
