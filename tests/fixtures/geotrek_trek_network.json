@@ -1,0 +1,42 @@
+{
+ "count": 7,
+ "next": null,
+ "previous": null,
+ "results": [
+  {
+   "id": 2,
+   "label": "PR",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/pr2_1Ip8L3G.svg"
+  },
+  {
+   "id": 3,
+   "label": "GRP",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/grp2_juOseuJ.svg"
+  },
+  {
+   "id": 4,
+   "label": "VTT",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/vtt3_oIVSWxc.svg"
+  },
+  {
+   "id": 6,
+   "label": "GR",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/gr1_0SXP307.svg"
+  },
+  {
+   "id": 13,
+   "label": "itinéraire",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/3_etoilesnew.svg"
+  },
+  {
+   "id": 25,
+   "label": "Balisage cyclo",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/balisage_cyclo.jpg"
+  },
+  {
+   "id": 27,
+   "label": "Gravel",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/gravel.jpg"
+  }
+ ]
+}

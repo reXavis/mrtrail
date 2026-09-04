@@ -29,7 +29,7 @@ trailsdb = "trailsdb.cli:main"
 include = ["trailsdb*"]
 
 [tool.setuptools.package-data]
-trailsdb = ["sources.yaml", "packs.yaml"]
+trailsdb = ["sources.yaml", "packs.yaml", "geotrek_instances.yaml"]
 
 [tool.ruff]
 line-length = 100

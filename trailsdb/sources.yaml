@@ -208,9 +208,14 @@ sources:
     legal:
       verified_on: null
       notes: >-
-        NOT in the CNIG download centre -- checked, it is absent under every
-        series code there. Published by the Ministerio de Agricultura separately,
-        so it needs its own adapter rather than being folded into the CNIG one.
+        NOT in the CNIG download centre. MAPA publishes it at
+        mapa.gob.es/es/cartografia-y-sig/ide/descargas/desarrollo-rural/red-caminos-naturales
+        as ccnn-etapas.zip and ccnn-pois.zip, and its legal notice permits reuse
+        without authorisation "siempre que se cite la fuente". But the download
+        is behind a reCAPTCHA, which an unattended pipeline must not try to
+        pass. This source needs a human to fetch the zip once per refresh and
+        drop it in raw/caminos_naturales/; the adapter is deferred until the
+        zip's format has been seen.
 
   # ------------------------------------------------------------ New Zealand -
   # DOC's two shapes, sharing one adapter: named experiences a user browses, and
@@ -414,9 +419,12 @@ sources:
     legal:
       verified_on: null
       notes: >-
-        License is read per instance at ingest and recorded in the pull manifest.
-        Instances that do not declare an open licence present in this registry
-        are skipped automatically -- silence is not permission.
+        Eleven instances discovered with working APIs (geotrek_instances.yaml),
+        about 3,360 treks, five of them in the Pyrenees. None is verified: the
+        API carries no licence, and the one operator legal page read so far
+        (Ecrins) is silent on the trek data. Instances are pulled for analysis
+        and ship only once their terms are read from the operator's own text --
+        silence is not permission.
 
   refuges_info:
     name: "refuges.info huts and shelters"

@@ -13,6 +13,7 @@ from .base import Adapter, AdapterContext, AdapterNotImplemented
 from .bc_recreation import BcRecreationAdapter
 from .cnig import CnigAdapter
 from .eurovelo import EuroVeloAdapter
+from .geotrek import GeotrekAdapter
 from .kartverket import KartverketAdapter
 from .naturvardsverket import NaturvardsverketAdapter
 from .nps import NpsAdapter
@@ -34,11 +35,11 @@ IMPLEMENTED: dict[str, type[Adapter]] = {
     KartverketAdapter.name: KartverketAdapter,
     BcRecreationAdapter.name: BcRecreationAdapter,
     NaturvardsverketAdapter.name: NaturvardsverketAdapter,
+    GeotrekAdapter.name: GeotrekAdapter,
 }
 
 #: adapter name -> the execution-order phase that builds it.
 PLANNED: dict[str, str] = {
-    "geotrek": "4 - Europe wave",
     "refuges_info": "4 - Europe wave",
     "spain_regional": "4 - Europe wave",
     "mapa_caminos_naturales": "4 - Europe wave",
@@ -81,6 +82,7 @@ __all__ = [
     "AdapterNotImplemented",
     "CnigAdapter",
     "EuroVeloAdapter",
+    "GeotrekAdapter",
     "NpsAdapter",
     "NzDocAdapter",
     "OntarioOtnAdapter",

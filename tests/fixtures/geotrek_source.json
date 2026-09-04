@@ -1,0 +1,61 @@
+{
+ "count": 9,
+ "next": null,
+ "previous": null,
+ "results": [
+  {
+   "id": 7,
+   "name": "Guide des balades de Cauterets\n",
+   "pictogram": null,
+   "website": ""
+  },
+  {
+   "id": 3,
+   "name": "Le Guide Rando « Cauterets – Val d'Azun »  - Rando",
+   "pictogram": null,
+   "website": ""
+  },
+  {
+   "id": 8,
+   "name": "Le Guide Rando « Gavarnie-Luz » - Rando éditions",
+   "pictogram": null,
+   "website": ""
+  },
+  {
+   "id": 18,
+   "name": "Topo-guide \"De bois en estives\" RNR du massif du Pibeste-Aoulhet",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/topo_rnr.jpg",
+   "website": "http://www.rnr-pibeste-aoulhet.com"
+  },
+  {
+   "id": 6,
+   "name": "Topo-guide « Lacs et sommets du Pays toy à pied® »",
+   "pictogram": null,
+   "website": ""
+  },
+  {
+   "id": 4,
+   "name": "Topo-guide « Le Val d'Azun à pied® »",
+   "pictogram": null,
+   "website": ""
+  },
+  {
+   "id": 5,
+   "name": "Topo-guide « Vallées du Pays toy à pied® »",
+   "pictogram": null,
+   "website": ""
+  },
+  {
+   "id": 13,
+   "name": "Vallées de Gavarnie - Itinérances de 2 à 6 jours",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/logo_atvg.png",
+   "website": ""
+  },
+  {
+   "id": 16,
+   "name": "Vallées de Gavarnie - Vallée d'Argelès-Gazost - Hautacam",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/logo_atvg_rx4fj46.png",
+   "website": ""
+  }
+ ]
+}

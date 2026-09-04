@@ -1,0 +1,61 @@
+{
+ "count": 9,
+ "next": null,
+ "previous": null,
+ "results": [
+  {
+   "id": 1,
+   "name": "VTT",
+   "order": 5,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/vtt_montee.svg"
+  },
+  {
+   "id": 2,
+   "name": "Cyclo",
+   "order": 4,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/cyclo_hp.svg"
+  },
+  {
+   "id": 4,
+   "name": "A Pied",
+   "order": 1,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/rando_pedestre_hp.svg"
+  },
+  {
+   "id": 5,
+   "name": "Trail",
+   "order": 3,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/trail_hp.svg"
+  },
+  {
+   "id": 6,
+   "name": "Itinérance à pied",
+   "order": 2,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/ITINERANCE_hp.svg"
+  },
+  {
+   "id": 7,
+   "name": "Gravel",
+   "order": 6,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/gravel_hp.svg"
+  },
+  {
+   "id": 10,
+   "name": "Enduro",
+   "order": 4,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/vtt_enduro_hp_pWLuPtS.svg"
+  },
+  {
+   "id": 11,
+   "name": "Raquettes",
+   "order": 8,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/rando_raquettes.svg"
+  },
+  {
+   "id": 12,
+   "name": "Sentier d'interprétation",
+   "order": 2,
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/LOUPE_blanche.svg"
+  }
+ ]
+}

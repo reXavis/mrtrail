@@ -1,0 +1,124 @@
+{
+ "type": "FeatureCollection",
+ "count": 570,
+ "next": null,
+ "previous": null,
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      0.5054,
+      43.18723,
+      457.0
+     ],
+     [
+      0.5054,
+      43.1871,
+      457.0
+     ],
+     [
+      0.5054,
+      43.18698,
+      457.0
+     ],
+     [
+      0.50535,
+      43.18677,
+      457.0
+     ],
+     [
+      0.50531,
+      43.18656,
+      457.0
+     ]
+    ]
+   },
+   "bbox": [
+    0.4785168,
+    43.1682058,
+    0.507431,
+    43.1960723
+   ],
+   "properties": {
+    "id": 32249,
+    "arrival": "Place de l'église, 65670 Arné",
+    "ascent": 98,
+    "departure": "Place de l'église, 65670 Arné",
+    "difficulty": 2,
+    "duration": 2.5,
+    "external_id": "",
+    "length_2d": 9189.3,
+    "name": "A la naissance de la Gesse",
+    "networks": [
+     2
+    ],
+    "practice": 4,
+    "source": [],
+    "structure": 12,
+    "update_datetime": "2026-03-25T19:08:50.540589+01:00",
+    "uuid": "8c11053f-2ca2-49b0-b1e7-142623167377"
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      0.10787,
+      43.12563,
+      440.0
+     ],
+     [
+      0.10787,
+      43.12563,
+      440.0
+     ],
+     [
+      0.10762,
+      43.12551,
+      440.0
+     ],
+     [
+      0.10762,
+      43.12551,
+      440.0
+     ],
+     [
+      0.10756,
+      43.12537,
+      440.0
+     ]
+    ]
+   },
+   "bbox": [
+    0.0777413,
+    43.11195,
+    0.1085455,
+    43.1284102
+   ],
+   "properties": {
+    "id": 32853,
+    "arrival": "Montgaillard",
+    "ascent": 186,
+    "departure": "Montgaillard",
+    "difficulty": 2,
+    "duration": 1.0,
+    "external_id": "",
+    "length_2d": 8467.1,
+    "name": "A1 Les Puyolles",
+    "networks": [
+     4
+    ],
+    "practice": 1,
+    "source": [],
+    "structure": 11,
+    "update_datetime": "2026-07-09T14:19:41.575184+02:00",
+    "uuid": "8c997f61-59ad-4b4c-a319-1fca67b7deaf"
+   }
+  }
+ ]
+}

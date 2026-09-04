@@ -1,0 +1,104 @@
+# Geotrek instances.
+#
+# Geotrek is not one source but ~80 independently operated deployments, each
+# with its own data, its own vocabulary ids and its own terms. The adapter
+# reads this file: an instance with an `api` is pulled; an instance whose
+# `licence` is null is pulled but cannot ship (the source stays unverified
+# until every instance it exports has terms read from the operator's own
+# text); an instance whose `licence` is "closed" is skipped entirely.
+#
+# Discovery: geotrek.fr's users map (utilisateurs.geotrek.fr/clients_map.geojson)
+# lists deployments and their public portals; each portal's HTML embeds the
+# admin API base it talks to. Trek counts are from the day of discovery.
+
+instances:
+
+  communaute-de-communes-alberes-cote-vermeille:
+    name: "Communauté de Communes Albères Côte Vermeille"
+    portal: "http://rando.tourisme-pyrenees-mediterranee.fr"
+    api: "https://geotrek.tourisme-pyrenees-mediterranee.fr/api/v2"
+    treks: 240
+    licence: null
+    attribution: "Communauté de Communes Albères Côte Vermeille"
+    verified_on: null
+
+  communaute-de-communes-coeur-et-coteaux-du-comminges:
+    name: "Communauté de Communes Cœur et Coteaux du Comminges"
+    portal: "https://rando.coeurcoteaux-comminges.fr/"
+    api: "https://adminrando.coeurcoteaux-comminges.fr/api/v2"
+    treks: 167
+    licence: null
+    attribution: "Communauté de Communes Cœur et Coteaux du Comminges"
+    verified_on: null
+
+  communaute-de-communes-pyrenees-haut-garonnaises:
+    name: "Communauté de Communes Pyrénées Haut Garonnaises"
+    portal: "https://rando.cc-pyreneeshautgaronnaises.fr/"
+    api: "https://admin-ccphg.openig.org/api/v2"
+    treks: 94
+    licence: null
+    attribution: "Communauté de Communes Pyrénées Haut Garonnaises"
+    verified_on: null
+
+  communaute-de-communes-pyrenees-vallees-des-gaves:
+    name: "Communauté de communes Pyrénées Vallées des Gaves"
+    portal: "https://rando.valleesdegavarnie.com/"
+    api: "https://geotrek65admin.openig.org/api/v2"
+    treks: 574
+    licence: null
+    attribution: "Communauté de communes Pyrénées Vallées des Gaves"
+    verified_on: null
+
+  conseil-departemental-des-pyrenees-orientales:
+    name: "Conseil Départemental des Pyrénées-Orientales"
+    portal: "https://rando66.fr/"
+    api: "https://admin-pyrenees-orientales.fr/api/v2"
+    treks: 121
+    licence: null
+    attribution: "Conseil Départemental des Pyrénées-Orientales"
+    verified_on: null
+
+  conseil-departemental-du-gard:
+    name: "Conseil Départemental du Gard"
+    portal: "https://rando.gard.fr/"
+    api: "https://geotrek-aggr.gard.fr/api/v2"
+    treks: 478
+    licence: null
+    attribution: "Conseil Départemental du Gard"
+    verified_on: null
+
+  parc-national-de-la-vanoise:
+    name: "Parc National de la Vanoise"
+    portal: "http://rando.vanoise.com"
+    api: "https://adminrando.vanoise.com/api/v2"
+    treks: 246
+    licence: null
+    attribution: "Parc National de la Vanoise"
+    verified_on: null
+
+  parc-national-des-cevennes:
+    name: "Parc National des Cévennes"
+    portal: "https://destination.cevennes-parcnational.fr"
+    api: "https://geotrek-admin.cevennes-parcnational.net/api/v2"
+    treks: 542
+    licence: null
+    attribution: "Parc National des Cévennes"
+    verified_on: null
+
+  parc-national-des-ecrins:
+    name: "Parc National des Ecrins"
+    portal: "https://rando.ecrins-parcnational.fr"
+    api: "https://geotrek-admin.ecrins-parcnational.fr/api/v2"
+    treks: 735
+    licence: null
+    attribution: "Parc National des Ecrins"
+    verified_on: null
+
+  parc-national-du-mercantour-et-parco-naturale-delle-alpi-marittime:
+    name: "Parc National du Mercantour et Parco Naturale delle Alpi Marittime"
+    portal: "https://rando.marittimemercantour.eu"
+    api: "https://adminrando.marittimemercantour.eu/api/v2"
+    treks: 160
+    licence: null
+    attribution: "Parc National du Mercantour et Parco Naturale delle Alpi Marittime"
+    verified_on: null

@@ -1,0 +1,37 @@
+{
+ "count": 5,
+ "next": null,
+ "previous": null,
+ "results": [
+  {
+   "id": 1,
+   "cirkwi_level": 1,
+   "label": "Très Facile",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/1tres_facile.svg"
+  },
+  {
+   "id": 2,
+   "cirkwi_level": 3,
+   "label": "Facile",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/2facile.svg"
+  },
+  {
+   "id": 3,
+   "cirkwi_level": 6,
+   "label": "Moyen",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/3moyen.svg"
+  },
+  {
+   "id": 4,
+   "cirkwi_level": 7,
+   "label": "Difficile",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/4difficile.svg"
+  },
+  {
+   "id": 5,
+   "cirkwi_level": 8,
+   "label": "Très difficile",
+   "pictogram": "https://geotrek65admin.openig.org/media/upload/5tres_difficile.svg"
+  }
+ ]
+}
