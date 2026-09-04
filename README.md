@@ -20,12 +20,12 @@ trailsdb status
 
 | built | not yet |
 | --- | --- |
-| Source registry for all 20 planned sources | 5 of 17 adapters (Australia, Spain regional, refuges.info; USGS NDT and Caminos Naturales blocked) |
+| Source registry for all 20 planned sources | 4 sources without an adapter (Australia, Spain regional, refuges.info; USGS NDT has no endpoint) |
 | Normalized schema, master-database format, SQLite catalog | Cross-link matcher against OSM relations |
 | Polite fetch layer; stdlib readers for ArcGIS, WFS (JSON and GML), GeoPackage/WKB, GPX; LV95 and transverse-Mercator transforms | Shapefile + file-geodatabase readers (the `geo` extra) |
-| CNIG ×3, NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC, Geotrek ×10 | App-side overlay toggle, source badges, licenses screen |
+| CNIG ×4 (FEDME, Camino, Camino del Cid, Caminos Naturales), NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC, Geotrek ×10 | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
-| Size model, validated against real pulled data and five tippecanoe bakes | Legal verification of 10 of 20 sources |
+| Size model, validated against real pulled data and five tippecanoe bakes | Legal verification of 5 of 20 sources (Geotrek's ten operators, refuges.info, USGS, Australia, Spain regional) |
 
 ### Data actually pulled
 
@@ -58,10 +58,13 @@ A Galicia cut — the pack that ships today — bakes to **1.6 MB of PMTiles,
 +0.08 % of the pack**, against the plan's predicted ~1 %, before FEDME. Five
 packs have been baked with tippecanoe; see [The size model](#the-size-model).
 
-**Ten sources are legally verified** (USFS, swisstopo, EuroVelo, Ontario, NPS,
-England, BC, Sweden, NZ DOC ×2). CNIG and Norway stay refused by
-`trailsdb export` — CNIG until its producer-attribution string is confirmed,
-Norway until Kartverket's licence is read from its own text — see
+**Fifteen sources are legally verified** from their publishers' own text:
+USFS, NPS, swisstopo, EuroVelo, Ontario, BC, England, Sweden, NZ DOC ×2,
+Norway, and the four CNIG series. The CNIG ones carry the credit the IGN
+licence prescribes and the SCNE product table spells out per product —
+`Obra derivada de FEDME 2020-2026 CC-BY 4.0 FEDME`, not the `ign.es` the plan
+assumed — and Norway's is the verbatim `© Kartverket`. Geotrek's ten operators
+stay refused by `trailsdb export` until each one's terms are read; see
 [Legal architecture](#legal-architecture).
 
 ### What contact with the real services changed
@@ -81,8 +84,11 @@ The plan's size estimates held up. Its assumptions about *access* mostly did not
   formulas (accurate to ~1 m) doing the reprojection.
 - **DOC's 2026 drift is real.** Its datasets are flagged deprecated with no
   replacement published; the adapter re-reads that notice on every pull.
-- **Caminos Naturales isn't a CNIG dataset at all.** It's published separately
-  by the Ministerio de Agricultura.
+- **Caminos Naturales is a MAPA dataset that CNIG redistributes.** The
+  ministry's own download is reCAPTCHA-gated, which an unattended pipeline
+  must not pass; the CNIG download centre carries the same 1,483 files as
+  series RTCNT, served from S3 through a pre-signed URL, and that is the
+  flow the adapter speaks.
 - **Half of BC's recreation lines are retired** tenure records, not trails, and
   are dropped. Sweden's 12,013 rows are pieces of 3,657 trails; Norway's WFS
   speaks only GML, which is why there is a GML reader. USGS's National Digital
@@ -91,8 +97,10 @@ The plan's size estimates held up. Its assumptions about *access* mostly did not
   working APIs and are pulled as one source with per-instance attribution. The
   API carries no licence and the one operator legal page read so far is silent
   on the data, so no instance ships until its terms are read.
-- **Caminos Naturales is CAPTCHA-gated.** MAPA's terms allow reuse with a
-  source citation, but its download needs a human, so it is parked.
+- **The plan's attribution strings were wrong for every Spanish series.**
+  The IGN licence takes the producer from a published product table; FEDME,
+  the Camino federations, the Camino del Cid consortium and MAPA are each
+  credited by name, and the download centre's own product pages say the same.
 
 ## Install
 

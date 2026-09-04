@@ -66,7 +66,8 @@ The plan's estimates held up well; its assumptions about *access* did not.
 | DOC endpoints change in 2026 | Correct — flagged deprecated, replacement not yet published |
 | NZ DOC ≈ 14,000 km | 13,895 km, but only counting the network once |
 | EuroVelo developed ≈ 60,000 km | 55,409 km |
-| Caminos Naturales comes from CNIG | Not in the download centre at all; it is a MAPA dataset |
+| Caminos Naturales comes from CNIG | A MAPA dataset, CAPTCHA-gated at MAPA — but CNIG redistributes it as series RTCNT, from S3 |
+| CNIG credit is `CC-BY 4.0 ign.es` | The SCNE product table names the producer per product: FEDME, FEAACS, Camino del CID, MAPA |
 
 ### 3. App integration — **not started**
 
@@ -79,10 +80,11 @@ last one is ready: `trailsdb licenses` emits the payload the screen renders.
 Built and pulled: EuroVelo (55,409 km), swisstopo (66,926 km), Naturvårdsverket
 (17,652 km), England's National Trails and Coast Path (7,604 km), Geotrek across
 ten of France's ~80 operators (56,301 km), and Kartverket's Turrutebasen (pull
-in progress, ~166k route pieces). refuges.info remains; so do the Spanish
-regional networks and Caminos Naturales, which turned out to be a Ministerio de
-Agricultura dataset rather than CNIG's, and one whose download sits behind a
-reCAPTCHA that this pipeline will not bypass.
+in progress, ~166k route pieces). Caminos Naturales, a Ministerio de
+Agricultura dataset whose own download sits behind a reCAPTCHA this pipeline
+will not bypass, turned out to be redistributed by the CNIG download centre
+from S3, so it is a fourth series of the CNIG adapter (pull queued).
+refuges.info and the Spanish regional networks remain.
 
 Each of these needed a different reader, and all of them are stdlib: ArcGIS
 GeoJSON paging, WFS with GML, a GeoPackage in LV95, plain GeoJSON in SWEREF99
@@ -137,10 +139,12 @@ surfaces immediately. The Camino series is pulled and normalized; FEDME's
 
 ## Before any of this ships
 
-Ten of the 20 sources carry a `legal.verified_on` date; `trailsdb export`
-refuses the other ten by default. Clearing each one means: read the publisher's
-terms, confirm the license id, confirm the exact attribution wording, then set
-the date. It is the one part of this that cannot be automated, and the export
-gate is there so it cannot be skipped by accident either. The open items are
-CNIG's producer-attribution string, Kartverket's licence name, Geotrek's ten
-per-instance terms, and Caminos Naturales' manual download.
+Fifteen of the 20 sources carry a `legal.verified_on` date; `trailsdb export`
+refuses the other five by default. Clearing each one means: read the
+publisher's terms, confirm the license id, confirm the exact attribution
+wording, then set the date. It is the one part of this that cannot be
+automated, and the export gate is there so it cannot be skipped by accident
+either. Reading the text paid for itself immediately: the IGN licence takes
+the producer credit from the SCNE product table, and every Spanish series had
+the wrong one. The open items are Geotrek's ten per-instance terms and the
+four sources that have no adapter yet.
