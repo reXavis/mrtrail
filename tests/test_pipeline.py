@@ -28,6 +28,17 @@ def verified(registry: Registry, *source_ids: str) -> Registry:
     return Registry(licenses=registry.licenses, sources=sources)
 
 
+def unverified(registry: Registry, *source_ids: str) -> Registry:
+    """A copy of the registry with the named sources' legal verification cleared."""
+    sources = dict(registry.sources)
+    for source_id in source_ids:
+        source = sources[source_id]
+        sources[source_id] = dataclasses.replace(
+            source, legal=Legal(verified_on=None, notes=source.legal.notes)
+        )
+    return Registry(licenses=registry.licenses, sources=sources)
+
+
 def session_for(transport):
     return PoliteSession(
         transport=transport, rate_limit_s=0, sleeper=lambda _s: None, today=lambda: "2026-08-27"
@@ -39,7 +50,10 @@ class PipelineCase(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.paths = Paths.resolve(Path(self.tmp.name)).ensure()
-        self.registry = registry_module.load()
+        # The fixture's Spanish sources start unverified whatever the shipped
+        # registry says, so the export gate is exercised and `verified()` is the
+        # only way past it.
+        self.registry = unverified(registry_module.load(), "cnig_fedme", "cnig_camino")
 
     def seed_cnig(self, source_id="cnig_fedme", name="GR11.gpx", track="GR 11 Senda", start=(-8.5, 42.1)):
         raw_dir = self.paths.raw_dir(source_id)
@@ -223,9 +237,11 @@ class TestExport(PipelineCase):
         out_dir = self.paths.export_dir("galicia")
         attribution = json.loads((out_dir / "attribution.json").read_text())
         credits = {row["source"]: row["attribution"] for row in attribution["sources"]}
-        # The IGN-prescribed citation form: product, licence, producer.
+        # The IGN-prescribed citation form: "Obra derivada de" + product
+        # identifier + date + licence + producer, from the SCNE product table.
         self.assertIn("CC-BY 4.0", credits["cnig_fedme"])
-        self.assertIn("Senderos FEDME", credits["cnig_fedme"])
+        self.assertTrue(credits["cnig_fedme"].startswith("Obra derivada de FEDME "))
+        self.assertTrue(credits["cnig_fedme"].endswith(" FEDME"))
 
         export = json.loads((out_dir / "export.json").read_text())
         self.assertEqual(export["pack"], "galicia")

@@ -44,6 +44,7 @@ listing.
 
 from __future__ import annotations
 
+import html
 import json
 import re
 from dataclasses import dataclass
@@ -60,6 +61,8 @@ BASE = "https://centrodedescargas.cnig.es/CentroDescargas/"
 HOME_URL = BASE + "home"
 LISTING_URL = BASE + "archivosTotalesSerie"
 DOWNLOAD_URL = BASE + "descargaDir"
+#: Series that moved to S3 answer this with a page carrying a pre-signed URL.
+DOWNLOAD_S3_URL = BASE + "descargaDirS3"
 DETAIL_URL = BASE + "detalleArchivo?sec={file_id}"
 LICENCE_DOCUMENT = "https://www.ign.es/resources/licencia/Condiciones_licenciaUso_IGN.pdf"
 
@@ -86,6 +89,13 @@ _CAMINO_RE = re.compile(
     r"(?P<section>.*)$"
 )
 
+#: The Caminos Naturales series names files ``CNT<route>-<stage><variant>-<title>``:
+#: ``CNT102-0021-senda-de-souta-da-vila-ramal-petroglifos`` is route 102, stage
+#: 2, variant 1. The four digits are stage x 10 + variant, so ``0400`` is stage
+#: 40 of the main line. The route's own name travels inside the GPX ``<desc>``.
+_CNT_RE = re.compile(r"^(?P<route>CNT\d{3})[-_](?P<stage>\d{3})(?P<variant>\d)[-_](?P<title>.+)$")
+_PRESIGNED_RE = re.compile(r'id="urlPregsigned"\s+value="([^"]+)"')
+
 _TOTAL_RE = re.compile(r'id="totalArchivos"[^>]*value="(\d+)"')
 _ROW_RE = re.compile(r"<tr[^>]*>(.*?)</tr>", re.S)
 _FILE_ID_RE = re.compile(r'id="tdAcciones_(\d+)"')
@@ -103,6 +113,10 @@ class Series:
     product_id: str
     official_status: str
     kind: str
+    #: "direct" (POST descargaDir streams the file) or "s3" (the centre hands
+    #: back a pre-signed bucket URL instead). A direct series that answers with
+    #: a page is retried the S3 way, so a migrated series keeps working.
+    hosting: str = "direct"
 
 
 SERIES: dict[str, Series] = {
@@ -110,6 +124,9 @@ SERIES: dict[str, Series] = {
     "camino": Series("camino", "CSANT", "Caminos de Santiago", "camino_oficial", "hiking"),
     "camino_cid": Series("camino_cid", "CACID", "Camino del Cid", "camino_del_cid", "mixed"),
     "rutas_pasion": Series("rutas_pasion", "RTPAS", "Rutas de Pasion", "ruta_tematica", "mixed"),
+    "caminos_naturales": Series(
+        "caminos_naturales", "RTCNT", "Caminos Naturales", "camino_natural", "mixed", hosting="s3"
+    ),
 }
 
 
@@ -159,21 +176,40 @@ class CnigAdapter(Adapter):
 
         target = self.raw_dir / "files"
         for entry in gpx_files:
-            manifest.add(
-                self.session.download(
-                    DOWNLOAD_URL,
-                    target / _safe_filename(f"{entry.file_id}_{entry.name}.gpx"),
-                    method="POST",
-                    data={"secDescDirLA": entry.file_id},
-                    force=force,
-                )
-            )
+            manifest.add(self._download(entry, target, force=force))
 
         manifest.notes = (
             f"series={self.series.key} code={self.series.code} "
             f"files={len(gpx_files)} of {len(files)} listed (GPX only, KML skipped) "
             f"pacing={self.session.rate_limit_s}s"
         )
+
+    def _download(self, entry: ListedFile, target: Path, *, force: bool):
+        dest = target / _safe_filename(f"{entry.file_id}_{entry.name}.gpx")
+        if self.series.hosting == "s3":
+            return self._download_via_s3(entry, dest, force=force)
+        record = self.session.download(
+            DOWNLOAD_URL, dest, method="POST", data={"secDescDirLA": entry.file_id}, force=force
+        )
+        if record.status == 200 and _is_html(dest):
+            # A page where the file should be: the centre serves this one from
+            # S3 now. Never keep it -- an HTML "GPX" would normalize to nothing.
+            return self._download_via_s3(entry, dest, force=True)
+        return record
+
+    def _download_via_s3(self, entry: ListedFile, dest: Path, *, force: bool):
+        page = self.session.post(DOWNLOAD_S3_URL, data={"secuencial": entry.file_id})
+        match = _PRESIGNED_RE.search(getattr(page, "text", "") or "")
+        if page.status_code != 200 or not match:
+            raise FetchError(
+                f"{self.source.id}: no pre-signed URL for file {entry.file_id} "
+                f"({entry.name}); descargaDirS3 returned HTTP {page.status_code}"
+            )
+        record = self.session.download(html.unescape(match.group(1)), dest, force=force)
+        if record.status == 200 and _is_html(dest):
+            dest.unlink(missing_ok=True)
+            raise FetchError(f"{self.source.id}: S3 returned a page for file {entry.file_id}")
+        return record
 
     def discover(self) -> list[ListedFile]:
         """The file list for this series: cached index first, live listing second."""
@@ -287,6 +323,11 @@ class CnigAdapter(Adapter):
                 "source_url": DETAIL_URL.format(file_id=meta.file_id) if meta else None,
             }
             camino = parse_camino_name(label) if series.key == "camino" else None
+            natural = (
+                parse_cnt_name(listed_name) or parse_cnt_name(stem)
+                if series.key == "caminos_naturales"
+                else None
+            )
             if camino:
                 # The route code is the stable grouping key; the group name is
                 # what a user recognises ("Caminos del Norte - Camino Primitivo").
@@ -294,6 +335,13 @@ class CnigAdapter(Adapter):
                 fields["parent_name"] = camino["group"]
                 fields["stage_no"] = camino["stage"]
                 fields["country"] = camino["country"]
+            elif natural:
+                # The file name carries the stage title; the GPX description
+                # carries the Camino Natural the stage belongs to.
+                fields["name"] = natural["title"]
+                fields["parent_id"] = self.make_id(natural["route"].lower())
+                fields["parent_name"] = track.description or None
+                fields["stage_no"] = natural["stage"]
             elif series.key in ("camino", "camino_cid"):
                 stage = extract_stage(label) or extract_stage(stem)
                 variant = variant_name(label, stem)
@@ -312,6 +360,13 @@ class CnigAdapter(Adapter):
                 )
                 if camino["variant"]:
                     extras["variant"] = camino["variant"]
+            if natural:
+                extras.update(
+                    route_code=natural["route"],
+                    stage_code=f"{natural['stage']:02d}{natural['variant']}",
+                )
+                if natural["variant"]:
+                    extras["variant"] = str(natural["variant"])
             if meta and meta.date:
                 extras["published_on"] = meta.date
             if member != path.name:
@@ -394,6 +449,25 @@ def parse_camino_name(name: str | None) -> dict | None:
     }
 
 
+def parse_cnt_name(name: str | None) -> dict | None:
+    """Split a Caminos Naturales file name into route, stage, variant and title.
+
+    ``None`` for anything else, so an unexpected name keeps the generic path.
+    """
+    if not name:
+        return None
+    match = _CNT_RE.match(name.strip())
+    if not match:
+        return None
+    title = re.sub(r"[-_]+", " ", match.group("title")).strip()
+    return {
+        "route": match.group("route"),
+        "stage": int(match.group("stage")),
+        "variant": int(match.group("variant")),
+        "title": title[:1].upper() + title[1:],
+    }
+
+
 def extract_stage(text: str | None) -> int | None:
     if not text:
         return None
@@ -414,6 +488,14 @@ def variant_name(label: str, stem: str) -> str | None:
 
 def _slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
+
+
+def _is_html(path: Path) -> bool:
+    try:
+        head = path.read_bytes()[:512].lstrip().lower()
+    except OSError:
+        return False
+    return head.startswith(b"<!doctype html") or head.startswith(b"<html")
 
 
 def _safe_filename(name: str) -> str:

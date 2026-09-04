@@ -123,26 +123,34 @@ sources:
     km_confidence: official
     cadence: quarterly
     license: cc-by-4.0
-    attribution: "Senderos FEDME CC-BY 4.0 ign.es"
+    attribution: "Obra derivada de FEDME 2020-2026 CC-BY 4.0 FEDME"
     homepage: "https://centrodedescargas.cnig.es/CentroDescargas/home"
     health_check:
       url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-09-04
       notes: >-
-        Licence confirmed: the download centre's aviso legal puts these products
-        under the IGN use licence (Orden FOM/2807/2015), "compatible con CC-BY
-        4.0". The licence document prescribes the citation form "<identificador
-        del producto> <fecha> CC-BY 4.0 <atribucion de productores>", example
-        "BTN25 2014-2015 CC-BY 4.0 ign.es". OPEN ITEM: confirm the exact
-        <atribucion de productores> value for this product against the SCNE
-        product table (scne.es/productos.html) -- FEDME is a co-producer, so
-        "ign.es" alone may be incomplete. 6,923 files listed (GPX + KML pairs).
+        Verified against the publisher's own text. The download centre's data
+        policy (centrodedescargas.cnig.es/CentroDescargas/politica-datos) puts
+        IGN products under Orden FOM/2807/2015, whose conditions "se concretan
+        en una licencia de uso, compatible con CC-BY 4.0". The licence document
+        (ign.es/resources/licencia/Condiciones_licenciaUso_IGN.pdf) prescribes
+        the credit "<identificador del producto> <fecha> CC-BY 4.0 <atribucion
+        de productores>", values taken from the SCNE product table
+        (scne.es/tablaProductos.php), and adds "Obra derivada de" in front when
+        the licensee generates a derived work. The table row for this product:
+        Senderos FEDME | identifier FEDME | fecha 2020-2026 | reconocimiento
+        "FEDME 2020-2026 CC-BY 4.0 FEDME" | productores "Federacion Espanola
+        de Deportes de Montana y Escalada (FEDME)". Pack tiles simplify the
+        geometry and carry a subset of the attributes, so the derived-work form
+        is used. The fecha range in the table grows with each release; re-read
+        the row at every quarterly refresh. 6,923 files listed (GPX + KML
+        pairs).
 
   cnig_camino:
     name: "Camino de Santiago (all variants)"
-    publisher: "Centro Nacional de Informacion Geografica (CNIG)"
+    publisher: "Centro Nacional de Informacion Geografica (CNIG) / FEAACS"
     countries: ["ES", "FR", "PT"]
     adapter: cnig
     series: camino
@@ -153,17 +161,22 @@ sources:
     km_confidence: assumed
     cadence: quarterly
     license: cc-by-4.0
-    attribution: "Caminos de Santiago CC-BY 4.0 ign.es"
+    attribution: "Obra derivada de Rutas de Caminos de Santiago 2020-2026 CC-BY 4.0 FEAACS"
     homepage: "https://centrodedescargas.cnig.es/CentroDescargas/home"
     health_check:
       url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-09-04
       notes: >-
-        Same IGN licence as cnig_fedme, same open item on the exact producer
-        attribution. The download centre lists exactly 2,221 files for this
-        series -- the stage count the plan predicted.
+        Same IGN licence and verification as cnig_fedme. The SCNE product table
+        row: Rutas de Caminos de Santiago | identifier "Rutas de Caminos de
+        Santiago" | fecha 2020-2026 | reconocimiento "Rutas de Caminos de
+        Santiago 2020-2026 CC-BY 4.0 FEAACS" | productores "Federacion Espanola
+        de Asociaciones de Amigos del Camino de Santiago (FEAACS) y Asociaciones
+        Jacobeas Espanolas y Europeas colaboradoras con la FEAACS". The
+        download centre lists exactly 2,221 files for this series -- the stage
+        count the plan predicted.
 
   cnig_camino_cid:
     name: "Camino del Cid"
@@ -178,44 +191,55 @@ sources:
     km_confidence: assumed
     cadence: quarterly
     license: cc-by-4.0
-    attribution: "Camino del Cid CC-BY 4.0 ign.es"
+    attribution: "Obra derivada de RCE_CDC 2018-2020 CC-BY 4.0 Camino del CID"
     homepage: "https://centrodedescargas.cnig.es/CentroDescargas/home"
     health_check:
       url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-09-04
       notes: >-
-        Found in the download centre alongside the other series (code CACID, 299
-        files). Walking and cycling variants of the same historic route.
+        Same IGN licence and verification as cnig_fedme. The SCNE product table
+        row: Camino del Cid | identifier RCE_CDC | fecha 2018-2020 |
+        reconocimiento "RCE_CDC 2018-2020 CC-BY 4.0 Camino del CID" |
+        productores "Consorcio Camino del CID". Found in the download centre
+        alongside the other series (code CACID, 299 files). Walking and cycling
+        variants of the same historic route.
 
   caminos_naturales:
     name: "Caminos Naturales"
-    publisher: "Ministerio de Agricultura, Pesca y Alimentacion"
+    publisher: "Ministerio de Agricultura, Pesca y Alimentacion (MAPA), via the CNIG download centre"
     countries: ["ES"]
-    adapter: mapa_caminos_naturales
+    adapter: cnig
+    series: caminos_naturales
+    rate_limit_s: 1.5
     feature_class: route
     default_kind: mixed
-    estimated_km: 10300
+    estimated_km: 10600
     km_confidence: official
     cadence: quarterly
     license: cc-by-4.0
-    attribution: "(c) Ministerio de Agricultura, Pesca y Alimentacion"
-    homepage: "https://www.mapa.gob.es/es/desarrollo-rural/temas/caminos-naturales/"
+    attribution: "Obra derivada de CNT 2024 CC-BY 4.0 MAPA"
+    homepage: "https://centrodedescargas.cnig.es/CentroDescargas/caminos-naturales"
     health_check:
-      url: "https://www.mapa.gob.es/es/desarrollo-rural/temas/caminos-naturales/"
+      url: "https://centrodedescargas.cnig.es/CentroDescargas/home"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-09-04
       notes: >-
-        NOT in the CNIG download centre. MAPA publishes it at
-        mapa.gob.es/es/cartografia-y-sig/ide/descargas/desarrollo-rural/red-caminos-naturales
-        as ccnn-etapas.zip and ccnn-pois.zip, and its legal notice permits reuse
-        without authorisation "siempre que se cite la fuente". But the download
-        is behind a reCAPTCHA, which an unattended pipeline must not try to
-        pass. This source needs a human to fetch the zip once per refresh and
-        drop it in raw/caminos_naturales/; the adapter is deferred until the
-        zip's format has been seen.
+        Same IGN licence and verification as cnig_fedme; this product's page
+        in the download centre says: "El producto « Caminos Naturales » son
+        itinerarios aportados por el Ministerio de Agricultura, Pesca y
+        Alimentacion (mapa.gob.es/es/desarrollo-rural/temas/caminos-naturales)
+        CC-BY 4.0 MAPA. Es necesario reconocer siempre la autoria usando las
+        siguientes formulas: CNT - 2024". The SCNE product table row: Caminos
+        Naturales | identifier CNT | fecha 2024 | reconocimiento "CNT 2024 CC-BY
+        4.0 MAPA" | productores "Ministerio de Agricultura, Pesca y
+        Alimentacion". MAPA's own download of the same data sits behind a
+        reCAPTCHA this pipeline will not pass; the download centre carries it
+        as series RTCNT (1,483 files: a GPX and a KML per stage plus one
+        shapefile bundle) served from S3 through descargaDirS3, and that is what
+        the adapter pulls. The series page says "mas de 10.600 km".
 
   # ------------------------------------------------------------ New Zealand -
   # DOC's two shapes, sharing one adapter: named experiences a user browses, and
@@ -334,19 +358,27 @@ sources:
     km_confidence: assumed
     cadence: quarterly
     license: cc-by-4.0
-    attribution: "(c) Kartverket"
+    attribution: "© Kartverket"
     homepage: "https://kartkatalog.geonorge.no/metadata/turrutebasen/d1422d17-6d95-4ef1-96ab-8af31744dd63"
     health_check:
       url: "https://wfs.geonorge.no/skwms1/wfs.turogfriluftsruter?service=WFS&request=GetCapabilities&version=2.0.0"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-09-04
       notes: >-
-        OPEN ITEM. The Geonorge record says "Apne data" and "No conditions
-        apply to access and use" but does not name the licence. Kartverket's
-        open data is generally CC BY 4.0 with "(c) Kartverket"; confirm on
-        kartverket.no before this ships. 166,434 features across foot, ski,
-        bike and other routes, served as GML only.
+        Verified against Kartverket's own terms
+        (kartverket.no/api-og-data/vilkar-for-bruk): "Kartverkets gratisprodukt
+        er lisensierte etter Creative Commons Navngivelse 4.0 international (CC
+        BY 4.0)", and the credit "skal visast i alle samanhengar der produkta
+        eller uttrekk av produkta blir brukt [...] pa folgjande mate: ©
+        Kartverket. Det skal ogsa linkast til nettsidene vare der det er
+        mogleg." Turrutebasen is one of those free products: its Geonorge record
+        (uuid d1422d17-6d95-4ef1-96ab-8af31744dd63) has AccessConstraints "Apne
+        data", "No conditions apply to access and use", UseConstraints "Lisens",
+        owner and publisher Kartverket. The link requirement is met by the
+        homepage in the licences payload and each feature's source_url.
+        166,434 features across foot, ski, bike and other routes, served as GML
+        only.
 
   naturvardsverket:
     name: "Vandringsleder"

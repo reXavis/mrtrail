@@ -138,6 +138,24 @@ class TestCnigParsers(unittest.TestCase):
                 self.assertIn(source.series, cnig_module.SERIES)
 
 
+class TestCaminosNaturalesNames(unittest.TestCase):
+    def test_route_stage_variant_and_title(self):
+        parsed = cnig_module.parse_cnt_name("CNT102-0021-senda-de-souta-da-vila-ramal-petroglifos")
+        self.assertEqual(parsed["route"], "CNT102")
+        self.assertEqual(parsed["stage"], 2)
+        self.assertEqual(parsed["variant"], 1)
+        self.assertEqual(parsed["title"], "Senda de souta da vila ramal petroglifos")
+
+    def test_the_four_digits_are_stage_times_ten_plus_variant(self):
+        self.assertEqual(cnig_module.parse_cnt_name("CNT614-0400-etapa-40-circuito-villanueva-del-fresno")["stage"], 40)
+        self.assertEqual(cnig_module.parse_cnt_name("CNT707_0050_etapa_5_yaiza_playa_blanca")["stage"], 5)
+
+    def test_anything_else_is_none(self):
+        self.assertIsNone(cnig_module.parse_cnt_name("CaminosNaturales"))
+        self.assertIsNone(cnig_module.parse_cnt_name("GR 11. Etapa 3"))
+        self.assertIsNone(cnig_module.parse_cnt_name(None))
+
+
 class TestCnigAdapter(AdapterCase):
     def seed_index(self, source_id, entries):
         raw = self.paths.raw_dir(source_id)
@@ -160,6 +178,53 @@ class TestCnigAdapter(AdapterCase):
         self.assertEqual(method, "POST")
         self.assertIn("descargaDir", url)
         self.assertEqual(kwargs["data"], {"secDescDirLA": "111"})
+
+    def _s3_transport(self, gpx: bytes, *, direct_answer: FakeResponse | None = None):
+        page = (
+            b'<html><body><input type="hidden" id="urlPregsigned" '
+            b'value="https://bucket.example/rutas/CNT101_0010.gpx?X-Amz-Signature=abc&amp;X-Amz-Expires=7199">'
+            b"</body></html>"
+        )
+
+        def handler(method, url, kwargs):
+            if url.endswith("descargaDirS3"):
+                return FakeResponse(200, page, {"Content-Type": "text/html"})
+            if "bucket.example" in url:
+                return FakeResponse(200, gpx, {"Content-Type": "binary/octet-stream"})
+            if url.endswith("descargaDir"):
+                return direct_answer or FakeResponse(200, gpx)
+            return FakeResponse(200, b"<html>home</html>", {"Content-Type": "text/html"})
+
+        return FakeTransport(handler)
+
+    def test_an_s3_hosted_series_follows_the_pre_signed_url(self):
+        self.seed_index(
+            "caminos_naturales",
+            [{"id": "11602481", "name": "CNT101-0010-ruta-del-rio-catoira", "format": "GPX"}],
+        )
+        transport = self._s3_transport(gpx_bytes("CNT101_0010_ruta_del_rio_catoira", line((-8.7, 42.66))))
+        manifest = self.adapter("caminos_naturales", transport).pull()
+
+        self.assertTrue(manifest.ok, manifest.errors)
+        methods_urls = [(m, u) for m, u, _ in transport.calls]
+        self.assertEqual(methods_urls[0][0], "POST")
+        self.assertTrue(methods_urls[0][1].endswith("descargaDirS3"))
+        self.assertEqual(transport.calls[0][2]["data"], {"secuencial": "11602481"})
+        # The HTML-escaped ampersand in the page is unescaped before the GET.
+        self.assertEqual(methods_urls[1], ("GET", "https://bucket.example/rutas/CNT101_0010.gpx?X-Amz-Signature=abc&X-Amz-Expires=7199"))
+        path = Path(manifest.files[0].path)
+        self.assertTrue(path.read_bytes().startswith(b"<?xml"))
+
+    def test_a_direct_series_that_answers_with_a_page_is_retried_via_s3(self):
+        self.seed_index("cnig_fedme", [{"id": "111", "name": "GR 11 Senda", "format": "GPX"}])
+        bounce = FakeResponse(200, b"\r\n<!doctype html>\n<html lang=\"ES\"><body>centro</body></html>", {"Content-Type": "text/html"})
+        transport = self._s3_transport(gpx_bytes("GR 11", line((-8.5, 42.1))), direct_answer=bounce)
+        manifest = self.adapter("cnig_fedme", transport).pull()
+
+        self.assertTrue(manifest.ok, manifest.errors)
+        urls = [u.rsplit("/", 1)[-1].split("?")[0] for _, u, _ in transport.calls]
+        self.assertEqual(urls, ["descargaDir", "descargaDirS3", "CNT101_0010.gpx"])
+        self.assertTrue(Path(manifest.files[0].path).read_bytes().startswith(b"<?xml"))
 
     def test_kml_duplicates_are_skipped(self):
         self.seed_index(
@@ -194,6 +259,39 @@ class TestCnigAdapter(AdapterCase):
         cached = json.loads((self.paths.raw_dir("cnig_camino_cid") / "files.json").read_text())
         self.assertEqual(len(cached["files"]), len(entries))
         self.assertEqual(cached["code"], "CACID")
+
+    def test_caminos_naturales_stages_group_under_the_route_named_in_the_gpx(self):
+        self.seed_index(
+            "caminos_naturales",
+            [{"id": "11602481", "name": "CNT101-0010-ruta-del-rio-catoira", "format": "GPX"}],
+        )
+        gpx = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1"><trk>'
+            "<name>CNT101_0010_ruta_del_rio_catoira</name><cmt>6.1 km</cmt>"
+            "<desc>Camino Natural de las rutas ecológicas del río Catoira</desc>"
+            "<src>Ministerio de Agricultura, Pesca y Alimentación</src><trkseg>"
+            '<trkpt lat="42.6627" lon="-8.6989"><ele>61</ele></trkpt>'
+            '<trkpt lat="42.6696" lon="-8.7216"><ele>50</ele></trkpt>'
+            "</trkseg></trk></gpx>"
+        ).encode("utf-8")
+        adapter = self.adapter("caminos_naturales", self._s3_transport(gpx))
+        manifest = adapter.pull()
+        features = list(adapter.normalize(manifest))
+
+        self.assertEqual(len(features), 1)
+        feature = features[0]
+        self.assertEqual(feature.id, "caminos_naturales:11602481")
+        self.assertEqual(feature.name, "Ruta del rio catoira")
+        self.assertEqual(feature.parent_id, "caminos_naturales:cnt101")
+        self.assertEqual(feature.parent_name, "Camino Natural de las rutas ecológicas del río Catoira")
+        self.assertEqual(feature.stage_no, 1)
+        self.assertEqual(feature.official_status, "camino_natural")
+        self.assertEqual(feature.kind, "mixed")
+        self.assertEqual(feature.extras["route_code"], "CNT101")
+        self.assertEqual(feature.extras["stage_code"], "010")
+        self.assertNotIn("variant", feature.extras)
+        self.assertEqual(feature.attribution, "Obra derivada de CNT 2024 CC-BY 4.0 MAPA")
 
     def test_normalize_stamps_provenance_and_uses_the_listed_name(self):
         self.seed_index(
@@ -459,14 +557,6 @@ class TestPlannedAdapters(AdapterCase):
         with self.assertRaises(AdapterNotImplemented) as ctx:
             self.adapter("australia_states", FakeTransport())
         self.assertIn("Americas & Oceania wave", str(ctx.exception))
-
-    def test_caminos_naturales_is_not_folded_into_the_cnig_adapter(self):
-        # It is genuinely absent from the CNIG download centre, so it has its own
-        # planned adapter rather than a series code that does not exist.
-        source = self.registry.get("caminos_naturales")
-        self.assertEqual(source.adapter, "mapa_caminos_naturales")
-        with self.assertRaises(AdapterNotImplemented):
-            self.adapter("caminos_naturales", FakeTransport())
 
     def test_cnig_series_must_be_one_the_adapter_knows(self):
         source = self.registry.get("cnig_fedme")

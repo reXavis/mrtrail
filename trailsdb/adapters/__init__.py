@@ -42,7 +42,6 @@ IMPLEMENTED: dict[str, type[Adapter]] = {
 PLANNED: dict[str, str] = {
     "refuges_info": "4 - Europe wave",
     "spain_regional": "4 - Europe wave",
-    "mapa_caminos_naturales": "4 - Europe wave",
     "usgs_ndt": "5 - Americas & Oceania wave",
     "australia_states": "5 - Americas & Oceania wave",
 }
