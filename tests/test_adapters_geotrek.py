@@ -66,7 +66,7 @@ GAVARNIE = Instance(
 
 
 class TestInstancesFile(unittest.TestCase):
-    def test_every_instance_has_an_api_and_no_instance_is_verified_yet(self):
+    def test_every_instance_has_an_api_and_a_verified_one_carries_its_verdict(self):
         instances = geotrek_module.load_instances()
         self.assertGreaterEqual(len(instances), 10)
         for instance in instances:
@@ -74,9 +74,22 @@ class TestInstancesFile(unittest.TestCase):
                 self.assertTrue(instance.api.startswith("https://"))
                 self.assertTrue(instance.api.endswith("/api/v2"))
                 # The API carries no licence; nothing ships until an operator's
-                # own text has been read. Asserting this keeps a hopeful edit
-                # from quietly verifying an instance.
-                self.assertIsNone(instance.verified_on)
+                # own text has been read. A verified instance therefore names a
+                # licence (or "closed") and quotes the text that decided it, so
+                # a hopeful edit cannot quietly verify one.
+                if instance.verified_on is None:
+                    self.assertIsNone(instance.licence)
+                else:
+                    self.assertTrue(instance.licence)
+                    self.assertTrue(instance.terms and instance.verified_on in instance.terms)
+
+    def test_no_operator_read_so_far_grants_reuse(self):
+        # Three reserve all rights in writing, seven say nothing about the
+        # data; every one of them is closed until an open publication by the
+        # same operator is read and recorded.
+        instances = geotrek_module.load_instances()
+        self.assertTrue(all(i.closed for i in instances if i.verified_on))
+        self.assertGreaterEqual(sum(1 for i in instances if i.closed), 10)
 
     def test_pyrenees_is_covered(self):
         keys = {i.key for i in geotrek_module.load_instances()}

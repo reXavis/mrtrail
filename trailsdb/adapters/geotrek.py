@@ -76,6 +76,8 @@ class Instance:
     attribution: str
     verified_on: str | None
     treks: int | None = None
+    #: What the operator's own text said about reuse, and when it was read.
+    terms: str | None = None
 
     @property
     def closed(self) -> bool:
@@ -96,6 +98,7 @@ def load_instances(path: Path = INSTANCES_PATH) -> list[Instance]:
                 attribution=body.get("attribution") or body["name"],
                 verified_on=str(body["verified_on"]) if body.get("verified_on") else None,
                 treks=body.get("treks"),
+                terms=body.get("terms"),
             )
         )
     return out

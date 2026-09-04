@@ -5,7 +5,14 @@
 # reads this file: an instance with an `api` is pulled; an instance whose
 # `licence` is null is pulled but cannot ship (the source stays unverified
 # until every instance it exports has terms read from the operator's own
-# text); an instance whose `licence` is "closed" is skipped entirely.
+# text); an instance whose `licence` is "closed" is skipped entirely, and
+# `terms` records what the operator's own text said and when it was read.
+#
+# As of 2026-09-04 every listed operator is closed: three portals reserve all
+# rights in so many words, and seven publish no terms for the data at all.
+# The way back in is an open publication by the same operator (data.gouv.fr
+# carries some Geotrek exports under the Licence Ouverte), read and recorded
+# here before the instance is reopened.
 #
 # Discovery: geotrek.fr's users map (utilisateurs.geotrek.fr/clients_map.geojson)
 # lists deployments and their public portals; each portal's HTML embeds the
@@ -18,87 +25,123 @@ instances:
     portal: "http://rando.tourisme-pyrenees-mediterranee.fr"
     api: "https://geotrek.tourisme-pyrenees-mediterranee.fr/api/v2"
     treks: 240
-    licence: null
+    licence: closed
     attribution: "Communauté de Communes Albères Côte Vermeille"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "Portal flatpage 'Mentions légales' read 2026-09-04: it is the RGPD
+      personal-data charter of the Office de Tourisme Intercommunal
+      Pyrénées-Méditerranée and says nothing about reuse of the trail data.
+      Silence is not permission."
 
   communaute-de-communes-coeur-et-coteaux-du-comminges:
     name: "Communauté de Communes Cœur et Coteaux du Comminges"
     portal: "https://rando.coeurcoteaux-comminges.fr/"
     api: "https://adminrando.coeurcoteaux-comminges.fr/api/v2"
     treks: 167
-    licence: null
+    licence: closed
     attribution: "Communauté de Communes Cœur et Coteaux du Comminges"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "The portal publishes no legal or terms page at all (its only flatpage is
+      'Partenaires'), read 2026-09-04. Silence is not permission."
 
   communaute-de-communes-pyrenees-haut-garonnaises:
     name: "Communauté de Communes Pyrénées Haut Garonnaises"
     portal: "https://rando.cc-pyreneeshautgaronnaises.fr/"
     api: "https://admin-ccphg.openig.org/api/v2"
     treks: 94
-    licence: null
+    licence: closed
     attribution: "Communauté de Communes Pyrénées Haut Garonnaises"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "Portal 'Mentions légales' read 2026-09-04: \"Les données renseignées sur
+      Rando Pyrénées Haut-Garonnaises sont la propriété exclusive de la
+      collectivité. Toute reproduction, toute représentation totale ou
+      partielle, toute utilisation, toute adaptation, toute mise à disposition
+      ou modification de ces éléments [...] sans l'autorisation expresse [...]
+      est strictement interdite\"; and \"Toute réutilisation commerciale est
+      soumise à l'accord préalable de la Communauté de communes\". Not open."
 
   communaute-de-communes-pyrenees-vallees-des-gaves:
     name: "Communauté de communes Pyrénées Vallées des Gaves"
     portal: "https://rando.valleesdegavarnie.com/"
     api: "https://geotrek65admin.openig.org/api/v2"
     treks: 574
-    licence: null
+    licence: closed
     attribution: "Communauté de communes Pyrénées Vallées des Gaves"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "Both 'Mentions légales' flatpages read 2026-09-04: hosting and OPenIG
+      boilerplate (\"diffuse des données géographiques, ouvertes ou non\");
+      nothing grants reuse of this instance's data. Silence is not permission."
 
   conseil-departemental-des-pyrenees-orientales:
     name: "Conseil Départemental des Pyrénées-Orientales"
     portal: "https://rando66.fr/"
     api: "https://admin-pyrenees-orientales.fr/api/v2"
     treks: 121
-    licence: null
+    licence: closed
     attribution: "Conseil Départemental des Pyrénées-Orientales"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "Portal 'Mentions légales' read 2026-09-04, Titre 6 Propriété
+      intellectuelle: \"La reproduction et/ou la représentation et/ou diffusion
+      du site [...] totale ou partielle, de quelque manière et par quelque moyen
+      que ce soit, d'un ou plusieurs éléments qui les composent [...] est
+      interdite sans accord exprès préalable et écrit du Conseil Départemental
+      des Pyrénées Orientales\". Not open."
 
   conseil-departemental-du-gard:
     name: "Conseil Départemental du Gard"
     portal: "https://rando.gard.fr/"
     api: "https://geotrek-aggr.gard.fr/api/v2"
     treks: 478
-    licence: null
+    licence: closed
     attribution: "Conseil Départemental du Gard"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "Portal 'Mentions légales' read 2026-09-04: photo and video credits only;
+      silent on the data. Silence is not permission."
 
   parc-national-de-la-vanoise:
     name: "Parc National de la Vanoise"
     portal: "http://rando.vanoise.com"
     api: "https://adminrando.vanoise.com/api/v2"
     treks: 246
-    licence: null
+    licence: closed
     attribution: "Parc National de la Vanoise"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "The portal publishes no legal or terms page (flatpages: territories,
+      preparation, themed trails), read 2026-09-04. Silence is not permission."
 
   parc-national-des-cevennes:
     name: "Parc National des Cévennes"
     portal: "https://destination.cevennes-parcnational.fr"
     api: "https://geotrek-admin.cevennes-parcnational.net/api/v2"
     treks: 542
-    licence: null
+    licence: closed
     attribution: "Parc National des Cévennes"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "The portal publishes no legal or terms page (flatpages: regulation,
+      exploring, getting there), read 2026-09-04. Silence is not permission."
 
   parc-national-des-ecrins:
     name: "Parc National des Ecrins"
     portal: "https://rando.ecrins-parcnational.fr"
     api: "https://geotrek-admin.ecrins-parcnational.fr/api/v2"
     treks: 735
-    licence: null
+    licence: closed
     attribution: "Parc National des Ecrins"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "Portal 'Mentions légales' read 2026-09-04: \"Le fait d'accéder à
+      l'application ne donne pas le droit de l'utiliser sans l'accord du Parc
+      national des Écrins : tous les droits de reproduction sont réservés en
+      vertu de l'article L.122-4 du code de la Propriété intellectuelle. Toute
+      utilisation des ressources [...] doit faire l'objet d'une autorisation
+      express du Parc national des Écrins.\" Not open."
 
   parc-national-du-mercantour-et-parco-naturale-delle-alpi-marittime:
     name: "Parc National du Mercantour et Parco Naturale delle Alpi Marittime"
     portal: "https://rando.marittimemercantour.eu"
     api: "https://adminrando.marittimemercantour.eu/api/v2"
     treks: 160
-    licence: null
+    licence: closed
     attribution: "Parc National du Mercantour et Parco Naturale delle Alpi Marittime"
-    verified_on: null
+    verified_on: 2026-09-04
+    terms: "Portal 'Mentions légales' read 2026-09-04: publisher identification and
+      hosting only; silent on the data. Silence is not permission."
