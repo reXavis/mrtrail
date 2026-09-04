@@ -18,10 +18,14 @@ marking flag, a difficulty grade (G/B/R/S: green, blue, red, black) and the
 club or municipality that maintains it. Routes are published as many pieces
 sharing one ``rutenummer``, which is used as the grouping key.
 
-Licensing is the open item. The Geonorge record says "Åpne data" and
-"No conditions apply to access and use" but never names a licence; Kartverket's
-open data is generally under CC BY 4.0. The registry keeps this source
-unverified until that is read from Kartverket's own text.
+Those pieces average half a kilometre -- 166,434 of them for 83,824 km -- so
+the source is a ``segment`` class: it is network-shaped, and a southern-Norway
+cut baked as z14 routes cost 1.31 KB/km, three times a FEDME sendero, almost
+all of it per-feature overhead. The z13 segment layer keeps the route name and
+the parent, and drops most of that cost.
+
+Licence: Kartverket's own terms put its free products under CC BY 4.0 with
+the credit "© Kartverket"; the registry carries the quote.
 """
 
 from __future__ import annotations

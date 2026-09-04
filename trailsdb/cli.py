@@ -313,8 +313,9 @@ def cmd_bake(args, registry, paths: Paths) -> int:
         )
     print(
         f"\ntotal {result.total_bytes / 1024**2:.1f} MB of tiles  "
-        f"(model: {sizing.KB_PER_KM_TILES_ROUTE} KB/km routes, "
-        f"{sizing.KB_PER_KM_TILES_SEGMENT} KB/km segments; plan carried {sizing.KB_PER_KM_TILES_GALICIA})"
+        f"(model: {sizing.KB_PER_KM_TILES_ROUTE_FIT} KB/km + {sizing.KB_PER_FEATURE_TILES_ROUTE} KB/feature "
+        f"for routes, {sizing.KB_PER_KM_TILES_SEGMENT_FIT} + {sizing.KB_PER_FEATURE_TILES_SEGMENT} for segments, "
+        f"{sizing.KB_PER_SPOT_TILES} KB/spot; plan carried {sizing.KB_PER_KM_TILES_GALICIA} KB/km)"
     )
     return 0
 

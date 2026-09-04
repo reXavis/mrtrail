@@ -366,7 +366,7 @@ sources:
     publisher: "Kartverket"
     countries: ["NO"]
     adapter: kartverket
-    feature_class: route
+    feature_class: segment
     default_kind: hiking
     estimated_km: 80000
     km_confidence: assumed

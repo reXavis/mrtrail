@@ -89,10 +89,28 @@ class SizeEstimate:
         )
 
 
-#: Spots have no length, so they are priced per feature. Provisional until
-#: refuges.info has been normalized and baked; both are then re-measured.
-KB_PER_SPOT_MASTER = 0.35
-KB_PER_SPOT_TILES = 0.15
+#: Tile bytes are really two terms, per km of line and per feature, and the
+#: per-feature term is what separates a 0.5 km Norwegian route piece from a 15 km
+#: FEDME sendero. A least-squares fit over every bake so far:
+#:
+#:   z8-14 routes:    KB = 0.375 * km + 0.449 * features
+#:   z8-13 segments:  KB = 0.292 * km + 0.216 * features
+#:
+#: which lands within 3 % on the layers that dominate (Norway south 90 MB,
+#: Switzerland 108 MB) and within ~20 % on the small ones. The rounded values
+#: below are used whenever a feature count is known; the per-km coefficients
+#: above remain the fallback for sources that have not been pulled yet.
+KB_PER_KM_TILES_ROUTE_FIT = 0.4
+KB_PER_FEATURE_TILES_ROUTE = 0.45
+KB_PER_KM_TILES_SEGMENT_FIT = 0.3
+KB_PER_FEATURE_TILES_SEGMENT = 0.22
+
+#: Spots have no length, so they are priced per feature. Measured on
+#: refuges.info: 8,467 points normalize to 4,390 KB uncompressed (0.52 KB/spot),
+#: and the Pyrenees cut bakes 1,112 of them into 0.4 MB of z8-14 tiles (0.37
+#: KB/spot) -- the same per-feature cost as a z14 line, which is reassuring.
+KB_PER_SPOT_MASTER = 0.55
+KB_PER_SPOT_TILES = 0.4
 
 
 def estimate(
@@ -106,7 +124,8 @@ def estimate(
 
     ``cap_segments_at_z13`` is accepted for compatibility; the measured segment
     coefficient was taken at z13 already, so it changes nothing. Spots carry no
-    km; they are priced from ``features``.
+    km; they are priced from ``features``. Lines with a known feature count use
+    the two-term fit; without one, the per-km fallback.
     """
     if feature_class == "spot":
         return SizeEstimate(
@@ -114,11 +133,17 @@ def estimate(
             master_mb=features * KB_PER_SPOT_MASTER / 1024,
             tiles_mb=features * KB_PER_SPOT_TILES / 1024,
         )
-    tile_kb_per_km = KB_PER_KM_TILES_SEGMENT if feature_class == "segment" else KB_PER_KM_TILES_ROUTE
+    if features > 0:
+        if feature_class == "segment":
+            tiles_kb = km * KB_PER_KM_TILES_SEGMENT_FIT + features * KB_PER_FEATURE_TILES_SEGMENT
+        else:
+            tiles_kb = km * KB_PER_KM_TILES_ROUTE_FIT + features * KB_PER_FEATURE_TILES_ROUTE
+    else:
+        tiles_kb = km * (KB_PER_KM_TILES_SEGMENT if feature_class == "segment" else KB_PER_KM_TILES_ROUTE)
     return SizeEstimate(
         km=km,
         master_mb=km * KB_PER_KM_MASTER / 1024,
-        tiles_mb=km * tile_kb_per_km / 1024,
+        tiles_mb=tiles_kb / 1024,
     )
 
 

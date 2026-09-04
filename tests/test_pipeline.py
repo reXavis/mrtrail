@@ -178,10 +178,28 @@ class TestLayerAssignment(unittest.TestCase):
         self.assertIn("--maximum-zoom=13", pipeline.tippecanoe_args(segment_layer))
 
     def test_the_size_estimate_uses_the_measured_per_class_coefficients(self):
-        route_layer = pipeline.LayerExport("official", Path("x"), 1, 1000.0, "route")
-        segment_layer = pipeline.LayerExport("official_net", Path("x"), 1, 1000.0, "segment")
-        self.assertAlmostEqual(route_layer.estimated_tiles_mb, 1000 * sizing.KB_PER_KM_TILES_ROUTE / 1024, places=4)
-        self.assertAlmostEqual(segment_layer.estimated_tiles_mb, 1000 * sizing.KB_PER_KM_TILES_SEGMENT / 1024, places=4)
+        # Without a feature count: the per-km fallback coefficients.
+        self.assertAlmostEqual(sizing.estimate(1000.0, feature_class="route").tiles_mb, 1000 * sizing.KB_PER_KM_TILES_ROUTE / 1024, places=4)
+        self.assertAlmostEqual(sizing.estimate(1000.0, feature_class="segment").tiles_mb, 1000 * sizing.KB_PER_KM_TILES_SEGMENT / 1024, places=4)
+        # With one: per km plus per feature, which is what a layer export knows.
+        route_layer = pipeline.LayerExport("official", Path("x"), 200, 1000.0, "route")
+        segment_layer = pipeline.LayerExport("official_net", Path("x"), 4000, 1000.0, "segment")
+        self.assertAlmostEqual(
+            route_layer.estimated_tiles_mb,
+            (1000 * sizing.KB_PER_KM_TILES_ROUTE_FIT + 200 * sizing.KB_PER_FEATURE_TILES_ROUTE) / 1024, places=4,
+        )
+        self.assertAlmostEqual(
+            segment_layer.estimated_tiles_mb,
+            (1000 * sizing.KB_PER_KM_TILES_SEGMENT_FIT + 4000 * sizing.KB_PER_FEATURE_TILES_SEGMENT) / 1024, places=4,
+        )
+
+    def test_the_two_term_model_reproduces_the_norway_and_swiss_bakes(self):
+        # Southern Norway as z14 routes: 143,703 pieces, 68,940 km -> 88.2 MB baked.
+        norway = sizing.estimate(68940.0, feature_class="route", features=143703).tiles_mb
+        self.assertAlmostEqual(norway, 88.2, delta=8)
+        # Switzerland as z13 segments: 409,276 pieces, 66,926 km -> 105.5 MB baked.
+        swiss = sizing.estimate(66926.0, feature_class="segment", features=409276).tiles_mb
+        self.assertAlmostEqual(swiss, 105.5, delta=10)
 
 
 class TestExport(PipelineCase):
