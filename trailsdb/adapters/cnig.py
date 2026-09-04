@@ -94,6 +94,14 @@ _CAMINO_RE = re.compile(
 #: 2, variant 1. The four digits are stage x 10 + variant, so ``0400`` is stage
 #: 40 of the main line. The route's own name travels inside the GPX ``<desc>``.
 _CNT_RE = re.compile(r"^(?P<route>CNT\d{3})[-_](?P<stage>\d{3})(?P<variant>\d)[-_](?P<title>.+)$")
+#: The Camino del Cid series names files ``<MODE><section><stage>-<from>-<to>``:
+#: ``BTT0102-burgos-santo-domingo-de-silos`` is the mountain-bike variant,
+#: section 1, stage 2. SEN is on foot, BTT mountain bike, CIC road bike, MOT
+#: motor -- the last is a driving route, not a trail, and is left out. One
+#: extra file, "Camino del Cid", is the whole walking route in one piece and
+#: duplicates the SEN stages, so it is left out too.
+_CID_RE = re.compile(r"^(?P<mode>SEN|BTT|CIC|MOT)(?P<section>\d{2})(?P<stage>\d{2})[-_](?P<title>.+)$")
+_CID_KINDS = {"SEN": "hiking", "BTT": "mtb", "CIC": "cycling"}
 _PRESIGNED_RE = re.compile(r'id="urlPregsigned"\s+value="([^"]+)"')
 
 _TOTAL_RE = re.compile(r'id="totalArchivos"[^>]*value="(\d+)"')
@@ -115,14 +123,18 @@ class Series:
     kind: str
     #: "direct" (POST descargaDir streams the file) or "s3" (the centre hands
     #: back a pre-signed bucket URL instead). A direct series that answers with
-    #: a page is retried the S3 way, so a migrated series keeps working.
+    #: a page is retried the S3 way, so a migrated series keeps working; the
+    #: hint only saves the wasted first request. As of 2026-09-04 FEDME and the
+    #: Camino are direct, the Camino del Cid and Caminos Naturales are on S3.
     hosting: str = "direct"
 
 
 SERIES: dict[str, Series] = {
     "fedme": Series("fedme", "FEDME", "Senderos FEDME", "homologado", "hiking"),
     "camino": Series("camino", "CSANT", "Caminos de Santiago", "camino_oficial", "hiking"),
-    "camino_cid": Series("camino_cid", "CACID", "Camino del Cid", "camino_del_cid", "mixed"),
+    "camino_cid": Series(
+        "camino_cid", "CACID", "Camino del Cid", "camino_del_cid", "mixed", hosting="s3"
+    ),
     "rutas_pasion": Series("rutas_pasion", "RTPAS", "Rutas de Pasion", "ruta_tematica", "mixed"),
     "caminos_naturales": Series(
         "caminos_naturales", "RTCNT", "Caminos Naturales", "camino_natural", "mixed", hosting="s3"
@@ -328,6 +340,13 @@ class CnigAdapter(Adapter):
                 if series.key == "caminos_naturales"
                 else None
             )
+            cid = None
+            if series.key == "camino_cid":
+                cid = parse_cid_name(listed_name) or parse_cid_name(stem)
+                if cid is None or cid["kind"] is None:
+                    continue  # the whole-route file, or the driving variant
+                label = track.name or cid["title"]
+                fields["name"] = label
             if camino:
                 # The route code is the stable grouping key; the group name is
                 # what a user recognises ("Caminos del Norte - Camino Primitivo").
@@ -342,6 +361,12 @@ class CnigAdapter(Adapter):
                 fields["parent_id"] = self.make_id(natural["route"].lower())
                 fields["parent_name"] = track.description or None
                 fields["stage_no"] = natural["stage"]
+            elif cid:
+                # One parent per travel mode ("Camino del Cid BTT-MTB", from the
+                # GPX description); stages number section-major so they sort.
+                fields["parent_id"] = self.make_id(f"cid-{cid['mode'].lower()}")
+                fields["parent_name"] = track.description or f"Camino del Cid {cid['mode']}"
+                fields["stage_no"] = cid["section"] * 100 + cid["stage"]
             elif series.key in ("camino", "camino_cid"):
                 stage = extract_stage(label) or extract_stage(stem)
                 variant = variant_name(label, stem)
@@ -367,6 +392,8 @@ class CnigAdapter(Adapter):
                 )
                 if natural["variant"]:
                     extras["variant"] = str(natural["variant"])
+            if cid:
+                extras.update(mode=cid["mode"], section_no=cid["section"], stage_in_section=cid["stage"])
             if meta and meta.date:
                 extras["published_on"] = meta.date
             if member != path.name:
@@ -380,7 +407,7 @@ class CnigAdapter(Adapter):
                 local_id,
                 track.geometry,
                 manifest=manifest,
-                kind=series.kind,
+                kind=cid["kind"] if cid else series.kind,
                 extras=extras,
                 **fields,
             )
@@ -464,6 +491,27 @@ def parse_cnt_name(name: str | None) -> dict | None:
         "route": match.group("route"),
         "stage": int(match.group("stage")),
         "variant": int(match.group("variant")),
+        "title": title[:1].upper() + title[1:],
+    }
+
+
+def parse_cid_name(name: str | None) -> dict | None:
+    """Split a Camino del Cid file name into mode, section, stage and title.
+
+    ``kind`` is None for the motor variant. ``None`` for anything else -- the
+    whole-route file included -- so those are dropped rather than mis-grouped.
+    """
+    if not name:
+        return None
+    match = _CID_RE.match(name.strip())
+    if not match:
+        return None
+    title = re.sub(r"[-_]+", " ", match.group("title")).strip()
+    return {
+        "mode": match.group("mode"),
+        "kind": _CID_KINDS.get(match.group("mode")),
+        "section": int(match.group("section")),
+        "stage": int(match.group("stage")),
         "title": title[:1].upper() + title[1:],
     }
 

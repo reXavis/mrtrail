@@ -29,6 +29,10 @@ def fixture(name: str) -> bytes:
     return (FIXTURES / name).read_bytes()
 
 
+def transport_calls(adapter):
+    return adapter.session.transport.calls
+
+
 def session_for(transport) -> PoliteSession:
     return PoliteSession(
         transport=transport, rate_limit_s=0, sleeper=lambda _s: None, today=lambda: "2026-08-27"
@@ -136,6 +140,20 @@ class TestCnigParsers(unittest.TestCase):
         for source in registry.by_adapter("cnig"):
             with self.subTest(source=source.id):
                 self.assertIn(source.series, cnig_module.SERIES)
+
+
+class TestCaminoDelCidNames(unittest.TestCase):
+    def test_mode_section_stage_and_title(self):
+        parsed = cnig_module.parse_cid_name("BTT0102-burgos-santo-domingo-de-silos")
+        self.assertEqual((parsed["mode"], parsed["kind"], parsed["section"], parsed["stage"]), ("BTT", "mtb", 1, 2))
+        self.assertEqual(parsed["title"], "Burgos santo domingo de silos")
+        self.assertEqual(cnig_module.parse_cid_name("SEN0702-gallocanta-daroca")["kind"], "hiking")
+        self.assertEqual(cnig_module.parse_cid_name("CIC0401-x")["kind"], "cycling")
+
+    def test_the_motor_variant_and_the_whole_route_file_are_not_stages(self):
+        self.assertIsNone(cnig_module.parse_cid_name("MOT0101-vivar-del-cid-burgos")["kind"])
+        self.assertIsNone(cnig_module.parse_cid_name("Camino del Cid"))
+        self.assertIsNone(cnig_module.parse_cid_name(None))
 
 
 class TestCaminosNaturalesNames(unittest.TestCase):
@@ -260,6 +278,41 @@ class TestCnigAdapter(AdapterCase):
         self.assertEqual(len(cached["files"]), len(entries))
         self.assertEqual(cached["code"], "CACID")
 
+    def test_camino_del_cid_stages_group_per_travel_mode_and_skip_the_driving_one(self):
+        self.seed_index(
+            "cnig_camino_cid",
+            [
+                {"id": "10901602", "name": "BTT0101-vivar-del-cid-burgos", "format": "GPX"},
+                {"id": "10901700", "name": "MOT0101-vivar-del-cid-burgos", "format": "GPX"},
+                {"id": "10901525", "name": "Camino del Cid", "format": "GPX"},
+            ],
+        )
+        gpx = (
+            '<?xml version="1.0" encoding="UTF-8"?>'
+            '<gpx version="1.1" xmlns="http://www.topografix.com/GPX/1/1"><trk>'
+            "<name>Vivar del Cid - Burgos</name><cmt>13.12 km</cmt><desc>Camino del Cid BTT-MTB</desc><trkseg>"
+            '<trkpt lat="42.4" lon="-3.6"><ele>900</ele></trkpt><trkpt lat="42.35" lon="-3.7"><ele>860</ele></trkpt>'
+            "</trkseg></trk></gpx>"
+        ).encode("utf-8")
+        adapter = self.adapter("cnig_camino_cid", self._s3_transport(gpx))
+        manifest = adapter.pull()
+        self.assertTrue(manifest.ok, manifest.errors)
+        # An S3-hosted series never tries the direct endpoint.
+        self.assertFalse(any(u.endswith("descargaDir") for _, u, _ in transport_calls(adapter)))
+        features = list(adapter.normalize(manifest))
+
+        self.assertEqual([f.id for f in features], ["cnig_camino_cid:10901602"])
+        f = features[0]
+        f.validate()
+        self.assertEqual(f.name, "Vivar del Cid - Burgos")
+        self.assertEqual(f.kind, "mtb")
+        self.assertEqual(f.parent_id, "cnig_camino_cid:cid-btt")
+        self.assertEqual(f.parent_name, "Camino del Cid BTT-MTB")
+        self.assertEqual(f.stage_no, 101)
+        self.assertEqual(f.extras["section_no"], 1)
+        self.assertEqual(f.official_status, "camino_del_cid")
+        self.assertEqual(f.attribution, "Obra derivada de RCE_CDC 2018-2020 CC-BY 4.0 Camino del CID")
+
     def test_caminos_naturales_stages_group_under_the_route_named_in_the_gpx(self):
         self.seed_index(
             "caminos_naturales",
@@ -346,12 +399,12 @@ class TestCnigAdapter(AdapterCase):
         self.assertEqual(feature.country, "FR")
 
     def test_reads_gpx_out_of_a_zip(self):
-        self.seed_index("cnig_camino_cid", [{"id": "7", "name": "cid", "format": "GPX"}])
+        self.seed_index("cnig_fedme", [{"id": "7", "name": "cid", "format": "GPX"}])
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, "w") as archive:
             archive.writestr("via.gpx", gpx_bytes("Via", line((-4.0, 37.6))))
         transport = FakeTransport(default=FakeResponse(200, buffer.getvalue()))
-        adapter = self.adapter("cnig_camino_cid", transport)
+        adapter = self.adapter("cnig_fedme", transport)
         features = list(adapter.normalize(adapter.pull()))
         self.assertEqual(len(features), 1)
         self.assertEqual(features[0].extras["archive_member"], "via.gpx")
