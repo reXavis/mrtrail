@@ -20,10 +20,10 @@ trailsdb status
 
 | built | not yet |
 | --- | --- |
-| Source registry for all 20 planned sources | 6 of 17 adapters (each tagged with the wave it lands in) |
+| Source registry for all 20 planned sources | 5 of 17 adapters (Australia, Spain regional, refuges.info; USGS NDT and Caminos Naturales blocked) |
 | Normalized schema, master-database format, SQLite catalog | Cross-link matcher against OSM relations |
 | Polite fetch layer; stdlib readers for ArcGIS, WFS (JSON and GML), GeoPackage/WKB, GPX; LV95 and transverse-Mercator transforms | Shapefile + file-geodatabase readers (the `geo` extra) |
-| CNIG ×3, NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC | App-side overlay toggle, source badges, licenses screen |
+| CNIG ×3, NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC, Geotrek ×10 | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
 | Size model, validated against real pulled data | Legal verification of 17 of 20 sources |
 
@@ -44,7 +44,8 @@ close.** Figures are measured from the normalized data.
 | NZ DOC network | 3,248 | 13,896 | 14,000 |
 | NZ DOC routes | 1,547 | 13,696 | — |
 | England: National Trails + Coast Path | 16,457 | 7,604 | 5,000 |
-| Sweden: Naturvårdsverket leder | 12,013 | see status | 15,000 |
+| France: Geotrek, 10 of ~80 operators | 3,321 | 56,301 | 65,000 (all of France) |
+| Sweden: Naturvårdsverket leder | 12,013 | 17,652 | 15,000 |
 | Norway: Kartverket Turrutebasen | — | — | 80,000 (pull running) |
 | CNIG FEDME senderos | — | — | 50,000 (pull running) |
 
@@ -85,6 +86,12 @@ The plan's size estimates held up. Its assumptions about *access* mostly did not
   are dropped. Sweden's 12,013 rows are pieces of 3,657 trails; Norway's WFS
   speaks only GML, which is why there is a GML reader. USGS's National Digital
   Trails has no public endpoint anywhere it was looked for.
+- **Geotrek is a fleet, not a source.** ~80 operators run it; ten answered with
+  working APIs and are pulled as one source with per-instance attribution. The
+  API carries no licence and the one operator legal page read so far is silent
+  on the data, so no instance ships until its terms are read.
+- **Caminos Naturales is CAPTCHA-gated.** MAPA's terms allow reuse with a
+  source citation, but its download needs a human, so it is parked.
 
 ## Install
 
