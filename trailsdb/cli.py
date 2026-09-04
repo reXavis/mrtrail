@@ -108,6 +108,11 @@ def _build_parser() -> argparse.ArgumentParser:
     )
     p_export.set_defaults(handler=cmd_export)
 
+    p_bake = sub.add_parser("bake", help="run tippecanoe over a pack's exported layers")
+    p_bake.add_argument("--pack", required=True)
+    p_bake.add_argument("--layer", action="append", help="bake only this layer (repeatable)")
+    p_bake.set_defaults(handler=cmd_bake)
+
     p_lic = sub.add_parser("licenses", help="the app's data-sources screen payload")
     p_lic.add_argument("-o", "--output", help="write JSON here instead of stdout")
     p_lic.set_defaults(handler=cmd_licenses)
@@ -282,6 +287,27 @@ def cmd_export(args, registry, paths: Paths) -> int:
         print(f"written to {paths.export_dir(result.pack)}")
     else:
         print("\nnothing exported")
+    return 0
+
+
+def cmd_bake(args, registry, paths: Paths) -> int:
+    if not pipeline.tippecanoe_available():
+        print("tippecanoe is not on PATH; install it to bake", file=sys.stderr)
+        return 2
+    export = paths.export_dir(args.pack) / "export.json"
+    if not export.exists():
+        print(f"no export for pack {args.pack!r}; run `trailsdb export --pack {args.pack}` first", file=sys.stderr)
+        return 2
+    result = pipeline.bake_pack(paths, pack=args.pack, layers=args.layer)
+    print(f"pack {result.pack}")
+    print(f"  {'layer':<18}{'class':<9}{'features':>9}{'km':>10}{'MB':>8}{'KB/km':>8}{'s':>6}")
+    for b in result.layers:
+        print(
+            f"  {b.layer:<18}{b.feature_class:<9}{b.features:>9,}{b.length_km:>10,.0f}"
+            f"{b.megabytes:>8.1f}{b.kb_per_km:>8.2f}{b.seconds:>6.0f}"
+        )
+    print(f"\ntotal {result.total_bytes / 1024**2:.1f} MB of tiles  "
+          f"(plan coefficient: {sizing.KB_PER_KM_TILES} KB/km for z8-14 routes)")
     return 0
 
 

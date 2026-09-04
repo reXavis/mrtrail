@@ -53,6 +53,40 @@ class PipelineCase(unittest.TestCase):
         )
 
 
+    def normalize_galicia_and_nz(self):
+        self.seed_cnig()
+        self.seed_cnig(source_id="cnig_camino", name="frances-1.gpx",
+                       track="Camino Francés - ES01c-01a-saint-jean-roncesvalles", start=(-8.4, 42.9))
+        # Something well outside the Galicia box, to prove the cut actually cuts.
+        raw = self.paths.raw_dir("nz_doc") / "walking"
+        raw.mkdir(parents=True, exist_ok=True)
+        (raw / "page-0000.geojson").write_text(
+            json.dumps(
+                {
+                    "type": "FeatureCollection",
+                    "features": [
+                        {
+                            "type": "Feature",
+                            "geometry": {
+                                "type": "LineString",
+                                "coordinates": [[170.0, -43.0], [170.1, -43.1]],
+                            },
+                            "properties": {"OBJECTID": 1, "name": "Milford Track",
+                                           "walkingAndTrampingWebPage": "https://www.doc.govt.nz/link/d7a3a8ec03804341b8bc15c23e21a722.aspx"},
+                        }
+                    ],
+                }
+            ),
+            encoding="utf-8",
+        )
+        from trailsdb.manifest import PullManifest
+
+        PullManifest.start("nz_doc", "nz_doc").finish().write(self.paths.raw_dir("nz_doc"))
+
+        for source_id in ("cnig_fedme", "cnig_camino", "nz_doc"):
+            pipeline.normalize_source(self.registry.get(source_id), self.paths)
+
+
 class TestPullAndNormalize(PipelineCase):
     def test_full_round_trip_writes_master_and_catalog(self):
         manifest = self.seed_cnig()
@@ -142,38 +176,6 @@ class TestLayerAssignment(unittest.TestCase):
 
 
 class TestExport(PipelineCase):
-    def normalize_galicia_and_nz(self):
-        self.seed_cnig()
-        self.seed_cnig(source_id="cnig_camino", name="frances-1.gpx",
-                       track="Camino Frances. Etapa 1", start=(-8.4, 42.9))
-        # Something well outside the Galicia box, to prove the cut actually cuts.
-        raw = self.paths.raw_dir("nz_doc") / "pages"
-        raw.mkdir(parents=True, exist_ok=True)
-        (raw / "tracks-0000.geojson").write_text(
-            json.dumps(
-                {
-                    "type": "FeatureCollection",
-                    "features": [
-                        {
-                            "type": "Feature",
-                            "geometry": {
-                                "type": "LineString",
-                                "coordinates": [[170.0, -43.0], [170.1, -43.1]],
-                            },
-                            "properties": {"assetId": 1, "name": "Milford Track"},
-                        }
-                    ],
-                }
-            ),
-            encoding="utf-8",
-        )
-        from trailsdb.manifest import PullManifest
-
-        PullManifest.start("nz_doc", "nz_doc").finish().write(self.paths.raw_dir("nz_doc"))
-
-        for source_id in ("cnig_fedme", "cnig_camino", "nz_doc"):
-            pipeline.normalize_source(self.registry.get(source_id), self.paths)
-
     def test_unverified_sources_are_refused_by_default(self):
         self.normalize_galicia_and_nz()
         result = pipeline.export_pack(self.registry, self.paths, pack="galicia", bbox=GALICIA)
@@ -229,6 +231,30 @@ class TestExport(PipelineCase):
         registry = verified(self.registry, "usfs_trails")
         result = pipeline.export_pack(registry, self.paths, pack="galicia", bbox=GALICIA)
         self.assertIn(("usfs_trails", "not normalized yet"), result.skipped)
+
+
+class TestBake(PipelineCase):
+    def test_bake_writes_one_pmtiles_per_layer_and_measures_it(self):
+        if not pipeline.tippecanoe_available():
+            self.skipTest("tippecanoe not installed")
+        self.normalize_galicia_and_nz()
+        registry = verified(self.registry, "cnig_fedme", "cnig_camino")
+        pipeline.export_pack(registry, self.paths, pack="galicia", bbox=GALICIA)
+        result = pipeline.bake_pack(self.paths, pack="galicia")
+        self.assertEqual([b.layer for b in result.layers], ["official"])
+        baked = result.layers[0]
+        self.assertTrue(baked.pmtiles.exists())
+        self.assertGreater(baked.bytes, 0)
+        self.assertGreater(baked.kb_per_km, 0)
+        report = json.loads((self.paths.export_dir("galicia") / "bake.json").read_text())
+        self.assertEqual(report["layers"][0]["pmtiles"], "official.pmtiles")
+
+    def test_bake_without_tippecanoe_is_a_clear_error(self):
+        import unittest.mock as mock
+
+        with mock.patch.object(pipeline, "tippecanoe_available", return_value=None):
+            with self.assertRaises(RuntimeError):
+                pipeline.bake_pack(self.paths, pack="galicia")
 
 
 class TestHealth(unittest.TestCase):

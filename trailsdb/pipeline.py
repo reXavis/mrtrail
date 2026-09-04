@@ -334,6 +334,112 @@ def tippecanoe_args(layer: LayerExport) -> list[str]:
     ]
 
 
+# --------------------------------------------------------------------- bake --
+
+
+@dataclass(slots=True)
+class BakedLayer:
+    layer: str
+    feature_class: str
+    features: int
+    length_km: float
+    pmtiles: Path
+    bytes: int
+    seconds: float
+
+    @property
+    def kb_per_km(self) -> float:
+        return (self.bytes / 1024) / self.length_km if self.length_km else 0.0
+
+    @property
+    def megabytes(self) -> float:
+        return self.bytes / 1024**2
+
+
+@dataclass(slots=True)
+class BakeResult:
+    pack: str
+    layers: list[BakedLayer]
+
+    @property
+    def total_bytes(self) -> int:
+        return sum(layer.bytes for layer in self.layers)
+
+
+def tippecanoe_available() -> str | None:
+    import shutil
+
+    return shutil.which("tippecanoe")
+
+
+def bake_pack(paths: Paths, *, pack: str, layers: list[str] | None = None) -> BakeResult:
+    """Run tippecanoe over a pack's exported layers, one PMTiles file per layer.
+
+    One file per layer rather than one per pack because the zoom range differs
+    by class (routes to z14, segments to z13) and tippecanoe applies a zoom
+    range per run; ``tile-join`` merges them into the pack's topo.pmtiles at
+    pack-build time. The measured bytes are what the size model gets re-anchored
+    on -- this is the one coefficient the plan could only carry over from the
+    Galicia OSM layer until now.
+    """
+    import subprocess
+    import time
+
+    binary = tippecanoe_available()
+    if not binary:
+        raise RuntimeError("tippecanoe is not on PATH; install it to bake")
+    out_dir = paths.export_dir(pack)
+    export = json.loads((out_dir / "export.json").read_text(encoding="utf-8"))
+
+    baked: list[BakedLayer] = []
+    for entry in export["layers"]:
+        if layers and entry["layer"] not in layers:
+            continue
+        source = out_dir / entry["file"]
+        target = out_dir / f"{entry['layer']}.pmtiles"
+        target.unlink(missing_ok=True)
+        args = [binary, "-o", str(target), "--force", "--quiet", *entry["tippecanoe"], str(source)]
+        started = time.monotonic()
+        subprocess.run(args, check=True)
+        baked.append(
+            BakedLayer(
+                layer=entry["layer"],
+                feature_class=entry["feature_class"],
+                features=entry["features"],
+                length_km=entry["length_km"],
+                pmtiles=target,
+                bytes=target.stat().st_size,
+                seconds=time.monotonic() - started,
+            )
+        )
+
+    result = BakeResult(pack=pack, layers=baked)
+    (out_dir / "bake.json").write_text(
+        json.dumps(
+            {
+                "pack": pack,
+                "tippecanoe": binary,
+                "layers": [
+                    {
+                        "layer": b.layer,
+                        "feature_class": b.feature_class,
+                        "features": b.features,
+                        "length_km": round(b.length_km, 1),
+                        "pmtiles": b.pmtiles.name,
+                        "bytes": b.bytes,
+                        "kb_per_km": round(b.kb_per_km, 3),
+                        "seconds": round(b.seconds, 1),
+                    }
+                    for b in baked
+                ],
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    return result
+
+
 # ------------------------------------------------------------------- health --
 
 
@@ -453,6 +559,10 @@ def status(registry: Registry, paths: Paths, *, catalog: Catalog | None = None) 
 
 __all__ = [
     "AdapterNotImplemented",
+    "BakeResult",
+    "BakedLayer",
+    "bake_pack",
+    "tippecanoe_available",
     "ExportResult",
     "HealthResult",
     "LayerExport",
