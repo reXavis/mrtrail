@@ -37,7 +37,7 @@ size model from the registry.
 
 | adapter | state |
 | --- | --- |
-| CNIG (FEDME · Camino · Camino del Cid · Caminos Naturales) | built against the live flow; Camino 1,074 stages / 24,854 km, FEDME 3,780 senderos / 49,780 km, Caminos Naturales 741 stages / 10,915 km pulled and normalized |
+| CNIG (FEDME · Camino · Camino del Cid · Caminos Naturales) | built against the live flow; Camino 1,074 stages / 24,854 km, FEDME 3,780 senderos / 49,780 km, Caminos Naturales 741 stages / 10,915 km, Camino del Cid 135 stages / 5,095 km — all pulled and normalized |
 | NZ DOC (routes + network) | built and pulled: 4,795 features, 27,591 km |
 | USFS | built and pulled from the ArcGIS GeoJSON endpoint: 80,966 features, 232,766 km — no `geo` extra needed |
 

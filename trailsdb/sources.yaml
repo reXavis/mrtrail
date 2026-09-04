@@ -201,8 +201,8 @@ sources:
     rate_limit_s: 1.5
     feature_class: route
     default_kind: mixed
-    estimated_km: 2500
-    km_confidence: assumed
+    estimated_km: 5100
+    km_confidence: official
     cadence: quarterly
     license: cc-by-4.0
     attribution: "Obra derivada de RCE_CDC 2018-2020 CC-BY 4.0 Camino del CID"
@@ -217,8 +217,10 @@ sources:
         row: Camino del Cid | identifier RCE_CDC | fecha 2018-2020 |
         reconocimiento "RCE_CDC 2018-2020 CC-BY 4.0 Camino del CID" |
         productores "Consorcio Camino del CID". Found in the download centre
-        alongside the other series (code CACID, 299 files). Walking and cycling
-        variants of the same historic route.
+        alongside the other series (code CACID, 299 files, served from S3).
+        Four travel modes of the same historic route: 70 walking, 28
+        mountain-bike and 37 road-bike stages are kept (5,095 km); the 11
+        driving stages and the whole-route file are not.
 
   caminos_naturales:
     name: "Caminos Naturales"

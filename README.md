@@ -53,6 +53,7 @@ from the normalized data.
 | Norway: Kartverket Turrutebasen | 166,434 | 83,824 | 80,000 |
 | CNIG FEDME senderos | 3,780 | 49,780 | 50,000 |
 | Caminos Naturales (MAPA, via CNIG) | 741 | 10,915 | 10,300 |
+| CNIG Camino del Cid (walking, MTB, road-bike stages) | 135 | 5,095 | 2,500 |
 
 The Camino pulled 1,074 stages across 80 route variants in three countries.
 USFS dropped 5,337 of 86,303 raw features, all null-geometry attribute rows;
@@ -97,7 +98,9 @@ The plan's size estimates held up. Its assumptions about *access* mostly did not
   ministry's own download is reCAPTCHA-gated, which an unattended pipeline
   must not pass; the CNIG download centre carries the same 1,483 files as
   series RTCNT, served from S3 through a pre-signed URL, and that is the
-  flow the adapter speaks.
+  flow the adapter speaks. The Camino del Cid had quietly moved to S3 too:
+  all 147 of its "GPX" downloads were HTML pages until the adapter learned
+  to notice a page where a file should be and take the S3 route instead.
 - **Half of BC's recreation lines are retired** tenure records, not trails, and
   are dropped. Sweden's 12,013 rows are pieces of 3,657 trails; Norway's WFS
   speaks only GML, which is why there is a GML reader. USGS's National Digital
