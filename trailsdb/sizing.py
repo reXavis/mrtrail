@@ -32,13 +32,38 @@ KB_PER_KM_MASTER_GALICIA = 1.56
 #: 51.5 points/km, not because the model is wrong.
 KB_PER_KM_MASTER = 1.98
 
-#: z8-14 vector tiles, including the zoom pyramid and gzip.
-KB_PER_KM_TILES = 3.5
+#: z8-14 vector tiles, including the zoom pyramid and gzip -- the Galicia OSM
+#: routes layer, measured 25 Aug 2026. Kept for reference; it is not what this
+#: pipeline's tiles cost.
+KB_PER_KM_TILES_GALICIA = 3.5
 
-#: Dropping network segments a zoom level (z8-13 instead of z8-14) roughly halves
-#: their tile cost. They are infrastructure, not browsable routes, so nothing is
-#: lost above the zoom where a user is actually reading trail names.
-SEGMENT_Z13_FACTOR = 0.5
+#: What the pipeline's own tiles cost, measured 4 Sep 2026 by baking four packs
+#: with tippecanoe at the settings tippecanoe_args() records (routes z8-14,
+#: segments z8-13), on tile-shaped features carrying only TILE_ATTRIBUTES:
+#:
+#:   New Zealand   routes    13,687 km   5.0 MB   0.37 KB/km
+#:   Pyrenees      routes    20,851 km   6.3 MB   0.31 KB/km   (Camino + Geotrek)
+#:   EuroVelo      routes     2,943 km   1.2 MB   0.43 KB/km
+#:   New Zealand   segments  13,819 km   5.0 MB   0.37 KB/km
+#:   Colorado      segments  22,987 km   7.9 MB   0.35 KB/km   (USFS + NPS)
+#:   Switzerland   segments  66,926 km 105.5 MB   1.61 KB/km   (409,276 pieces, 160 m each)
+#:
+#: Routes cluster tightly. Segments do not: cost is driven by feature count
+#: rather than length, because each piece carries its attributes into every
+#: tile, and swisstopo publishes trails in 160 m pieces. The segment figure is
+#: therefore set near that worst case rather than the median -- an estimate
+#: for a pack that turns out to be swisstopo-shaped should not be four times
+#: too low. Per-source measured figures, where a source has been baked, are in
+#: the export's bake.json and beat these defaults.
+KB_PER_KM_TILES_ROUTE = 0.4
+KB_PER_KM_TILES_SEGMENT = 1.2
+
+#: The figure the plan carried, kept only so old comparisons still read.
+KB_PER_KM_TILES = KB_PER_KM_TILES_GALICIA
+
+#: The segment zoom lever is now baked into KB_PER_KM_TILES_SEGMENT (the
+#: measurements were taken at z13), so it no longer applies on top.
+SEGMENT_Z13_FACTOR = 1.0
 
 #: Catalog row cost: names, refs, status, bbox, no geometry.
 KB_PER_CATALOG_ROUTE = 0.6
@@ -65,9 +90,12 @@ class SizeEstimate:
 
 
 def estimate(km: float, *, feature_class: str = "route", cap_segments_at_z13: bool = False) -> SizeEstimate:
-    tile_kb_per_km = KB_PER_KM_TILES
-    if feature_class == "segment" and cap_segments_at_z13:
-        tile_kb_per_km *= SEGMENT_Z13_FACTOR
+    """Master-database and tile bytes for ``km`` of a feature class.
+
+    ``cap_segments_at_z13`` is accepted for compatibility; the measured segment
+    coefficient was taken at z13 already, so it changes nothing.
+    """
+    tile_kb_per_km = KB_PER_KM_TILES_SEGMENT if feature_class == "segment" else KB_PER_KM_TILES_ROUTE
     return SizeEstimate(
         km=km,
         master_mb=km * KB_PER_KM_MASTER / 1024,

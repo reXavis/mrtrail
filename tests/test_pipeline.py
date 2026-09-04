@@ -163,16 +163,11 @@ class TestLayerAssignment(unittest.TestCase):
         self.assertIn("--maximum-zoom=14", pipeline.tippecanoe_args(route_layer))
         self.assertIn("--maximum-zoom=13", pipeline.tippecanoe_args(segment_layer))
 
-    def test_the_size_estimate_assumes_the_zoom_the_layer_is_baked_at(self):
-        # An estimate that charges segments the z14 rate while tippecanoe bakes
-        # them at z13 overstates every segment-heavy pack twofold.
+    def test_the_size_estimate_uses_the_measured_per_class_coefficients(self):
         route_layer = pipeline.LayerExport("official", Path("x"), 1, 1000.0, "route")
         segment_layer = pipeline.LayerExport("official_net", Path("x"), 1, 1000.0, "segment")
-        self.assertAlmostEqual(
-            segment_layer.estimated_tiles_mb,
-            route_layer.estimated_tiles_mb * sizing.SEGMENT_Z13_FACTOR,
-            places=4,
-        )
+        self.assertAlmostEqual(route_layer.estimated_tiles_mb, 1000 * sizing.KB_PER_KM_TILES_ROUTE / 1024, places=4)
+        self.assertAlmostEqual(segment_layer.estimated_tiles_mb, 1000 * sizing.KB_PER_KM_TILES_SEGMENT / 1024, places=4)
 
 
 class TestExport(PipelineCase):
@@ -325,46 +320,51 @@ class TestLicensesDocument(unittest.TestCase):
 
 
 class TestSizeModel(unittest.TestCase):
-    """The model must keep reproducing the plan's headline numbers."""
+    """The model is anchored on measured bakes; these pin what it now says."""
 
     def setUp(self):
         self.registry = registry_module.load()
 
-    def total(self, **kwargs):
+    def total(self):
         total = sizing.SizeEstimate(0.0, 0.0, 0.0)
         for source in self.registry:
-            total = total + sizing.estimate(
-                source.estimated_km, feature_class=source.feature_class, **kwargs
-            )
+            total = total + sizing.estimate(source.estimated_km, feature_class=source.feature_class)
         return total
 
-    def test_master_database_is_about_1_2_gb(self):
-        self.assertAlmostEqual(self.total().master_mb / 1024, 1.2, delta=0.4)
+    def test_master_database_is_about_one_and_a_half_gb(self):
+        self.assertAlmostEqual(self.total().master_mb / 1024, 1.55, delta=0.3)
 
-    def test_world_tiles_land_in_the_2_to_3_5_gb_range(self):
+    def test_world_tiles_are_well_under_a_gigabyte(self):
+        # The plan carried 2-3.5 GB on a borrowed 3.5 KB/km; measured tiles
+        # cost 0.3-0.45 KB/km for routes and up to 1.61 for dense segments.
         gigabytes = self.total().tiles_mb / 1024
-        self.assertGreater(gigabytes, 2.0)
-        self.assertLess(gigabytes, 3.5)
+        self.assertGreater(gigabytes, 0.3)
+        self.assertLess(gigabytes, 1.0)
 
-    def test_the_z13_segment_lever_cuts_the_worst_case(self):
-        self.assertLess(self.total(cap_segments_at_z13=True).tiles_mb, self.total().tiles_mb * 0.8)
+    def test_segments_are_costed_near_the_measured_worst_case(self):
+        route = sizing.estimate(1000.0, feature_class="route").tiles_mb
+        segment = sizing.estimate(1000.0, feature_class="segment").tiles_mb
+        self.assertGreater(segment, route * 2)
+        self.assertLess(segment, route * 5)
 
-    def test_galicia_grows_by_about_one_percent(self):
-        # The plan's per-pack table: ~4-6k km of official trails, +15-20 MB, +1%.
+    def test_galicia_grows_by_a_fraction_of_a_percent(self):
+        # Plan table: ~4-6k km, +15-20 MB, +1 %. Measured: 0.31-0.37 KB/km.
         tiles_mb = sizing.estimate(5000).tiles_mb
-        self.assertGreater(tiles_mb, 15.0)
-        self.assertLess(tiles_mb, 20.0)
-        self.assertLess(sizing.pack_growth_percent(tiles_mb), 1.5)
+        self.assertLess(tiles_mb, 3.0)
+        self.assertLess(sizing.pack_growth_percent(tiles_mb), 0.2)
 
-    def test_the_alps_worst_case_stays_around_twelve_percent(self):
+    def test_the_alps_worst_case_stays_under_seven_percent(self):
+        # ~105,000 km of swisstopo-shaped segments; the plan said +12 %, or
+        # under 7 % with the z13 lever, which the measurement already includes.
         alps_mb = sizing.estimate(105_000, feature_class="segment").tiles_mb
-        growth = sizing.pack_growth_percent(alps_mb, 3.15 * 1024**3)
-        self.assertGreater(growth, 8.0)
-        self.assertLess(growth, 14.0)
+        self.assertLess(sizing.pack_growth_percent(alps_mb, 3.15 * 1024**3), 7.0)
 
-    def test_the_zoom_lever_pulls_the_alps_under_seven_percent(self):
-        capped = sizing.estimate(105_000, feature_class="segment", cap_segments_at_z13=True)
-        self.assertLess(sizing.pack_growth_percent(capped.tiles_mb, 3.15 * 1024**3), 7.0)
+    def test_the_measured_swiss_bake_is_within_the_segment_coefficient(self):
+        # 66,926 km baked to 105.5 MB: the coefficient must not undershoot it
+        # by more than a third, or the model is optimistic exactly where the
+        # plan warned it should not be.
+        predicted = sizing.estimate(66_926, feature_class="segment").tiles_mb
+        self.assertGreater(predicted, 105.5 * 0.67)
 
 
 class TestStatus(PipelineCase):

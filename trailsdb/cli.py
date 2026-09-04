@@ -306,8 +306,11 @@ def cmd_bake(args, registry, paths: Paths) -> int:
             f"  {b.layer:<18}{b.feature_class:<9}{b.features:>9,}{b.length_km:>10,.0f}"
             f"{b.megabytes:>8.1f}{b.kb_per_km:>8.2f}{b.seconds:>6.0f}"
         )
-    print(f"\ntotal {result.total_bytes / 1024**2:.1f} MB of tiles  "
-          f"(plan coefficient: {sizing.KB_PER_KM_TILES} KB/km for z8-14 routes)")
+    print(
+        f"\ntotal {result.total_bytes / 1024**2:.1f} MB of tiles  "
+        f"(model: {sizing.KB_PER_KM_TILES_ROUTE} KB/km routes, "
+        f"{sizing.KB_PER_KM_TILES_SEGMENT} KB/km segments; plan carried {sizing.KB_PER_KM_TILES_GALICIA})"
+    )
     return 0
 
 
@@ -356,8 +359,9 @@ def cmd_estimate(args, registry, paths: Paths) -> int:
             pack = known[args.pack]
             print(
                 f"for reference, {pack.name} ships at {pack.pack_gb:.2f} GB "
-                f"(source coefficients: {sizing.KB_PER_KM_MASTER} KB/km master, "
-                f"{sizing.KB_PER_KM_TILES} KB/km tiles, measured on the Galicia pipeline)"
+                f"(coefficients: {sizing.KB_PER_KM_MASTER} KB/km master; "
+                f"{sizing.KB_PER_KM_TILES_ROUTE} KB/km route tiles, "
+                f"{sizing.KB_PER_KM_TILES_SEGMENT} KB/km segment tiles -- measured on this pipeline)"
             )
     return 0
 

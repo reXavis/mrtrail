@@ -40,10 +40,12 @@ class TestCli(unittest.TestCase):
         self.assertIn("master database", out)
         self.assertIn("all tiles worldwide", out)
 
-    def test_estimate_accepts_the_zoom_lever(self):
+    def test_estimate_accepts_the_legacy_zoom_flag(self):
+        # The lever is baked into the measured segment coefficient now; the
+        # flag stays accepted and changes nothing.
         _, plain, _ = run("estimate", data_dir=self.data)
         _, capped, _ = run("estimate", "--cap-segments-at-z13", data_dir=self.data)
-        self.assertNotEqual(plain, capped)
+        self.assertEqual(plain, capped)
 
     def test_licenses_writes_the_app_payload(self):
         target = self.data / "licenses.json"
