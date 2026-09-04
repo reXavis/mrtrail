@@ -24,7 +24,7 @@ needed them: a polite/resumable/revalidating fetch layer, the per-pack bbox
 export with tippecanoe settings, and `trailsdb estimate` reproducing the plan's
 size model from the registry.
 
-### 2. Prove it on three continents — **partly done**
+### 2. Prove it on three continents — **done**
 
 | adapter | state |
 | --- | --- |
@@ -65,18 +65,29 @@ The plan's estimates held up well; its assumptions about *access* did not.
 route info sheet source badge, the licenses screen. The pipeline side of that
 last one is ready: `trailsdb licenses` emits the payload the screen renders.
 
-### 4. Europe wave — **1 of 7**
+### 4. Europe wave — **5 of 7**
 
-EuroVelo built. Geotrek, swisstopo, UK, Norway, Sweden and refuges.info are
-registered with licenses and health checks, and tagged with this phase.
+Built and pulled: EuroVelo (55,409 km), swisstopo (66,926 km), Naturvårdsverket
+(17,652 km), England's National Trails and Coast Path (7,604 km), and
+Kartverket's Turrutebasen (pull in progress, ~166k route pieces). Geotrek and
+refuges.info remain; so do the Spanish regional networks and Caminos Naturales,
+which turned out to be a Ministerio de Agricultura dataset rather than CNIG's.
+
+Each of these needed a different reader, and all of them are stdlib: ArcGIS
+GeoJSON paging, WFS with GML, a GeoPackage in LV95, plain GeoJSON in SWEREF99
+TM. The `geo` extra (GDAL) has not been needed for any source so far.
 
 Geotrek's per-instance licensing is already modelled: the registry marks its
-license `resolved_at_ingest`, and an instance that declares no attribution
+licence `resolved_at_ingest`, and an instance that declares no attribution
 raises rather than shipping a blank credit line.
 
-### 5. Americas & Oceania wave — **not started**
+### 5. Americas & Oceania wave — **3 of 6**
 
-USGS/NPS dedup, Ontario/BC, Australian states. All registered and tagged.
+Built and pulled: NPS (27,820 km), Ontario (45,544 km), British Columbia
+(20,198 km of active reserves; the retired half dropped). USGS's National
+Digital Trails has no public endpoint anywhere it was looked for — TNM Access,
+ScienceBase, ArcGIS Online — and is parked. Australia's state portals remain,
+and the USFS/NPS dedup pass is still to do.
 
 ### 6. Cross-links & refresh automation — **not started**
 
