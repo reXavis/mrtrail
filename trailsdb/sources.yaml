@@ -38,6 +38,13 @@ licenses:
     attribution_required: true
     share_alike: false
 
+  cc-by-3.0-au:
+    name: "Creative Commons Attribution 3.0 Australia"
+    url: "https://creativecommons.org/licenses/by/3.0/au/"
+    family: attribution
+    attribution_required: true
+    share_alike: false
+
   cc-by-sa-4.0:
     name: "Creative Commons Attribution-ShareAlike 4.0 International"
     url: "https://creativecommons.org/licenses/by-sa/4.0/"
@@ -634,13 +641,13 @@ sources:
 
   # --------------------------------------------------------------- Oceania --
   australia_states:
-    name: "State walking track datasets"
-    publisher: "Australian state governments (NSW, VIC, QLD, WA, SA, TAS)"
+    name: "State walking track datasets (NSW, QLD, WA)"
+    publisher: "Australian state governments (NSW, QLD, WA)"
     countries: ["AU"]
     adapter: australia_states
     feature_class: segment
     default_kind: hiking
-    estimated_km: 30000
+    estimated_km: 15000
     km_confidence: assumed
     cadence: quarterly
     license: cc-by-4.0
@@ -651,4 +658,101 @@ sources:
       expect_status: 200
     legal:
       verified_on: null
-      notes: "4-6 portals, mixed schemas; attribution differs per state."
+      notes: >-
+        The states with a usable endpoint have their own sources: au_sa_trails,
+        au_vic_tracks, au_tas_tracks. This placeholder covers the rest, none of
+        which has a public, open endpoint as of 2026-09-04: NSW's National
+        Parks and Wildlife Walking Tracks service on portal.data.nsw.gov.au
+        answers "Token Required"; WA's DBCA Long Trails (DBCA-027) is CC BY-NC,
+        which rules out use in anything commercial; Queensland's QPWS tracks
+        were not found on data.qld.gov.au or QSpatial (only a walking network
+        *plan*). Estimated km reduced to those three states' share.
+
+  au_sa_trails:
+    name: "Recreation Trails (South Australia)"
+    publisher: "Government of South Australia, Department for Environment and Water"
+    countries: ["AU"]
+    adapter: au_sa
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 9600
+    km_confidence: official
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "Recreation Trails © Government of South Australia (Department for Environment and Water), CC BY 4.0"
+    homepage: "https://data.sa.gov.au/data/dataset/recreation-trails"
+    health_check:
+      url: "https://www.waterconnect.sa.gov.au/Content/Downloads/DEWNR/TOPO_RecreationTrails_geojson.zip"
+      expect_status: 200
+    legal:
+      verified_on: 2026-09-04
+      notes: >-
+        Verified from the publisher's own text, inside the download: the zip's
+        CC_BY.txt reads "Information contained in this file is licensed under
+        a Creative Commons By Attribution 4.0 Australia Licence
+        http://creativecommons.org/licenses/by/4.0/", and the data.sa.gov.au
+        record (license_url creativecommons.org/licenses/by/4.0) names the
+        Department for Environment and Water as publisher. No credit wording is
+        prescribed, so the string names the dataset, the licensor and the
+        licence as CC BY 4.0 s.3(a) asks. 7,271 pieces, 9,592 km, GDA2020.
+
+  au_vic_tracks:
+    name: "Recreation Tracks (Victoria)"
+    publisher: "State of Victoria, Department of Energy, Environment and Climate Action"
+    countries: ["AU"]
+    adapter: au_vic
+    feature_class: route
+    default_kind: hiking
+    estimated_km: 5000
+    km_confidence: official
+    cadence: quarterly
+    license: cc-by-4.0
+    attribution: "Recreation Tracks © State of Victoria (Department of Energy, Environment and Climate Action), CC BY 4.0"
+    homepage: "https://discover.data.vic.gov.au/dataset/recreation-tracks"
+    health_check:
+      url: "https://opendata.maps.vic.gov.au/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=open-data-platform:recweb_tracks&resultType=hits"
+      expect_status: 200
+    legal:
+      verified_on: 2026-09-04
+      notes: >-
+        Verified from the publisher's own catalogue: the data.vic.gov.au record
+        "Recreation Tracks" (DEECA) carries license "Creative Commons
+        Attribution 4.0 International" and points at the opendata.maps.vic.gov.au
+        WFS this adapter reads. No credit wording is prescribed, so the string
+        names the dataset, the licensor and the licence. recweb_tracks: 365
+        tracks, 5,065 km, of which the vehicle-only tours are left out.
+
+  au_tas_tracks:
+    name: "Tracks (Tasmania, the LIST)"
+    publisher: "State of Tasmania (the LIST, Land Tasmania)"
+    countries: ["AU"]
+    adapter: au_tas
+    feature_class: segment
+    default_kind: hiking
+    estimated_km: 6000
+    km_confidence: assumed
+    cadence: quarterly
+    license: cc-by-3.0-au
+    attribution: "Transport Segments from theLIST ©State of Tasmania"
+    homepage: "https://listdata.thelist.tas.gov.au/opendata/"
+    health_check:
+      url: "https://services.thelist.tas.gov.au/arcgis/rest/services/Public/TopographyAndRelief/MapServer/24?f=json"
+      expect_status: 200
+    legal:
+      verified_on: 2026-09-04
+      notes: >-
+        Verified from Land Tasmania's own text. Its open-data page lists "LIST
+        Transport Segments" (metadata 1ab7e34f-811c-4521-a549-212f295acc97)
+        with copyright type "cc", rendered as the CC BY 3.0 AU badge linking
+        creativecommons.org/licenses/by/3.0/au/. The Land Tasmania Data
+        Attribution Guidelines (May 2015) say "Land Tasmania utilises the
+        Creative Commons Attribution 3.0 Australia (CC Aus.) licences for
+        selected Data [...] Regardless of the CC Aus. licence used, you must
+        always attribute Land Tasmania as the creator", and prescribe, "For
+        Digital products (Inc. Web/Mobile): 'insert dataset/service name' from
+        theLIST ©State of Tasmania" -- the string above, verbatim. The
+        web-service terms (December 2014) defer licensing to the service's
+        copyright text, "the LIST State of Tasmania". Layer 24 of
+        TopographyAndRelief is the tracks subset of Transport Segments: 12,386
+        track segments once ferries and unclassified rows are filtered out.
+

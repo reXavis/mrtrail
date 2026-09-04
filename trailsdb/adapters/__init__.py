@@ -1,6 +1,6 @@
 """Adapter registry.
 
-Every source in ``sources.yaml`` names an adapter. Three are implemented; the
+Every source in ``sources.yaml`` names an adapter. Most are implemented; the
 rest are declared here with the wave of the execution order they belong to, so
 ``trailsdb status`` can report honestly on what is and is not built rather than
 failing with an opaque KeyError.
@@ -9,6 +9,9 @@ failing with an opaque KeyError.
 from __future__ import annotations
 
 from .arcgis import ArcGisAdapter, ArcGisLayer
+from .au_sa import AuSaAdapter
+from .au_tas import AuTasAdapter
+from .au_vic import AuVicAdapter
 from .base import Adapter, AdapterContext, AdapterNotImplemented
 from .bc_recreation import BcRecreationAdapter
 from .cnig import CnigAdapter
@@ -36,6 +39,9 @@ IMPLEMENTED: dict[str, type[Adapter]] = {
     BcRecreationAdapter.name: BcRecreationAdapter,
     NaturvardsverketAdapter.name: NaturvardsverketAdapter,
     GeotrekAdapter.name: GeotrekAdapter,
+    AuSaAdapter.name: AuSaAdapter,
+    AuVicAdapter.name: AuVicAdapter,
+    AuTasAdapter.name: AuTasAdapter,
 }
 
 #: adapter name -> the execution-order phase that builds it.

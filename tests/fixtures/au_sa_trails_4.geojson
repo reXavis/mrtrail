@@ -1,0 +1,211 @@
+{
+ "type": "FeatureCollection",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "EPSG:7844"
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "id": 2,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      138.5466161500001,
+      -35.62399753599993
+     ],
+     [
+      138.54660161900006,
+      -35.623975180999935
+     ],
+     [
+      138.54658922300007,
+      -35.62394696299998
+     ],
+     [
+      138.546595098,
+      -35.623857277999946
+     ]
+    ]
+   },
+   "properties": {
+    "FID": 2,
+    "PERSISTENT": 4853850,
+    "TRAILNAME": "Heysen Trail",
+    "TRAILREGIO": " ",
+    "TRAILNETWO": "Heysen Trail",
+    "TRAILTYPE": "WALKING",
+    "TRAILCATEG": "MAIN",
+    "TRAILSTATU": "ACTIVE",
+    "WALKCLASS": 0,
+    "WALK_RATIN": " ",
+    "HORSE_RATI": " ",
+    "MTB_RATING": " ",
+    "DIRECTION": "2W",
+    "ONTYPE": " ",
+    "CAPTURESOU": 41,
+    "CAPTUREMET": 2,
+    "FEATURESOU": 1,
+    "HORIZONTAL": 10,
+    "FEATUREREL": 1610150400000,
+    "ATTRIBUTER": 1610150400000,
+    "EDITDATE": 1656374400000,
+    "DATA_AVAIL": "PUBLIC",
+    "Shape_Leng": 0.0098770803954
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 94,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      139.3111339720001,
+      -35.148124236999934
+     ],
+     [
+      139.3112061500001,
+      -35.14810180699993
+     ],
+     [
+      139.31132567200007,
+      -35.14807904399993
+     ],
+     [
+      139.31155467700012,
+      -35.14802828499995
+     ]
+    ]
+   },
+   "properties": {
+    "FID": 94,
+    "PERSISTENT": 3815110,
+    "TRAILNAME": "unnamed",
+    "TRAILREGIO": " ",
+    "TRAILNETWO": " ",
+    "TRAILTYPE": "WALKING",
+    "TRAILCATEG": "LOOP",
+    "TRAILSTATU": "INACTIVE:TEMP CLOSURE",
+    "WALKCLASS": 0,
+    "WALK_RATIN": " ",
+    "HORSE_RATI": " ",
+    "MTB_RATING": " ",
+    "DIRECTION": "2W",
+    "ONTYPE": " ",
+    "CAPTURESOU": 41,
+    "CAPTUREMET": 2,
+    "FEATURESOU": 1,
+    "HORIZONTAL": 10,
+    "FEATUREREL": 1542499200000,
+    "ATTRIBUTER": 1542499200000,
+    "EDITDATE": 1671494400000,
+    "DATA_AVAIL": "PUBLIC",
+    "Shape_Leng": 0.00104826758979
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 3,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      138.7448863950001,
+      -34.60143350499993
+     ],
+     [
+      138.74483096300003,
+      -34.60136174199994
+     ],
+     [
+      138.74479873600012,
+      -34.601330436999945
+     ],
+     [
+      138.74476826900002,
+      -34.60130908199994
+     ]
+    ]
+   },
+   "properties": {
+    "FID": 3,
+    "PERSISTENT": 4402969,
+    "TRAILNAME": "Gawler Rivers Path (Tapa Pariara)",
+    "TRAILREGIO": " ",
+    "TRAILNETWO": " ",
+    "TRAILTYPE": "SU:WALK,BIKE",
+    "TRAILCATEG": "MAIN",
+    "TRAILSTATU": "ACTIVE",
+    "WALKCLASS": 0,
+    "WALK_RATIN": " ",
+    "HORSE_RATI": " ",
+    "MTB_RATING": " ",
+    "DIRECTION": "2W",
+    "ONTYPE": " ",
+    "CAPTURESOU": 41,
+    "CAPTUREMET": 2,
+    "FEATURESOU": 1,
+    "HORIZONTAL": 10,
+    "FEATUREREL": 1389139200000,
+    "ATTRIBUTER": 1389139200000,
+    "EDITDATE": 1645660800000,
+    "DATA_AVAIL": "PUBLIC",
+    "Shape_Leng": 0.0117461034565
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 645,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      138.9128332250001,
+      -34.73025050199993
+     ],
+     [
+      138.91279447600004,
+      -34.73026422399994
+     ],
+     [
+      138.91275864200009,
+      -34.730286855999964
+     ],
+     [
+      138.91272412000012,
+      -34.73029761399994
+     ]
+    ]
+   },
+   "properties": {
+    "FID": 645,
+    "PERSISTENT": 4860836,
+    "TRAILNAME": "Warren Tower Hike",
+    "TRAILREGIO": " ",
+    "TRAILNETWO": " ",
+    "TRAILTYPE": "WALKING",
+    "TRAILCATEG": "MAIN",
+    "TRAILSTATU": "CLOSED (RETIRED) - PERMANENT CLOSURE",
+    "WALKCLASS": 0,
+    "WALK_RATIN": "HIKE_M",
+    "HORSE_RATI": " ",
+    "MTB_RATING": " ",
+    "DIRECTION": " ",
+    "ONTYPE": " ",
+    "CAPTURESOU": 41,
+    "CAPTUREMET": 2,
+    "FEATURESOU": 1,
+    "HORIZONTAL": 10,
+    "FEATUREREL": 1415491200000,
+    "ATTRIBUTER": 1415491200000,
+    "EDITDATE": 1654560000000,
+    "DATA_AVAIL": "PUBLIC",
+    "Shape_Leng": 0.00503478867687
+   }
+  }
+ ]
+}

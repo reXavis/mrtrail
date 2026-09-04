@@ -18,6 +18,7 @@ import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Iterator
+from urllib.parse import quote
 
 from ..fetch import FetchError
 from ..formats import geojson
@@ -39,6 +40,8 @@ class ArcGisLayer:
     id_fields: tuple[str, ...] = ()
     name_fields: tuple[str, ...] = ()
     extras_skip: tuple[str, ...] = field(default=("OBJECTID", "objectid", "Shape__Length"))
+    #: Server-side filter, for layers that mix trails with things that are not.
+    where: str = "1=1"
 
 
 class ArcGisAdapter(Adapter):
@@ -79,7 +82,7 @@ class ArcGisAdapter(Adapter):
         total = 0
         for page in range(pages):
             url = (
-                f"{layer.url}/query?where=1%3D1&outFields=*&outSR=4326&f=geojson"
+                f"{layer.url}/query?where={quote(layer.where)}&outFields=*&outSR=4326&f=geojson"
                 f"&resultOffset={page * self.page_size}&resultRecordCount={self.page_size}"
             )
             record = self.session.download(url, target / f"page-{page:04d}.geojson", force=force)

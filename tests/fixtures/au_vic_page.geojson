@@ -1,0 +1,329 @@
+{
+ "type": "FeatureCollection",
+ "totalFeatures": 365,
+ "numberMatched": 365,
+ "numberReturned": 2,
+ "timeStamp": "2026-09-04T20:20:30.201Z",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "urn:ogc:def:crs:EPSG::7844"
+  }
+ },
+ "bbox": [
+  141.020125,
+  -38.651363,
+  149.754424,
+  -34.987189
+ ],
+ "features": [
+  {
+   "type": "Feature",
+   "id": "recweb_tracks.64",
+   "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+     [
+      [
+       144.106275,
+       -37.058985
+      ],
+      [
+       144.10635,
+       -37.059254
+      ],
+      [
+       144.106462,
+       -37.059483
+      ],
+      [
+       144.106653,
+       -37.059678
+      ]
+     ],
+     [
+      [
+       144.106275,
+       -37.058985
+      ],
+      [
+       144.106355,
+       -37.058995
+      ],
+      [
+       144.106434,
+       -37.058958
+      ],
+      [
+       144.106439,
+       -37.058959
+      ]
+     ]
+    ]
+   },
+   "geometry_name": "geom",
+   "properties": {
+    "serial_no": "121106",
+    "name": "Red White And Blue Walk",
+    "asset_cls": "TRACK",
+    "access_dsc": "Starts at the Red, White and Blue Historical Site in the Muckleford State Forest, approximately 10 kms south of Maldon. From Maldon head south, take the Castlemaine Maldon Rd to the left, turn right into Pullans Rd, travel west for about 1 km then turn left into Red White and Blue Tk, travel south for about 4km - Red White and Blue is signposted on the left.",
+    "maintained_by": "CASTLEMAINE",
+    "comments": "A 5km walk through Box-ironbark forest exploring the rich history and biodiversity of the forest.  These forests are also home to a large number of native animals, including mammals, birds, reptiles and frogs. By day, enjoy the sights and sounds of wallabies and kangaroos bounding through the forest and numerous bird species twittering in the trees overhead, as well as the odd Koala. Visit the forest at night when the owls, gliders, possums and bats come out to play.",
+    "dis_access": "NONE",
+    "export_date": "2026/09/03 16:14:41.",
+    "published": "1",
+    "trk_class": "BASIC",
+    "wilderness": null,
+    "clos_stat": "",
+    "clos_desc": null,
+    "clos_start": null,
+    "clos_open": null,
+    "clos_reas": "",
+    "f_activity": null,
+    "f_comment": null,
+    "f_durdesc": null,
+    "f_grade": null,
+    "f_distance": null,
+    "f_distuom": null,
+    "f_time": null,
+    "f_timeuom": null,
+    "f_measure": null,
+    "f_ranking": null,
+    "h_activity": "Y",
+    "h_comment": "Popular with local horse enthusiasts, an easy ride along formed forest roads taking in the beauty of box-ironbark forest",
+    "h_durdesc": "MEDIUM (1-4 HOURS)",
+    "h_grade": "BASIC",
+    "h_distance": "5",
+    "h_distuom": "km",
+    "h_time": null,
+    "h_timeuom": "h",
+    "h_measure": "RETURN",
+    "h_ranking": 1,
+    "qual_mark": "Sign posted",
+    "qual_track": "Formed track",
+    "w_activity": "Y",
+    "w_comment": "This is an easy walk through the Box-Ironbark forest to Dunns Reef. It starts at the Historic Red White and Blue Mine Site and includes interpretive information boards telling you interesting stories of Muckleford State Forests natural and cultural landscape that will inspire you to look at your surrounds through different eyes.",
+    "w_distance": "5",
+    "w_distuom": "km",
+    "w_durdesc": "MEDIUM (1-4 HOURS)",
+    "w_expert": "Bushwalking experience recommended",
+    "w_grade": "C2",
+    "w_gradient": "Flat",
+    "w_level": "Grade 3",
+    "w_measure": "RETURN",
+    "w_steps": "Occasional steps",
+    "w_time": "2",
+    "w_timeuom": null,
+    "w_ranking": null,
+    "m_activity": "Y",
+    "m_comment": "An easy ride along gently undulating bush tracks through box ironbark forest.",
+    "m_durdesc": "SHORT (<1 HOUR)",
+    "m_distance": "5",
+    "m_distuom": "km",
+    "m_time": null,
+    "m_timeuom": "h",
+    "m_measure": "RETURN",
+    "m_fitness": null,
+    "m_difficult": "Very Easy",
+    "m_ranking": null,
+    "d_activity": null,
+    "d_grade": null,
+    "d_distance": null,
+    "d_distuom": null,
+    "d_time": null,
+    "d_timeuom": null,
+    "d_measure": null,
+    "d_comment": null,
+    "d_durdesc": null,
+    "d_ranking": null,
+    "t_activity": null,
+    "t_grade": null,
+    "t_distance": null,
+    "t_distuom": null,
+    "t_time": null,
+    "t_timeuom": null,
+    "t_measure": null,
+    "t_comment": null,
+    "t_durdesc": null,
+    "t_ranking": null,
+    "heritage": null,
+    "heritage_c": null,
+    "heritage_r": null,
+    "paddling": null,
+    "paddling_c": null,
+    "paddling_r": null,
+    "tree_view": null,
+    "treeview_c": null,
+    "tv_ranking": null,
+    "wildlife": null,
+    "wildlife_c": null,
+    "wildlife_r": null,
+    "photo_id_1": "122336",
+    "photo_id_2": "122337",
+    "photo_id_3": "122338",
+    "layer_edit_date": 20260412.0,
+    "vers_date": null
+   },
+   "bbox": [
+    144.10402,
+    -37.060178,
+    144.121818,
+    -37.048161
+   ]
+  },
+  {
+   "type": "Feature",
+   "id": "recweb_tracks.4",
+   "geometry": {
+    "type": "MultiLineString",
+    "coordinates": [
+     [
+      [
+       144.161894,
+       -37.513236
+      ],
+      [
+       144.16211,
+       -37.513226
+      ],
+      [
+       144.162347,
+       -37.512863
+      ],
+      [
+       144.163036,
+       -37.512056
+      ]
+     ],
+     [
+      [
+       144.48788,
+       -37.50332
+      ],
+      [
+       144.48759,
+       -37.502622
+      ],
+      [
+       144.487367,
+       -37.502089
+      ],
+      [
+       144.487222,
+       -37.5018
+      ]
+     ]
+    ]
+   },
+   "geometry_name": "geom",
+   "properties": {
+    "serial_no": "120425",
+    "name": "Wombat State Forest 4WD Tour",
+    "asset_cls": "TRACK",
+    "access_dsc": "Located 88 kilometres from Melbourne. Follow the Calder Highway to the township of Woodend. At Woodend head west along the Daylesford Road for then turn left down James Road just west of Tylden. Follow this, passing through Trentham East then turn left at Firth Road. Follow Firth Road east for 5 kilometres then turn left to arrive at Firth Park.",
+    "maintained_by": "DAYLESFORD",
+    "comments": null,
+    "dis_access": null,
+    "export_date": "2026/09/03 16:14:41.",
+    "published": "1",
+    "trk_class": "BASIC",
+    "wilderness": null,
+    "clos_stat": "",
+    "clos_desc": null,
+    "clos_start": null,
+    "clos_open": null,
+    "clos_reas": "",
+    "f_activity": "Y",
+    "f_comment": "The Wombat Forest 4WD Tour starts at Gisborne and takes in the scenic sites of the Wombat State Forest. Stop at Firth Park for a picnic or walk, visit the old Yankee Mine and Rat Hole Mine, drive to Mt Hope and visit the Werribee River with opportunities for picnicking and walking.Note: The 4WD grading system applies in dry conditions only. This track not suitable for inexperienced drivers in wet weather when the tracks are slippery.",
+    "f_durdesc": "DAY (>4 HOURS)",
+    "f_grade": "Easy (Green Circle)",
+    "f_distance": "100",
+    "f_distuom": "km",
+    "f_time": "8",
+    "f_timeuom": "h",
+    "f_measure": "ONE WAY",
+    "f_ranking": 1,
+    "h_activity": null,
+    "h_comment": null,
+    "h_durdesc": null,
+    "h_grade": null,
+    "h_distance": null,
+    "h_distuom": null,
+    "h_time": null,
+    "h_timeuom": null,
+    "h_measure": null,
+    "h_ranking": null,
+    "qual_mark": null,
+    "qual_track": null,
+    "w_activity": null,
+    "w_comment": null,
+    "w_distance": null,
+    "w_distuom": null,
+    "w_durdesc": null,
+    "w_expert": null,
+    "w_grade": null,
+    "w_gradient": null,
+    "w_level": null,
+    "w_measure": null,
+    "w_steps": null,
+    "w_time": null,
+    "w_timeuom": null,
+    "w_ranking": null,
+    "m_activity": null,
+    "m_comment": null,
+    "m_durdesc": null,
+    "m_distance": null,
+    "m_distuom": null,
+    "m_time": null,
+    "m_timeuom": null,
+    "m_measure": null,
+    "m_fitness": null,
+    "m_difficult": null,
+    "m_ranking": null,
+    "d_activity": null,
+    "d_grade": null,
+    "d_distance": null,
+    "d_distuom": null,
+    "d_time": null,
+    "d_timeuom": null,
+    "d_measure": null,
+    "d_comment": null,
+    "d_durdesc": null,
+    "d_ranking": null,
+    "t_activity": null,
+    "t_grade": null,
+    "t_distance": null,
+    "t_distuom": null,
+    "t_time": null,
+    "t_timeuom": null,
+    "t_measure": null,
+    "t_comment": null,
+    "t_durdesc": null,
+    "t_ranking": null,
+    "heritage": null,
+    "heritage_c": null,
+    "heritage_r": null,
+    "paddling": null,
+    "paddling_c": null,
+    "paddling_r": null,
+    "tree_view": null,
+    "treeview_c": null,
+    "tv_ranking": null,
+    "wildlife": null,
+    "wildlife_c": null,
+    "wildlife_r": null,
+    "photo_id_1": "121382",
+    "photo_id_2": "121383",
+    "photo_id_3": "121384",
+    "layer_edit_date": 20250815.0,
+    "vers_date": null
+   },
+   "bbox": [
+    144.161894,
+    -37.516387,
+    144.48788,
+    -37.423773
+   ]
+  }
+ ]
+}

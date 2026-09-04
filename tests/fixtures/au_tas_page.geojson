@@ -1,0 +1,138 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "id": 16,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      147.3326298083554,
+      -42.905220000901146
+     ],
+     [
+      147.33267640396917,
+      -42.905210347400455
+     ],
+     [
+      147.33293898691662,
+      -42.90507961144017
+     ],
+     [
+      147.33300293169344,
+      -42.905029806721885
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 16,
+    "TRANSEG_ID": 6368886,
+    "TRANS_TYPE": "Track",
+    "TSEG_FEAT": "Normal Transport Segment",
+    "STATUS": "Open",
+    "TRAFF_DIR": "Not Applicable",
+    "TRAN_CLASS": "Shared Use Bike/Walking",
+    "USER_TYPE": "Public",
+    "TOUR_CLASS": null,
+    "SURFACE_TY": "Unsealed",
+    "PRI_NAME": "Lambert Rivulet Track",
+    "PRI_NOMREG": "48204J",
+    "SEC_NAME": null,
+    "SEC_NOMREG": null,
+    "AUTHORITY": "Council",
+    "FOREIGN_ID": null,
+    "COMP_LEN": 122.5999984741211
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 17,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      147.33189696633988,
+      -42.90660017997819
+     ],
+     [
+      147.33191360673217,
+      -42.90658739797898
+     ],
+     [
+      147.33191806776588,
+      -42.906583134899385
+     ],
+     [
+      147.33192104118947,
+      -42.90658028977557
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 17,
+    "TRANSEG_ID": 6383066,
+    "TRANS_TYPE": "Track",
+    "TSEG_FEAT": "Normal Transport Segment",
+    "STATUS": "Open",
+    "TRAFF_DIR": "Not Applicable",
+    "TRAN_CLASS": "Walking",
+    "USER_TYPE": "Public",
+    "TOUR_CLASS": null,
+    "SURFACE_TY": "Unsealed",
+    "PRI_NAME": "Lambert Rivulet Track",
+    "PRI_NOMREG": "48204J",
+    "SEC_NAME": null,
+    "SEC_NOMREG": null,
+    "AUTHORITY": "Council",
+    "FOREIGN_ID": null,
+    "COMP_LEN": 166.39999389648438
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 18,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      147.33235762151924,
+      -42.90551055273237
+     ],
+     [
+      147.3324320038214,
+      -42.9054901739452
+     ],
+     [
+      147.33243695264034,
+      -42.905476489603295
+     ],
+     [
+      147.332440501884,
+      -42.90546663676994
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 18,
+    "TRANSEG_ID": 6383065,
+    "TRANS_TYPE": "Track",
+    "TSEG_FEAT": "Normal Transport Segment",
+    "STATUS": "Open",
+    "TRAFF_DIR": "Not Applicable",
+    "TRAN_CLASS": "Walking",
+    "USER_TYPE": "Public",
+    "TOUR_CLASS": null,
+    "SURFACE_TY": "Unsealed",
+    "PRI_NAME": "Lambert Rivulet Track",
+    "PRI_NOMREG": "48204J",
+    "SEC_NAME": null,
+    "SEC_NOMREG": null,
+    "AUTHORITY": "Council",
+    "FOREIGN_ID": null,
+    "COMP_LEN": 48.70000076293945
+   }
+  }
+ ],
+ "exceededTransferLimit": true
+}
