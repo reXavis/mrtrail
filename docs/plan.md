@@ -103,13 +103,17 @@ rule was written for. data.gouv.fr carries the Gard's PDIPR trails "(source
 Géotrek)" under the Licence Ouverte 2.0 — an open distribution by the same
 operator, and the model for reopening an instance.
 
-### 5. Americas & Oceania wave — **3 of 6**
+### 5. Americas & Oceania wave — **6 of 6 built where an open endpoint exists**
 
 Built and pulled: NPS (27,820 km), Ontario (45,544 km), British Columbia
-(20,198 km of active reserves; the retired half dropped). USGS's National
-Digital Trails has no public endpoint anywhere it was looked for — TNM Access,
-ScienceBase, ArcGIS Online — and is parked. Australia's state portals remain,
-and the USFS/NPS dedup pass is still to do.
+(20,198 km of active reserves; the retired half dropped), and three Australian
+states — South Australia's Recreation Trails (9,461 km), Tasmania's LIST tracks
+(4,181 km) and Victoria's walkable Recreation Tracks (1,139 km) — each on a
+government endpoint with its licence read from the publisher's own text. USGS's
+National Digital Trails has no public endpoint anywhere it was looked for — TNM
+Access, ScienceBase, ArcGIS Online — and is parked; NSW, Queensland and Western
+Australia have no open endpoint either (token-gated, absent, CC BY-NC). The
+USFS/NPS dedup pass is still to do.
 
 ### 6. Cross-links & refresh automation — **not started**
 
@@ -146,13 +150,13 @@ surfaces immediately. The Camino series is pulled and normalized; FEDME's
 
 ## Before any of this ships
 
-Fifteen of the 20 sources carry a `legal.verified_on` date; `trailsdb export`
-refuses the other five by default. Clearing each one means: read the
+Nineteen of the 23 sources carry a `legal.verified_on` date; `trailsdb export`
+refuses the other four by default. Clearing each one means: read the
 publisher's terms, confirm the license id, confirm the exact attribution
 wording, then set the date. It is the one part of this that cannot be
 automated, and the export gate is there so it cannot be skipped by accident
 either. Reading the text paid for itself immediately: the IGN licence takes
 the producer credit from the SCNE product table, and every Spanish series had
-the wrong one; and all ten Geotrek operators turned out closed. The open items
-are an open Geotrek distribution and the four sources that have no adapter
-yet.
+the wrong one; all ten Geotrek operators turned out closed; and refuges.info is
+CC BY-SA 2.0, not 4.0. The open items are an open Geotrek distribution and the
+four sources that have no adapter yet.

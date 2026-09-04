@@ -52,6 +52,13 @@ licenses:
     attribution_required: true
     share_alike: true
 
+  cc-by-sa-2.0:
+    name: "Creative Commons Attribution-ShareAlike 2.0 Generic"
+    url: "https://creativecommons.org/licenses/by-sa/2.0/"
+    family: share-alike
+    attribution_required: true
+    share_alike: true
+
   odbl-1.0:
     name: "Open Data Commons Open Database License v1.0"
     url: "https://opendatacommons.org/licenses/odbl/1-0/"
@@ -475,17 +482,27 @@ sources:
     estimated_km: 0
     km_confidence: official
     cadence: quarterly
-    license: cc-by-sa-4.0
-    attribution: "(c) refuges.info contributors, CC BY-SA"
+    license: cc-by-sa-2.0
+    attribution: "© refuges.info contributors, CC BY-SA 2.0"
     homepage: "https://www.refuges.info/"
     health_check:
-      url: "https://www.refuges.info/"
+      url: "https://www.refuges.info/api/"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-09-04
       notes: >-
-        Share-alike. Stays in its own layer and its own spots file; it must never
-        be combined with any other source's geometry or attributes.
+        Share-alike, and 2.0 rather than the 4.0 the plan assumed: the API
+        documentation (refuges.info/api/) says "Les donnees du site
+        Refuges.info sont sous licence CC By-Sa 2.0, cependant l'API permet
+        aussi de retourner des donnees provenant d'OpenStreetMap [...] ces
+        donnees sont sous licence ODbL" -- so only the site's own points may
+        be taken, never the OSM search results. It also describes itself as
+        "un service web personnel et non commercial"; the bbox export is
+        read-only, needs no key, and returns GeoJSON points (cabane, refuge,
+        gite, bivouac...). Points, not lines: the adapter waits on point
+        support in the schema and export. Stays in its own layer and its own
+        spots file; it must never be combined with any other source's
+        geometry or attributes.
 
   # --------------------------------------------------------------- Americas -
   # US sources are pulled from government endpoints only. Esri-hosted mirrors of
@@ -637,7 +654,14 @@ sources:
       expect_status: 200
     legal:
       verified_on: null
-      notes: "Catch-all for regional portals; attribution differs per community."
+      notes: >-
+        Catch-all for regional portals; attribution differs per community.
+        Scouted on datos.gob.es 2026-09-04: Navarra publishes each SL-NA as
+        its own CC BY 4.0 dataset, Bizkaia its PR network over WFS, Aragon a
+        senderos table, the Comunitat Valenciana WMS only; most of it is the
+        homologated GR/PR/SL network that cnig_fedme already carries
+        nationwide, so the marginal kilometres are few. The Xunta's open-data
+        API for Galicia answered with a redirect and is still to be found.
 
   # --------------------------------------------------------------- Oceania --
   australia_states:
@@ -703,7 +727,7 @@ sources:
     adapter: au_vic
     feature_class: route
     default_kind: hiking
-    estimated_km: 5000
+    estimated_km: 1100
     km_confidence: official
     cadence: quarterly
     license: cc-by-4.0
@@ -720,7 +744,9 @@ sources:
         Attribution 4.0 International" and points at the opendata.maps.vic.gov.au
         WFS this adapter reads. No credit wording is prescribed, so the string
         names the dataset, the licensor and the licence. recweb_tracks: 365
-        tracks, 5,065 km, of which the vehicle-only tours are left out.
+        tracks, 5,065 km, of which the 73 vehicle-only tours are most of the
+        distance; the 292 tracks open to walkers, riders or mountain bikers
+        come to 1,139 km.
 
   au_tas_tracks:
     name: "Tracks (Tasmania, the LIST)"
@@ -729,8 +755,8 @@ sources:
     adapter: au_tas
     feature_class: segment
     default_kind: hiking
-    estimated_km: 6000
-    km_confidence: assumed
+    estimated_km: 4200
+    km_confidence: official
     cadence: quarterly
     license: cc-by-3.0-au
     attribution: "Transport Segments from theLIST ©State of Tasmania"

@@ -20,17 +20,17 @@ trailsdb status
 
 | built | not yet |
 | --- | --- |
-| Source registry for all 20 planned sources | 4 sources without an adapter (Australia, Spain regional, refuges.info; USGS NDT has no endpoint) |
+| Source registry for 23 sources | 4 without an adapter: refuges.info (points, needs schema support), Spain regional, NSW/QLD/WA (no open endpoint), USGS NDT (no endpoint) |
 | Normalized schema, master-database format, SQLite catalog | Cross-link matcher against OSM relations |
 | Polite fetch layer; stdlib readers for ArcGIS, WFS (JSON and GML), GeoPackage/WKB, GPX; LV95 and transverse-Mercator transforms | Shapefile + file-geodatabase readers (the `geo` extra) |
-| CNIG ×4 (FEDME, Camino, Camino del Cid, Caminos Naturales), NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC, Geotrek fleet (ten operators pulled, all ten closed on their own terms) | App-side overlay toggle, source badges, licenses screen |
+| CNIG ×4 (FEDME, Camino, Camino del Cid, Caminos Naturales), NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC, Australia ×3 (SA, VIC, TAS), Geotrek fleet (ten operators pulled, all ten closed on their own terms) | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
-| Size model, validated against real pulled data and five tippecanoe bakes | An open Geotrek operator (all ten read so far refuse or say nothing); refuges.info, USGS, Australia, Spain regional |
+| Size model, validated against real pulled data and five tippecanoe bakes; 19 of 23 sources legally verified from their publishers' own text | An open Geotrek operator (all ten read so far refuse or say nothing) |
 
 ### Data actually pulled
 
-**Nine sources, 12 layers, and every volume estimate the plan made landed
-close.** Figures are measured from the normalized data.
+**Every volume estimate the plan made landed close.** Figures are measured
+from the normalized data.
 
 | source | features | km | plan estimated |
 | --- | ---: | ---: | ---: |
@@ -46,8 +46,11 @@ close.** Figures are measured from the normalized data.
 | England: National Trails + Coast Path | 16,457 | 7,604 | 5,000 |
 | France: Geotrek, 10 of ~80 operators — pulled, then dropped: every operator's terms are closed | 3,321 | 56,301 | 65,000 (all of France) |
 | Sweden: Naturvårdsverket leder | 12,013 | 17,652 | 15,000 |
+| South Australia: DEW Recreation Trails | 7,113 | 9,461 | 30,000 (all states) |
+| Tasmania: the LIST tracks | 12,057 | 4,181 | — |
+| Victoria: DEECA Recreation Tracks (walkable) | 292 | 1,139 | — |
 | Norway: Kartverket Turrutebasen | — | — | 80,000 (pull running) |
-| CNIG FEDME senderos | — | — | 50,000 (pull running) |
+| CNIG FEDME senderos | 3,780 | 49,780 | 50,000 |
 
 The Camino pulled 1,074 stages across 80 route variants in three countries.
 USFS dropped 5,337 of 86,303 raw features, all null-geometry attribute rows;
@@ -58,9 +61,11 @@ A Galicia cut — the pack that ships today — bakes to **1.6 MB of PMTiles,
 +0.08 % of the pack**, against the plan's predicted ~1 %, before FEDME. Five
 packs have been baked with tippecanoe; see [The size model](#the-size-model).
 
-**Fifteen sources are legally verified** from their publishers' own text:
-USFS, NPS, swisstopo, EuroVelo, Ontario, BC, England, Sweden, NZ DOC ×2,
-Norway, and the four CNIG series. The CNIG ones carry the credit the IGN
+**Nineteen of 23 sources are legally verified** from their publishers' own
+text: USFS, NPS, swisstopo, EuroVelo, Ontario, BC, England, Sweden, NZ DOC ×2,
+Norway, the four CNIG series, South Australia, Victoria, Tasmania and
+refuges.info (CC BY-SA 2.0, not the 4.0 the plan assumed; points, so its
+adapter waits on point support). The CNIG ones carry the credit the IGN
 licence prescribes and the SCNE product table spells out per product —
 `Obra derivada de FEDME 2020-2026 CC-BY 4.0 FEDME`, not the `ign.es` the plan
 assumed — and Norway's is the verbatim `© Kartverket`. Geotrek's ten operators
@@ -104,6 +109,12 @@ The plan's size estimates held up. Its assumptions about *access* mostly did not
   carries the Gard's PDIPR trails "(source Géotrek)" under the Licence Ouverte
   2.0, which is a different distribution to read and record before that
   instance reopens.
+- **Australia is three states, not six.** South Australia, Victoria and
+  Tasmania publish official tracks on government endpoints under CC BY (the
+  LIST even prescribes its credit wording); NSW's walking-tracks service wants
+  a token, Western Australia's long trails are CC BY-NC, and Queensland's
+  QPWS tracks are not on its portals. Victoria's 5,065 km shrink to 1,139
+  once the four-wheel-drive tours are left out.
 - **The plan's attribution strings were wrong for every Spanish series.**
   The IGN licence takes the producer from a published product table; FEDME,
   the Camino federations, the Camino del Cid consortium and MAPA are each
