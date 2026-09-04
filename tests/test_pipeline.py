@@ -193,7 +193,8 @@ class TestExport(PipelineCase):
         layer = result.layers[0]
         self.assertEqual(layer.features, 2)  # both Spanish sources, not the NZ one
         self.assertEqual(sorted(layer.sources), ["cnig_camino", "cnig_fedme"])
-        ids = {f.id for f in geojsonl.read(layer.path)}
+        # Layer files are tile-shaped (id as a property), not full features.
+        ids = {json.loads(line)["properties"]["id"] for line in layer.path.read_text().splitlines()}
         self.assertTrue(all(i.startswith("cnig_") for i in ids))
 
     def test_allow_unverified_is_an_explicit_override(self):
@@ -211,7 +212,7 @@ class TestExport(PipelineCase):
         pipeline.export_pack(registry, self.paths, pack="galicia", bbox=GALICIA)
         line = (self.paths.export_dir("galicia") / "official.geojsonl").read_text().splitlines()[0]
         obj = json.loads(line)
-        self.assertEqual(obj["properties"]["id"], "cnig_fedme:GR11")
+        self.assertEqual(obj["properties"]["id"], "cnig_fedme:1")  # the CNIG file id
         self.assertNotIn("extras", obj["properties"])
         self.assertNotIn("attribution", obj["properties"])
         self.assertNotIn("source_url", obj["properties"])
