@@ -27,6 +27,7 @@ from .fetch import PoliteSession
 from .geo import BBox
 from .manifest import PullManifest
 from .registry import Registry, Source
+from .schema import TILE_ATTRIBUTES
 
 #: Packs are cut with a small pad so a route that briefly leaves the box does not
 #: come back as two disconnected stubs at the edge.
@@ -230,7 +231,7 @@ def export_pack(
             for feature in geojsonl.read(path):
                 if not geo.bbox_intersects(geo.bbox(feature.geometry), padded):
                     continue
-                writers[layer].add(feature)
+                writers[layer].add_tile(feature)
                 layer_km[layer] += geo.length_km(feature.geometry)
                 kept += 1
 
@@ -325,13 +326,18 @@ def tippecanoe_args(layer: LayerExport) -> list[str]:
     the Alps and US mountain-state packs under about 7 % growth.
     """
     max_zoom = "14" if layer.feature_class == "route" else "13"
-    return [
+    args = [
         f"--layer={layer.layer}",
         "--minimum-zoom=8",
         f"--maximum-zoom={max_zoom}",
         "--drop-densest-as-needed",
         "--no-tile-size-limit",
     ]
+    # Only the schema's tile attributes reach the tiles, by name. The export
+    # already writes nothing else, and saying so here means a future export
+    # change cannot quietly widen the tiles.
+    args.extend(f"--include={name}" for name in TILE_ATTRIBUTES)
+    return args
 
 
 # --------------------------------------------------------------------- bake --

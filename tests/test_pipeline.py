@@ -203,6 +203,22 @@ class TestExport(PipelineCase):
         )
         self.assertTrue(result.layers)
 
+    def test_exported_layer_features_are_tile_shaped(self):
+        # Whitelist properties only, id among them, no extras, no attribution
+        # (per-source, rendered from the registry), and rounded coordinates.
+        self.normalize_galicia_and_nz()
+        registry = verified(self.registry, "cnig_fedme")
+        pipeline.export_pack(registry, self.paths, pack="galicia", bbox=GALICIA)
+        line = (self.paths.export_dir("galicia") / "official.geojsonl").read_text().splitlines()[0]
+        obj = json.loads(line)
+        self.assertEqual(obj["properties"]["id"], "cnig_fedme:GR11")
+        self.assertNotIn("extras", obj["properties"])
+        self.assertNotIn("attribution", obj["properties"])
+        self.assertNotIn("source_url", obj["properties"])
+        self.assertLessEqual(set(obj["properties"]), set(pipeline.TILE_ATTRIBUTES))
+        self.assertIn("--include=id", pipeline.tippecanoe_args(
+            pipeline.LayerExport("official", Path("x"), 1, 1.0, "route")))
+
     def test_export_writes_attribution_and_manifest(self):
         self.normalize_galicia_and_nz()
         registry = verified(self.registry, "cnig_fedme", "cnig_camino")

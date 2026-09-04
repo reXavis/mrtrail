@@ -82,6 +82,25 @@ class Writer:
         self._fh.write("\n")
         self.count += 1
 
+    def add_tile(self, feature: Feature) -> None:
+        """Write the tile-shaped form: whitelist properties only, id among them.
+
+        This is what tippecanoe gets. The master database keeps everything;
+        tiles carry ``TILE_ATTRIBUTES`` and nothing else, which is what keeps
+        the per-pack growth figures honest -- and tippecanoe cannot carry a
+        string feature id at all, so the id travels as a property.
+        """
+        from .geo import round_geometry
+
+        obj = {
+            "type": "Feature",
+            "properties": feature.tile_properties(),
+            "geometry": round_geometry(feature.geometry),
+        }
+        self._fh.write(json.dumps(obj, ensure_ascii=False, separators=(",", ":")))
+        self._fh.write("\n")
+        self.count += 1
+
     def close(self) -> int:
         self._fh.close()
         self._tmp.replace(self.path)
