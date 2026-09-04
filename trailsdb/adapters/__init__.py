@@ -22,6 +22,7 @@ from .naturvardsverket import NaturvardsverketAdapter
 from .nps import NpsAdapter
 from .nz_doc import NzDocAdapter
 from .ontario_otn import OntarioOtnAdapter
+from .refuges_info import RefugesInfoAdapter
 from .swisstopo import SwisstopoAdapter
 from .uk_national_trails import UkNationalTrailsAdapter
 from .usfs import UsfsAdapter
@@ -42,11 +43,11 @@ IMPLEMENTED: dict[str, type[Adapter]] = {
     AuSaAdapter.name: AuSaAdapter,
     AuVicAdapter.name: AuVicAdapter,
     AuTasAdapter.name: AuTasAdapter,
+    RefugesInfoAdapter.name: RefugesInfoAdapter,
 }
 
 #: adapter name -> the execution-order phase that builds it.
 PLANNED: dict[str, str] = {
-    "refuges_info": "4 - Europe wave",
     "spain_regional": "4 - Europe wave",
     "usgs_ndt": "5 - Americas & Oceania wave",
     "australia_states": "5 - Americas & Oceania wave",

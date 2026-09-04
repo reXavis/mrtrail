@@ -231,10 +231,14 @@ def cmd_normalize(args, registry, paths: Paths) -> int:
                 failures += 1
                 print(f"FAIL    {source.id:<24} {type(exc).__name__}: {exc}")
                 continue
+            density = (
+                f"{result.kb_per_feature:5.2f} KB/spot"
+                if result.features and not result.length_km
+                else f"{result.points_per_km:5.1f} pts/km  {result.kb_per_km:5.2f} KB/km"
+            )
             print(
                 f"ok      {result.source_id:<24} {result.features:>7,} features "
-                f"{result.length_km:>9,.0f} km  {result.points_per_km:5.1f} pts/km  "
-                f"{result.kb_per_km:5.2f} KB/km"
+                f"{result.length_km:>9,.0f} km  {density}"
             )
     if failures:
         print(f"\n{failures} source(s) failed to normalize")
@@ -304,7 +308,8 @@ def cmd_bake(args, registry, paths: Paths) -> int:
     for b in result.layers:
         print(
             f"  {b.layer:<18}{b.feature_class:<9}{b.features:>9,}{b.length_km:>10,.0f}"
-            f"{b.megabytes:>8.1f}{b.kb_per_km:>8.2f}{b.seconds:>6.0f}"
+            f"{b.megabytes:>8.1f}{(b.kb_per_km if b.length_km else b.kb_per_feature):>8.2f}"
+            f"{b.seconds:>6.0f}{'  KB/spot' if not b.length_km else ''}"
         )
     print(
         f"\ntotal {result.total_bytes / 1024**2:.1f} MB of tiles  "
@@ -330,7 +335,9 @@ def cmd_licenses(args, registry, paths: Paths) -> int:
 
 def cmd_estimate(args, registry, paths: Paths) -> int:
     catalog = Catalog(paths.catalog) if paths.catalog.exists() else None
-    measured = {s.source_id: s.length_km for s in catalog.stats()} if catalog else {}
+    stats = list(catalog.stats()) if catalog else []
+    measured = {s.source_id: s.length_km for s in stats}
+    counted = {s.source_id: s.features for s in stats}
     if catalog:
         catalog.close()
 
@@ -340,9 +347,17 @@ def cmd_estimate(args, registry, paths: Paths) -> int:
     total = sizing.SizeEstimate(0.0, 0.0, 0.0)
     for source in sorted(registry, key=lambda s: -s.estimated_km):
         km = measured.get(source.id) or float(source.estimated_km)
-        origin = "measured" if source.id in measured and measured[source.id] else source.km_confidence
+        features = counted.get(source.id, 0)
+        origin = (
+            "measured"
+            if (measured.get(source.id) or (source.feature_class == "spot" and features))
+            else source.km_confidence
+        )
         est = sizing.estimate(
-            km, feature_class=source.feature_class, cap_segments_at_z13=args.cap_segments_at_z13
+            km,
+            feature_class=source.feature_class,
+            cap_segments_at_z13=args.cap_segments_at_z13,
+            features=features,
         )
         total = total + est
         print(f"{source.id:<24} {km:>9,.0f} {origin:>9} {est.master_mb:>10.1f} {est.tiles_mb:>9.1f}")

@@ -26,9 +26,16 @@ def haversine_km(a: Sequence[float], b: Sequence[float]) -> float:
 
 
 def lines_of(geometry: dict[str, Any]) -> list[list[Sequence[float]]]:
-    """Normalize LineString / MultiLineString to a list of lines."""
+    """Normalize LineString / MultiLineString to a list of lines.
+
+    A Point is one line of one position, so bbox and point counts work on spots
+    and its length is zero, as it should be.
+    """
     coords = geometry.get("coordinates") or []
-    if geometry.get("type") == "LineString":
+    gtype = geometry.get("type")
+    if gtype == "Point":
+        return [[coords]] if coords else []
+    if gtype == "LineString":
         return [coords] if coords else []
     return [line for line in coords if line]
 
@@ -117,6 +124,8 @@ def round_geometry(geometry: dict[str, Any], precision: int = COORDINATE_PRECISI
     """Return the geometry with coordinates rounded to ``precision`` decimals."""
     gtype = geometry.get("type")
     coords = geometry.get("coordinates")
+    if gtype == "Point":
+        return {"type": gtype, "coordinates": _round_line([coords], precision)[0]}
     if gtype == "LineString":
         return {"type": gtype, "coordinates": _round_line(coords, precision)}
     if gtype == "MultiLineString":

@@ -49,7 +49,7 @@ from the normalized data.
 | South Australia: DEW Recreation Trails | 7,113 | 9,461 | 30,000 (all states) |
 | Tasmania: the LIST tracks | 12,057 | 4,181 | — |
 | Victoria: DEECA Recreation Tracks (walkable) | 292 | 1,139 | — |
-| Norway: Kartverket Turrutebasen | — | — | 80,000 (pull running) |
+| Norway: Kartverket Turrutebasen | 166,434 | 83,824 | 80,000 |
 | CNIG FEDME senderos | 3,780 | 49,780 | 50,000 |
 
 The Camino pulled 1,074 stages across 80 route variants in three countries.

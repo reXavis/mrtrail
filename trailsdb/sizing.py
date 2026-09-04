@@ -89,12 +89,31 @@ class SizeEstimate:
         )
 
 
-def estimate(km: float, *, feature_class: str = "route", cap_segments_at_z13: bool = False) -> SizeEstimate:
+#: Spots have no length, so they are priced per feature. Provisional until
+#: refuges.info has been normalized and baked; both are then re-measured.
+KB_PER_SPOT_MASTER = 0.35
+KB_PER_SPOT_TILES = 0.15
+
+
+def estimate(
+    km: float,
+    *,
+    feature_class: str = "route",
+    cap_segments_at_z13: bool = False,
+    features: int = 0,
+) -> SizeEstimate:
     """Master-database and tile bytes for ``km`` of a feature class.
 
     ``cap_segments_at_z13`` is accepted for compatibility; the measured segment
-    coefficient was taken at z13 already, so it changes nothing.
+    coefficient was taken at z13 already, so it changes nothing. Spots carry no
+    km; they are priced from ``features``.
     """
+    if feature_class == "spot":
+        return SizeEstimate(
+            km=0.0,
+            master_mb=features * KB_PER_SPOT_MASTER / 1024,
+            tiles_mb=features * KB_PER_SPOT_TILES / 1024,
+        )
     tile_kb_per_km = KB_PER_KM_TILES_SEGMENT if feature_class == "segment" else KB_PER_KM_TILES_ROUTE
     return SizeEstimate(
         km=km,

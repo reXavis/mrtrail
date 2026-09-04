@@ -87,6 +87,10 @@ class NormalizeResult:
     def kb_per_km(self) -> float:
         return (self.bytes_written / 1024) / self.length_km if self.length_km else 0.0
 
+    @property
+    def kb_per_feature(self) -> float:
+        return (self.bytes_written / 1024) / self.features if self.features else 0.0
+
 
 def normalize_source(
     source: Source, paths: Paths, *, catalog: Catalog | None = None
@@ -148,6 +152,7 @@ class LayerExport:
             self.length_km,
             feature_class=self.feature_class,
             cap_segments_at_z13=True,
+            features=self.features,
         ).tiles_mb
 
 
@@ -323,9 +328,10 @@ def tippecanoe_args(layer: LayerExport) -> list[str]:
     Routes go to z14 like the OSM layer they sit next to. Segments stop at z13:
     they are infrastructure rather than something a user reads a name off, and
     the extra zoom level is roughly half their tile cost -- the lever that keeps
-    the Alps and US mountain-state packs under about 7 % growth.
+    the Alps and US mountain-state packs under about 7 % growth. Spots go to z14
+    like routes: a hut has to be findable at the zoom a user plans at.
     """
-    max_zoom = "14" if layer.feature_class == "route" else "13"
+    max_zoom = "13" if layer.feature_class == "segment" else "14"
     args = [
         f"--layer={layer.layer}",
         "--minimum-zoom=8",
@@ -356,6 +362,10 @@ class BakedLayer:
     @property
     def kb_per_km(self) -> float:
         return (self.bytes / 1024) / self.length_km if self.length_km else 0.0
+
+    @property
+    def kb_per_feature(self) -> float:
+        return (self.bytes / 1024) / self.features if self.features else 0.0
 
     @property
     def megabytes(self) -> float:
@@ -434,6 +444,7 @@ def bake_pack(paths: Paths, *, pack: str, layers: list[str] | None = None) -> Ba
                         "pmtiles": b.pmtiles.name,
                         "bytes": b.bytes,
                         "kb_per_km": round(b.kb_per_km, 3),
+                        "kb_per_feature": round(b.kb_per_feature, 3),
                         "seconds": round(b.seconds, 1),
                     }
                     for b in baked

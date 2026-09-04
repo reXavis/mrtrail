@@ -79,9 +79,11 @@ class TestCoordinatePrecision(unittest.TestCase):
         )["coordinates"][0]
         self.assertLess(geo.haversine_km(original, rounded) * 1000, 0.2)
 
-    def test_non_line_geometry_passes_through_untouched(self):
+    def test_points_are_rounded_and_other_geometry_passes_through_untouched(self):
         point = {"type": "Point", "coordinates": [1.123456789, 2.0]}
-        self.assertEqual(geo.round_geometry(point), point)
+        self.assertEqual(geo.round_geometry(point), {"type": "Point", "coordinates": [1.123457, 2.0]})
+        polygon = {"type": "Polygon", "coordinates": [[[1.123456789, 2.0], [1.2, 2.1], [1.1, 2.2], [1.123456789, 2.0]]]}
+        self.assertIs(geo.round_geometry(polygon), polygon)
 
 
 class TestSimplify(unittest.TestCase):

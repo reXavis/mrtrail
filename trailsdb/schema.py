@@ -12,6 +12,11 @@ Two feature classes, because official sources come in two shapes:
     Trail Network. Hundreds of thousands of short lines with no browsable
     identity. Rendered like the ways layer, and cheap to drop a zoom level.
 
+``spot``
+    A point a trail user plans around -- a hut, a shelter, a water point, a
+    pass. refuges.info is the one source of these. Rendered as icons, never
+    merged with any line layer, and (being share-alike) in a layer of its own.
+
 Deliberately absent: ascent, descent, and elevation profiles. Those are computed
 at pack-bake time by ``enrich_routes.py`` against the pack's own DEM, exactly as
 OSM routes get today. Storing them in the master database would bloat it by
@@ -27,7 +32,7 @@ from typing import Any, Iterable
 
 SCHEMA_VERSION = 1
 
-FEATURE_CLASSES = ("route", "segment")
+FEATURE_CLASSES = ("route", "segment", "spot")
 
 # Small on purpose. Anything a source says that does not map here goes into
 # ``extras``, which never reaches the tiles.
@@ -58,12 +63,17 @@ TILE_ATTRIBUTES = (
     "official_status",
     "parent_id",
     "stage_no",
+    "category",
 )
 
 _ID_RE = re.compile(r"^[a-z0-9_]+:[A-Za-z0-9_.:/\-]+$")
 _SOURCE_RE = re.compile(r"^[a-z0-9_]+$")
 
 LINE_TYPES = ("LineString", "MultiLineString")
+POINT_TYPES = ("Point",)
+
+#: What a spot is, for the icon: the one attribute spots carry that lines do not.
+SPOT_CATEGORIES = ("hut", "shelter", "gite", "bivouac", "water", "summit", "pass", "lake", "other")
 
 
 class ValidationError(ValueError):
@@ -99,6 +109,8 @@ class Feature:
     stage_no: int | None = None
 
     official_status: str | None = None
+    #: Spots only: one of SPOT_CATEGORIES. Lines leave it None.
+    category: str | None = None
     source_url: str | None = None
 
     country: str | None = None
@@ -129,7 +141,11 @@ class Feature:
             raise ValidationError(f"{self.id}: stage_no must be non-negative")
         if self.country is not None and not re.match(r"^[A-Z]{2}$", self.country):
             raise ValidationError(f"{self.id}: country {self.country!r} must be ISO 3166-1 alpha-2")
-        validate_geometry(self.geometry, self.id)
+        if self.category is not None and self.category not in SPOT_CATEGORIES:
+            raise ValidationError(f"{self.id}: category {self.category!r} not in {SPOT_CATEGORIES}")
+        if self.category is not None and self.feature_class != "spot":
+            raise ValidationError(f"{self.id}: only spots carry a category")
+        validate_geometry(self.geometry, self.id, feature_class=self.feature_class)
 
     # -- serialization -------------------------------------------------------
 
@@ -148,6 +164,7 @@ class Feature:
             "parent_name",
             "stage_no",
             "official_status",
+            "category",
             "source_url",
             "country",
             "admin",
@@ -169,6 +186,7 @@ class Feature:
             "parent_name",
             "stage_no",
             "official_status",
+            "category",
             "source_url",
             "country",
             "admin",
@@ -192,10 +210,15 @@ class Feature:
         return {k: full[k] for k in TILE_ATTRIBUTES if full.get(k) is not None}
 
 
-def validate_geometry(geometry: Any, ctx: str = "geometry") -> None:
+def validate_geometry(geometry: Any, ctx: str = "geometry", *, feature_class: str = "route") -> None:
     if not isinstance(geometry, dict):
         raise ValidationError(f"{ctx}: geometry must be an object")
     gtype = geometry.get("type")
+    if feature_class == "spot":
+        if gtype not in POINT_TYPES:
+            raise ValidationError(f"{ctx}: a spot needs a Point geometry, not {gtype!r}")
+        _validate_position(geometry.get("coordinates"), ctx)
+        return
     if gtype not in LINE_TYPES:
         raise ValidationError(f"{ctx}: geometry type {gtype!r} not in {LINE_TYPES}")
     coords = geometry.get("coordinates")
