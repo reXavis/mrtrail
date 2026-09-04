@@ -1,0 +1,126 @@
+{
+ "type": "FeatureCollection",
+ "exceededTransferLimit": false,
+ "features": [
+  {
+   "type": "Feature",
+   "id": 79489,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -78.73384,
+      44.05476
+     ],
+     [
+      -78.7338,
+      44.05468
+     ],
+     [
+      -78.73379,
+      44.05453
+     ],
+     [
+      -78.73376,
+      44.05439
+     ]
+    ]
+   },
+   "properties": {
+    "OGF_ID": 155164139,
+    "TRAIL_NAME": "White-tailed Deer Trail",
+    "TRAIL_ASSOCIATION": "Central Lake Ontario Conservation Authority",
+    "TRAIL_ASSOCIATION_WEBSITE": "www.cloca.com",
+    "PERMITTED_USES": "Hiking or Walking, Cycling, Cross Country Skiing",
+    "DESCRIPTION": "Nestled in the heart of the provincially significant Oak Ridges Moraine, Long Sault Conservation Area is the largest Area owned and managed by the Central Lake Ontario Conservation Authority. Once part of the Agreement Forest program operated by the Ontario Ministry of Natural Resources, Long Sault Conservation Area now includes close to 400 hectares of mature forest, plantation, wetland and meadow. The area is considered an important core wildlife area because of the diversity and size of habitats that it contains. This Conservation Area also includes headwater tributaries that are an important part of the Bowmanville/Soper Creek Watershed. Much of Long Sault Conservation Area's natural beauty can be seen from any section of the more than 18 km of marked trails that wind throughout the property. With trails that range in difficulty from gently sloping straight trails, to technical rolling and quickly turning trails, Long Sault Conservation Area is a favourite destination for many outdoor enthusiasts looking to pursue a number of different recreational activities.",
+    "ON_ROAD_FLG": "No",
+    "TRAIL_LENGTH_KM": 3.9000000953674316,
+    "LOCATION_ACCURACY": "Within 10 metres",
+    "EFFECTIVE_DATETIME": 1652872938000,
+    "SYSTEM_DATETIME": 1652913565000,
+    "OBJECTID": 79489,
+    "SHAPE.LEN": 0
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 79745,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -80.01654,
+      44.49844
+     ],
+     [
+      -80.01637,
+      44.49845
+     ],
+     [
+      -80.01631,
+      44.49846
+     ],
+     [
+      -80.01617,
+      44.49854
+     ]
+    ]
+   },
+   "properties": {
+    "OGF_ID": 154614413,
+    "TRAIL_NAME": "Gill's Gultch Trail",
+    "TRAIL_ASSOCIATION": "Wasaga Beach Provincial Park",
+    "TRAIL_ASSOCIATION_WEBSITE": "www.ontarioparks.com/park/wasagabeach",
+    "PERMITTED_USES": "Hiking or Walking, Cross Country Skiing",
+    "DESCRIPTION": "Moderate - Experienced Skiers",
+    "ON_ROAD_FLG": "No",
+    "TRAIL_LENGTH_KM": 1,
+    "LOCATION_ACCURACY": "Within 10 metres",
+    "EFFECTIVE_DATETIME": 1652872528000,
+    "SYSTEM_DATETIME": 1652913565000,
+    "OBJECTID": 79745,
+    "SHAPE.LEN": 0
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 79937,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -79.58112,
+      43.61712
+     ],
+     [
+      -79.58134,
+      43.61709
+     ],
+     [
+      -79.58141,
+      43.61709
+     ],
+     [
+      -79.58165,
+      43.61711
+     ]
+    ]
+   },
+   "properties": {
+    "OGF_ID": 143661443,
+    "TRAIL_NAME": "Etobicoke Creek Trail, Missauga Section",
+    "TRAIL_ASSOCIATION": "Region of Peel",
+    "TRAIL_ASSOCIATION_WEBSITE": "www.walkandrollpeel.ca",
+    "PERMITTED_USES": "Hiking or Walking, Cycling",
+    "DESCRIPTION": "The Etobicoke Creek Trail is designated as a regional multi-use recreational trail. When completed, it will travel from the Waterfront Trail along Lake Ontario, through the cities of Mississauga, Toronto and Brampton up into the Town of Caledon, a total length of 50 kilometres.  Currently, the Etobicoke Creek Trail, in Mississauga, is in two sections:  Willowcreek Park, north of Dundas Street East, to Rathburn Road East with a link to Centennial Park in Toronto; and Matheson Blvd. East, through the western boundary of the Greater Toronto Airports Authority lands, to Mount Charles Park.",
+    "ON_ROAD_FLG": "Yes",
+    "TRAIL_LENGTH_KM": 11.199999809265137,
+    "LOCATION_ACCURACY": "Within 10 metres",
+    "EFFECTIVE_DATETIME": 1652872884000,
+    "SYSTEM_DATETIME": 1652913565000,
+    "OBJECTID": 79937,
+    "SHAPE.LEN": 0
+   }
+  }
+ ]
+}

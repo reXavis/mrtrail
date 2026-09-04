@@ -1,0 +1,80 @@
+{
+ "type": "FeatureCollection",
+ "exceededTransferLimit": false,
+ "features": [
+  {
+   "type": "Feature",
+   "id": 1,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -2.42712,
+      50.5405
+     ],
+     [
+      -2.42716,
+      50.54043
+     ],
+     [
+      -2.42716,
+      50.54042
+     ],
+     [
+      -2.42716,
+      50.5404
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 1,
+    "Stretch": "Rufus Castle to Lulworth Cove",
+    "Section_ID": "WBY-S001",
+    "Chapter": "1",
+    "Status": "Public footpath",
+    "Alt_Route": "No",
+    "Rollback_": "No",
+    "Pub_Date": 1340928000000,
+    "GlobalID": "70a02f24-3668-41f1-aebb-250b1dd348be",
+    "Shape__Length": 111.53791501033227
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 85,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -2.39316,
+      50.63808
+     ],
+     [
+      -2.39305,
+      50.63809
+     ],
+     [
+      -2.39298,
+      50.63808
+     ],
+     [
+      -2.39284,
+      50.63809
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 85,
+    "Stretch": "Rufus Castle to Lulworth Cove",
+    "Section_ID": "WBY-S092",
+    "Chapter": "12",
+    "Status": "Not an existing walked route",
+    "Alt_Route": "No",
+    "Rollback_": "Yes",
+    "Pub_Date": 1340928000000,
+    "GlobalID": "654997e4-5518-459e-8603-ef0d5a2cc7be",
+    "Shape__Length": 308.91416124212407
+   }
+  }
+ ]
+}

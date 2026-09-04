@@ -295,14 +295,21 @@ sources:
     km_confidence: official
     cadence: quarterly
     license: opendata-swiss-by
-    attribution: "(c) swisstopo"
-    homepage: "https://www.swisstopo.admin.ch/"
+    attribution: "Federal Office of Topography swisstopo"
+    homepage: "https://www.swisstopo.admin.ch/en/landscape-model-swisstlm3d"
     health_check:
-      url: "https://www.swisstopo.admin.ch/"
+      url: "https://data.geo.admin.ch/api/stac/v0.9/collections/ch.swisstopo.swisstlm3d-wanderwege"
       expect_status: 200
     legal:
-      verified_on: null
-      notes: "~351k segments; network infrastructure, not browsable routes."
+      verified_on: 2026-09-04
+      notes: >-
+        Terms read from swisstopo's own page: standard digital products have
+        been free of charge as open government data since 1 March 2021; a
+        source reference is mandatory, and "Federal Office of Topography
+        swisstopo" is one of the prescribed forms (alongside "(c)swisstopo" and
+        the same name in the national languages). 409,276 segments, not the
+        ~351k assumed, and every row is a trail. Read from the GeoPackage with
+        the stdlib -- no GDAL.
 
   kartverket_turrutebasen:
     name: "Turrutebasen"
@@ -350,17 +357,23 @@ sources:
     adapter: uk_national_trails
     feature_class: route
     default_kind: hiking
-    estimated_km: 5000
-    km_confidence: assumed
+    estimated_km: 8000
+    km_confidence: official
     cadence: quarterly
     license: ogl-uk-3.0
-    attribution: "Contains public sector information licensed under the Open Government Licence v3.0"
+    attribution: "(c) Natural England. Contains public sector information licensed under the Open Government Licence v3.0."
     homepage: "https://www.nationaltrail.co.uk/"
     health_check:
-      url: "https://www.nationaltrail.co.uk/"
+      url: "https://services.arcgis.com/JJzESW51TqeY9uat/arcgis/rest/services/National_Trails_England/FeatureServer/0?f=json"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-08-27
+      notes: >-
+        Natural England's own ArcGIS organisation; the dataset licence is OGL
+        v3.0 and the layer names carry "(c) Natural England". Two layers: the 14
+        National Trails (4,111 km, an official figure) and the 17,489 sections of
+        the King Charles III England Coast Path, whose not-yet-opened sections are
+        dropped. Wales and Scotland are separate publishers.
 
   geotrek:
     name: "Geotrek public instances"
@@ -452,11 +465,16 @@ sources:
     attribution: "US National Park Service"
     homepage: "https://public-nps.opendata.arcgis.com/"
     health_check:
-      url: "https://public-nps.opendata.arcgis.com/"
+      url: "https://mapservices.nps.gov/arcgis/rest/services/NationalDatasets/NPS_Public_Trails_Geographic/FeatureServer/0?f=json"
       expect_status: 200
     legal:
-      verified_on: null
-      notes: "Heavy overlap with USFS; deduplicated against it at normalize time."
+      verified_on: 2026-08-27
+      notes: >-
+        A work of the US federal government, not subject to domestic copyright
+        (17 U.S.C. 105). Pulled from NPS's own mapservices.nps.gov endpoint, not
+        the Esri-hosted mirrors. 31,541 segments; trails NPS marks Proposed or
+        Abandoned are dropped at normalize. Heavy overlap with USFS remains to
+        be deduplicated in phase 5.
 
   usgs_ndt:
     name: "National Digital Trails"
@@ -489,13 +507,18 @@ sources:
     km_confidence: assumed
     cadence: quarterly
     license: ogl-ontario-1.0
-    attribution: "Contains information licensed under the Open Government Licence - Ontario"
+    attribution: "Contains information licensed under the Open Government Licence - Ontario."
     homepage: "https://geohub.lio.gov.on.ca/"
     health_check:
-      url: "https://geohub.lio.gov.on.ca/"
+      url: "https://ws.lioservices.lrc.gov.on.ca/arcgis2/rest/services/LIO_OPEN_DATA/LIO_Open04/MapServer/19?f=json"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-08-27
+      notes: >-
+        The layer's own copyright text is the OGL-Ontario URL, and that licence
+        prescribes the attribution statement above verbatim. 6,991 segments
+        totalling 47,090 km by the province's length field -- more than the plan
+        budgeted for Ontario and BC together.
 
   bc_recreation:
     name: "Recreation trails"

@@ -335,8 +335,8 @@ class TestStatus(PipelineCase):
         self.assertEqual(rows["cnig_fedme"].normalized_features, 1)
         self.assertFalse(rows["cnig_fedme"].verified)
 
-        self.assertFalse(rows["swisstopo_wanderwege"].adapter_ready)
-        self.assertIn("Europe wave", rows["swisstopo_wanderwege"].phase)
+        self.assertFalse(rows["kartverket_turrutebasen"].adapter_ready)
+        self.assertIn("Europe wave", rows["kartverket_turrutebasen"].phase)
 
 
 if __name__ == "__main__":

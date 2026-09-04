@@ -28,6 +28,9 @@ from .schema import Feature
 
 CATALOG_SCHEMA_VERSION = 1
 
+#: How long a writer waits for another's transaction before failing.
+BUSY_TIMEOUT_S = 900
+
 _SCHEMA = """
 CREATE TABLE IF NOT EXISTS meta (
     key   TEXT PRIMARY KEY,
@@ -120,8 +123,13 @@ class Catalog:
     def __init__(self, path: Path | str) -> None:
         self.path = Path(path)
         self.path.parent.mkdir(parents=True, exist_ok=True)
-        self.db = sqlite3.connect(self.path)
+        # Two normalizes may run at once -- swisstopo's 409k-row replace holds
+        # the write lock for minutes while a smaller source finishes alongside
+        # it. SQLite's default is to give up after five seconds with "database
+        # is locked"; a writer that waits its turn is the behaviour wanted.
+        self.db = sqlite3.connect(self.path, timeout=BUSY_TIMEOUT_S)
         self.db.row_factory = sqlite3.Row
+        self.db.execute(f"PRAGMA busy_timeout={BUSY_TIMEOUT_S * 1000}")
         self.db.execute("PRAGMA journal_mode=WAL")
         self.db.execute("PRAGMA foreign_keys=ON")
         self.has_fts = False

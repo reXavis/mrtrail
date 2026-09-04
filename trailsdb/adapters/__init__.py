@@ -12,7 +12,11 @@ from .arcgis import ArcGisAdapter, ArcGisLayer
 from .base import Adapter, AdapterContext, AdapterNotImplemented
 from .cnig import CnigAdapter
 from .eurovelo import EuroVeloAdapter
+from .nps import NpsAdapter
 from .nz_doc import NzDocAdapter
+from .ontario_otn import OntarioOtnAdapter
+from .swisstopo import SwisstopoAdapter
+from .uk_national_trails import UkNationalTrailsAdapter
 from .usfs import UsfsAdapter
 
 IMPLEMENTED: dict[str, type[Adapter]] = {
@@ -20,21 +24,21 @@ IMPLEMENTED: dict[str, type[Adapter]] = {
     NzDocAdapter.name: NzDocAdapter,
     EuroVeloAdapter.name: EuroVeloAdapter,
     UsfsAdapter.name: UsfsAdapter,
+    NpsAdapter.name: NpsAdapter,
+    OntarioOtnAdapter.name: OntarioOtnAdapter,
+    UkNationalTrailsAdapter.name: UkNationalTrailsAdapter,
+    SwisstopoAdapter.name: SwisstopoAdapter,
 }
 
 #: adapter name -> the execution-order phase that builds it.
 PLANNED: dict[str, str] = {
-    "swisstopo": "4 - Europe wave",
     "geotrek": "4 - Europe wave",
     "kartverket": "4 - Europe wave",
     "naturvardsverket": "4 - Europe wave",
-    "uk_national_trails": "4 - Europe wave",
     "refuges_info": "4 - Europe wave",
     "spain_regional": "4 - Europe wave",
     "mapa_caminos_naturales": "4 - Europe wave",
-    "nps": "5 - Americas & Oceania wave",
     "usgs_ndt": "5 - Americas & Oceania wave",
-    "ontario_otn": "5 - Americas & Oceania wave",
     "bc_recreation": "5 - Americas & Oceania wave",
     "australia_states": "5 - Americas & Oceania wave",
 }
@@ -71,7 +75,11 @@ __all__ = [
     "AdapterNotImplemented",
     "CnigAdapter",
     "EuroVeloAdapter",
+    "NpsAdapter",
     "NzDocAdapter",
+    "OntarioOtnAdapter",
+    "SwisstopoAdapter",
+    "UkNationalTrailsAdapter",
     "IMPLEMENTED",
     "PLANNED",
     "build",

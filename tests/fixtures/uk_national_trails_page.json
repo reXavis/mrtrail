@@ -1,0 +1,84 @@
+{
+ "type": "FeatureCollection",
+ "exceededTransferLimit": false,
+ "features": [
+  {
+   "type": "Feature",
+   "id": 1,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -1.81681,
+      53.37046
+     ],
+     [
+      -1.81728,
+      53.37036
+     ],
+     [
+      -1.81817,
+      53.37037
+     ],
+     [
+      -1.81903,
+      53.3703
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID_1": 1,
+    "OBJECTID": 1,
+    "Name": "Pennine Way",
+    "Opened": -148003200000,
+    "Start": "The Old Nags Head, Edale",
+    "End_": "The Border Inn, Kirk Yetholm",
+    "Length_Km": 435,
+    "Length_Mil": 270,
+    "Updated": 1366675200000,
+    "Last_VR": 98,
+    "GlobalID": "7afc565d-f28d-4271-9c34-77c61c73e767",
+    "Shape__Length": 748891.4169570995
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 2,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -2.64843,
+      51.63255
+     ],
+     [
+      -2.64941,
+      51.63289
+     ],
+     [
+      -2.64976,
+      51.63298
+     ],
+     [
+      -2.65011,
+      51.63313
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID_1": 2,
+    "OBJECTID": 3,
+    "Name": "Offa's Dyke Path",
+    "Opened": 47952000000,
+    "Start": "Sedbury Cliffs, Chepstow",
+    "End_": "Seafront, Prestatyn",
+    "Length_Km": 292,
+    "Length_Mil": 181,
+    "Updated": 1368576000000,
+    "Last_VR": 70,
+    "GlobalID": "d183a406-fa55-419a-bb11-7ec53d6535e2",
+    "Shape__Length": 479043.5394751802
+   }
+  }
+ ]
+}

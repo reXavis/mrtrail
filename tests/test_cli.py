@@ -96,7 +96,7 @@ class TestCli(unittest.TestCase):
         self.assertIn("nothing pulled yet", out)
 
     def test_pull_skips_unimplemented_adapters_without_failing(self):
-        code, out, _ = run("pull", "swisstopo_wanderwege", data_dir=self.data)
+        code, out, _ = run("pull", "kartverket_turrutebasen", data_dir=self.data)
         self.assertEqual(code, 0)
         self.assertIn("adapter not implemented yet", out)
 

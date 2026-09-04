@@ -20,34 +20,42 @@ trailsdb status
 
 | built | not yet |
 | --- | --- |
-| Source registry for all 20 planned sources | 13 of 17 adapters (each tagged with the wave it lands in) |
+| Source registry for all 20 planned sources | 9 of 17 adapters (each tagged with the wave it lands in) |
 | Normalized schema, master-database format, SQLite catalog | Cross-link matcher against OSM relations |
-| Polite/resumable/revalidating fetch layer | Shapefile + file-geodatabase readers (the `geo` extra) |
-| CNIG ×3, NZ DOC ×2, EuroVelo, USFS | App-side overlay toggle, source badges, licenses screen |
+| Polite/resumable/revalidating fetch layer; stdlib GeoPackage/WKB reader and LV95 transform | Shapefile + file-geodatabase readers (the `geo` extra) |
+| CNIG ×3, NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
 | Size model, validated against real pulled data | Legal verification of 17 of 20 sources |
 
 ### Data actually pulled
 
-**340,621 km normalized — 42 % of the plan's entire worldwide inventory.**
+**Nine sources, 12 layers, and every volume estimate the plan made landed
+close.** Figures are measured from the normalized data.
 
 | source | features | km | plan estimated |
 | --- | ---: | ---: | ---: |
 | USFS National Forest System Trails | 80,966 | 232,766 | 257,000 |
+| swisstopo Wanderwege | 409,276 | 66,926 | 65,000 |
 | EuroVelo (developed sections) | 1,337 | 55,409 | 60,000 |
+| Ontario Trail Network | 6,991 | 45,544 | 35,000 (with BC) |
+| NPS park trails | 31,156 | 27,820 | 40,000 |
 | CNIG Camino de Santiago | 1,074 | 24,854 | 25,000 |
 | NZ DOC network | 3,248 | 13,896 | 14,000 |
 | NZ DOC routes | 1,547 | 13,696 | — |
+| England: National Trails + Coast Path | 16,457 | 7,604 | 5,000 |
+| CNIG FEDME senderos | — | — | 50,000 (pull running) |
 
-Every estimate the plan made about *volume* landed within 10 %. The Camino
-pulled 1,074 stages across 80 route variants in three countries; USFS dropped
-5,337 of 86,303 raw features, all of them null-geometry attribute rows.
+The Camino pulled 1,074 stages across 80 route variants in three countries.
+USFS dropped 5,337 of 86,303 raw features, all null-geometry attribute rows;
+NPS drops trails it marks Proposed or Abandoned; the Coast Path drops sections
+not yet opened.
 
 A Galicia cut — the pack that ships today — comes to **+11.2 MB of tiles,
-+0.6 % of the pack**, against the plan's predicted ~1 %.
++0.6 % of the pack**, against the plan's predicted ~1 %, before FEDME.
 
-Four sources are legally verified (NZ DOC ×2, EuroVelo, USFS). The rest are
-refused by `trailsdb export` until a human confirms their terms — see
+**Eight sources are legally verified** (USFS, swisstopo, EuroVelo, Ontario, NPS,
+England, NZ DOC ×2). CNIG stays refused by `trailsdb export` until its
+producer-attribution string is confirmed — see
 [Legal architecture](#legal-architecture).
 
 ### What contact with the real services changed
@@ -60,8 +68,11 @@ The plan's size estimates held up. Its assumptions about *access* mostly did not
 - **EuroVelo is ODbL and share-alike**, not the bespoke ECF terms assumed. That
   makes it a second share-alike source alongside refuges.info, and a far bigger
   one — it now takes its own tile layer automatically.
-- **USFS needs no GDAL.** The plan reserved geodatabase parsing for its 118 MB
-  `.gdb`; the same data comes back as GeoJSON from the EDW REST service.
+- **Neither USFS nor swisstopo needs GDAL.** The plan reserved geodatabase
+  parsing for USFS's 118 MB `.gdb`; the same data comes back as GeoJSON from
+  the EDW REST service. swisstopo ships a GeoPackage — SQLite with WKB inside,
+  in LV95 — and the stdlib reads it, with swisstopo's own published conversion
+  formulas (accurate to ~1 m) doing the reprojection.
 - **DOC's 2026 drift is real.** Its datasets are flagged deprecated with no
   replacement published; the adapter re-reads that notice on every pull.
 - **Caminos Naturales isn't a CNIG dataset at all.** It's published separately

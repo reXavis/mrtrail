@@ -1,0 +1,222 @@
+{
+ "type": "FeatureCollection",
+ "exceededTransferLimit": false,
+ "features": [
+  {
+   "type": "Feature",
+   "id": 3,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -78.37279,
+      38.59802
+     ],
+     [
+      -78.3728,
+      38.59802
+     ],
+     [
+      -78.37282,
+      38.59801
+     ],
+     [
+      -78.37283,
+      38.598
+     ]
+    ]
+   },
+   "properties": {
+    "TRLFEATTYPE": "Park Trail",
+    "OBJECTID": 3,
+    "TRLNAME": "Stony Man Horse Trail",
+    "TRLALTNAME": "Stony Man Horse Trail",
+    "MAPLABEL": "Stony Man Horse Trail",
+    "TRLSTATUS": "Existing",
+    "TRLSURFACE": "Earth",
+    "TRLTYPE": "Standard Terra Trail",
+    "TRLCLASS": "Class 3: Developed",
+    "TRLUSE": "Pack and Saddle",
+    "PUBLICDISPLAY": "Public Map Display",
+    "DATAACCESS": "Unrestricted",
+    "ACCESSNOTES": null,
+    "ORIGINATOR": null,
+    "UNITCODE": "SHEN",
+    "UNITNAME": "Shenandoah National Park",
+    "UNITTYPE": null,
+    "GROUPCODE": null,
+    "GROUPNAME": null,
+    "REGIONCODE": "NER",
+    "CREATEDATE": null,
+    "EDITDATE": 1753988133000,
+    "LINETYPE": null,
+    "MAPMETHOD": "Differential GPS",
+    "MAPSOURCE": "Unknown",
+    "SOURCEDATE": 1421730000000,
+    "XYACCURACY": "<=1m",
+    "GEOMETRYID": "562ecf86-05f1-494e-b79c-1468d12f7862",
+    "FEATUREID": "{a727b95e-80fe-45b6-9733-bcefbb355536}",
+    "FACLOCID": "48132",
+    "FACASSETID": " ",
+    "IMLOCID": null,
+    "OBSERVABLE": null,
+    "ISEXTANT": "True",
+    "OPENTOPUBLIC": null,
+    "ALTLANGNAME": null,
+    "ALTLANG": null,
+    "SEASONAL": "No",
+    "SEASDESC": null,
+    "MAINTAINER": "National Park Service",
+    "NOTES": " ",
+    "Shape__Length": 0.011114249726152018
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 4,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -116.27478,
+      34.07388
+     ],
+     [
+      -116.27468,
+      34.07354
+     ],
+     [
+      -116.27445,
+      34.07313
+     ],
+     [
+      -116.27431,
+      34.07248
+     ]
+    ]
+   },
+   "properties": {
+    "TRLFEATTYPE": "Park Trail",
+    "OBJECTID": 4,
+    "TRLNAME": "Quail Springs Historic",
+    "TRLALTNAME": " ",
+    "MAPLABEL": "Quail Springs Historic",
+    "TRLSTATUS": "Existing",
+    "TRLSURFACE": "Native",
+    "TRLTYPE": "Standard Terra Trail",
+    "TRLCLASS": "Class 3: Developed",
+    "TRLUSE": "Hike | PackOrSaddle",
+    "PUBLICDISPLAY": "Public Map Display",
+    "DATAACCESS": "Unrestricted",
+    "ACCESSNOTES": null,
+    "ORIGINATOR": null,
+    "UNITCODE": "JOTR",
+    "UNITNAME": "Joshua Tree National Park",
+    "UNITTYPE": null,
+    "GROUPCODE": null,
+    "GROUPNAME": null,
+    "REGIONCODE": "PWR",
+    "CREATEDATE": null,
+    "EDITDATE": 1768257114000,
+    "LINETYPE": null,
+    "MAPMETHOD": null,
+    "MAPSOURCE": "original",
+    "SOURCEDATE": null,
+    "XYACCURACY": "Unknown",
+    "GEOMETRYID": "{C3C69908-094B-4FB1-B973-479552B55E09}",
+    "FEATUREID": "{C3C69908-094B-4FB1-B973-479552B55E09}",
+    "FACLOCID": null,
+    "FACASSETID": null,
+    "IMLOCID": null,
+    "OBSERVABLE": null,
+    "ISEXTANT": "True",
+    "OPENTOPUBLIC": null,
+    "ALTLANGNAME": null,
+    "ALTLANG": null,
+    "SEASONAL": "No",
+    "SEASDESC": null,
+    "MAINTAINER": "Unknown",
+    "NOTES": "HORSE",
+    "Shape__Length": 0.002987261962465145
+   }
+  },
+  {
+   "type": "Feature",
+   "id": 207,
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -135.26793,
+      59.65954
+     ],
+     [
+      -135.26799,
+      59.65959
+     ],
+     [
+      -135.26803,
+      59.65962
+     ],
+     [
+      -135.26807,
+      59.6597
+     ]
+    ]
+   },
+   "properties": {
+    "TRLFEATTYPE": "Park Trail",
+    "OBJECTID": 207,
+    "TRLNAME": "Chilkoot Trail",
+    "TRLALTNAME": "Sheep Camp to Summit",
+    "MAPLABEL": "Chilkoot Trail",
+    "TRLSTATUS": "Abandoned",
+    "TRLSURFACE": "Native",
+    "TRLTYPE": "Standard Terra Trail",
+    "TRLCLASS": "Class 3: Developed",
+    "TRLUSE": "Hiker/Pedestrian",
+    "PUBLICDISPLAY": "Public Map Display",
+    "DATAACCESS": "Unrestricted",
+    "ACCESSNOTES": null,
+    "ORIGINATOR": null,
+    "UNITCODE": "KLGO",
+    "UNITNAME": "Klondike Gold Rush National Historical Park",
+    "UNITTYPE": null,
+    "GROUPCODE": "CHIL",
+    "GROUPNAME": "Chilkoot National Historic Trail",
+    "REGIONCODE": "AKR",
+    "CREATEDATE": 1757549037000,
+    "EDITDATE": 1770852112000,
+    "LINETYPE": null,
+    "MAPMETHOD": "GNSS: Mapping Grade",
+    "MAPSOURCE": "Combination of mapping grade GPS(2003/2004) and heads-up digitizing 2003 ORTHO and local knowledge.  Cultural Landscape Report for the Chilkoot Trail Historic Corridor, Part I: History, Existing Conditions, & Analysis (2010) Samson Ferreira.",
+    "SOURCEDATE": 1093996800000,
+    "XYACCURACY": ">=1m and <5m",
+    "GEOMETRYID": "{AFEBDCCE-9822-40E9-8FF8-EA2628A81CEA}",
+    "FEATUREID": "{F3AC8CF9-2747-45A4-AF2E-7946B83EA7DF}",
+    "FACLOCID": "258764",
+    "FACASSETID": null,
+    "IMLOCID": null,
+    "OBSERVABLE": null,
+    "ISEXTANT": "False",
+    "OPENTOPUBLIC": null,
+    "ALTLANGNAME": null,
+    "ALTLANG": null,
+    "SEASONAL": "Yes",
+    "SEASDESC": "Winter seasonal closure",
+    "MAINTAINER": "National Park Service",
+    "NOTES": "Zone 5- Section of trail abandoned S of Mas O' Menos Bridge",
+    "Shape__Length": 0.0009159809264905464
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": null,
+   "properties": {
+    "GEOMETRYID": "{NULL-0000}",
+    "TRLNAME": "No shape",
+    "TRLSTATUS": "Existing"
+   }
+  }
+ ]
+}
