@@ -119,6 +119,23 @@ class TestGeotrekAdapter(GeotrekCase):
             # placeholder, which the export gate refuses.
             self.assertEqual(f.license, "per-instance")
 
+    def test_an_operator_listed_as_its_own_source_is_not_credited_twice(self):
+        # Gavarnie's fixture treks declare no sources; give the instance the
+        # name of one of the fixture's sources and check it is not doubled.
+        self_named = dataclasses.replace(GAVARNIE, attribution="Guide des balades de Cauterets")
+        page = json.loads((FIXTURES / "geotrek_trek_page.geojson").read_text())
+        page["features"][0]["properties"]["source"] = [7]  # "Guide des balades de Cauterets"
+        good = gavarnie_transport()
+
+        def handler(method, url, kwargs):
+            if "/trek/" in url:
+                return FakeResponse(200, json.dumps(page).encode())
+            return good.handler(method, url, kwargs)
+
+        adapter = self.adapter(FakeTransport(handler), [self_named])
+        first = next(f for f in adapter.normalize(adapter.pull()) if f.name == "A la naissance de la Gesse")
+        self.assertEqual(first.attribution, "Guide des balades de Cauterets")
+
     def test_a_verified_instance_stamps_its_own_licence(self):
         verified = dataclasses.replace(GAVARNIE, licence="odbl-1.0", verified_on="2026-09-04")
         adapter = self.adapter(gavarnie_transport(), [verified])

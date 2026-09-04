@@ -187,7 +187,12 @@ class GeotrekAdapter(Adapter):
         difficulty = vocab["trek_difficulty"].get(props.get("difficulty"), "")
         networks = [vocab["trek_network"].get(n, "") for n in props.get("networks") or []]
         sources = [vocab["source"].get(s, "") for s in props.get("source") or []]
-        sources = [s for s in sources if s]
+        # Operators often list themselves as a source; crediting "Parc National
+        # des Ecrins / Parc national des Ecrins" helps nobody.
+        sources = [
+            s for s in sources
+            if s and s.strip().lower() != instance.attribution.strip().lower()
+        ]
 
         attribution = instance.attribution
         if sources:
