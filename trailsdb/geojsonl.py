@@ -43,13 +43,17 @@ def write(path: Path, features: Iterable[Feature], *, validate: bool = True) -> 
     path.parent.mkdir(parents=True, exist_ok=True)
     tmp = path.with_name(path.name + ".tmp")
     count = 0
-    with _open(tmp, "w", gzipped=is_gzipped(path)) as fh:
-        for feature in features:
-            if validate:
-                feature.validate()
-            fh.write(dumps(feature))
-            fh.write("\n")
-            count += 1
+    try:
+        with _open(tmp, "w", gzipped=is_gzipped(path)) as fh:
+            for feature in features:
+                if validate:
+                    feature.validate()
+                fh.write(dumps(feature))
+                fh.write("\n")
+                count += 1
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
     tmp.replace(path)
     return count
 

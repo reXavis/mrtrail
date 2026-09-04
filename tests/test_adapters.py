@@ -457,8 +457,8 @@ class TestEuroVeloAdapter(AdapterCase):
 class TestPlannedAdapters(AdapterCase):
     def test_a_planned_adapter_says_which_phase_it_is_due_in(self):
         with self.assertRaises(AdapterNotImplemented) as ctx:
-            self.adapter("kartverket_turrutebasen", FakeTransport())
-        self.assertIn("Europe wave", str(ctx.exception))
+            self.adapter("australia_states", FakeTransport())
+        self.assertIn("Americas & Oceania wave", str(ctx.exception))
 
     def test_caminos_naturales_is_not_folded_into_the_cnig_adapter(self):
         # It is genuinely absent from the CNIG download centre, so it has its own

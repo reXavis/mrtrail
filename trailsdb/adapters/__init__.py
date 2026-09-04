@@ -10,8 +10,11 @@ from __future__ import annotations
 
 from .arcgis import ArcGisAdapter, ArcGisLayer
 from .base import Adapter, AdapterContext, AdapterNotImplemented
+from .bc_recreation import BcRecreationAdapter
 from .cnig import CnigAdapter
 from .eurovelo import EuroVeloAdapter
+from .kartverket import KartverketAdapter
+from .naturvardsverket import NaturvardsverketAdapter
 from .nps import NpsAdapter
 from .nz_doc import NzDocAdapter
 from .ontario_otn import OntarioOtnAdapter
@@ -28,18 +31,18 @@ IMPLEMENTED: dict[str, type[Adapter]] = {
     OntarioOtnAdapter.name: OntarioOtnAdapter,
     UkNationalTrailsAdapter.name: UkNationalTrailsAdapter,
     SwisstopoAdapter.name: SwisstopoAdapter,
+    KartverketAdapter.name: KartverketAdapter,
+    BcRecreationAdapter.name: BcRecreationAdapter,
+    NaturvardsverketAdapter.name: NaturvardsverketAdapter,
 }
 
 #: adapter name -> the execution-order phase that builds it.
 PLANNED: dict[str, str] = {
     "geotrek": "4 - Europe wave",
-    "kartverket": "4 - Europe wave",
-    "naturvardsverket": "4 - Europe wave",
     "refuges_info": "4 - Europe wave",
     "spain_regional": "4 - Europe wave",
     "mapa_caminos_naturales": "4 - Europe wave",
     "usgs_ndt": "5 - Americas & Oceania wave",
-    "bc_recreation": "5 - Americas & Oceania wave",
     "australia_states": "5 - Americas & Oceania wave",
 }
 
@@ -70,6 +73,9 @@ __all__ = [
     "Adapter",
     "ArcGisAdapter",
     "ArcGisLayer",
+    "BcRecreationAdapter",
+    "KartverketAdapter",
+    "NaturvardsverketAdapter",
     "UsfsAdapter",
     "AdapterContext",
     "AdapterNotImplemented",

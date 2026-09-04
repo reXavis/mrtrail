@@ -224,13 +224,33 @@ class Catalog:
         replaces its rows rather than accumulating duplicates, which matters
         because adapters get re-run constantly while they are being written.
         """
-        self.db.execute("DELETE FROM features WHERE source_id = ?", (source_id,))
+        # One transaction for the whole swap. A failure halfway -- a duplicate
+        # id from an adapter, a disk error -- must leave the previous rows in
+        # place, not a source that is three features long. The connection's own
+        # close() commits, so without an explicit rollback here that is exactly
+        # what a failed replace used to leave behind.
+        try:
+            stats = self._replace_features(source_id, features)
+        except BaseException:
+            self.db.rollback()
+            raise
+        self.db.commit()
+        return stats
+
+    def _replace_features(self, source_id: str, features: Iterable[Feature]) -> SourceStats:
         if self.has_fts:
+            # A contentless FTS5 table cannot be DELETEd from; it is told to
+            # forget a row with a 'delete' insert carrying the row's original
+            # values. This has to run while those rows still exist -- the old
+            # code ran it after the features delete, matched nothing, and so
+            # never failed and never cleaned the index either.
             self.db.execute(
-                "DELETE FROM features_fts WHERE rowid IN "
-                "(SELECT rowid FROM features WHERE source_id = ?)",
+                "INSERT INTO features_fts(features_fts, rowid, name, ref) "
+                "SELECT 'delete', rowid, COALESCE(name, ''), COALESCE(ref, '') "
+                "FROM features WHERE source_id = ?",
                 (source_id,),
             )
+        self.db.execute("DELETE FROM features WHERE source_id = ?", (source_id,))
 
         count = 0
         total_km = 0.0
@@ -272,7 +292,6 @@ class Catalog:
                 rows.clear()
         if rows:
             self._insert_features(rows)
-        self.db.commit()
         return SourceStats(source_id, count, total_km, total_points)
 
     def _insert_features(self, rows: list[tuple]) -> None:

@@ -1,0 +1,164 @@
+{
+ "type": "FeatureCollection",
+ "numberMatched": 3,
+ "numberReturned": 3,
+ "features": [
+  {
+   "type": "Feature",
+   "id": "WHSE_FOREST_TENURE.FTEN_RECREATION_LINES_SVW.fid-5bbe2dd6_1a06d949d65_7ebe",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -125.36346,
+      50.13018
+     ],
+     [
+      -125.36337,
+      50.12982
+     ],
+     [
+      -125.36383,
+      50.12973
+     ]
+    ]
+   },
+   "geometry_name": "GEOMETRY",
+   "properties": {
+    "RMF_SKEY": 23177,
+    "FOREST_FILE_ID": "REC0472",
+    "SECTION_ID": "2",
+    "RECREATION_MAP_FEATURE_CODE": "RTR",
+    "PROJECT_TYPE": "Recreation Trail Reserve",
+    "RETIREMENT_DATE": null,
+    "AMENDMENT_ID": 2,
+    "MAP_LABEL": "REC0472 2",
+    "PROJECT_NAME": "Ripple Rock Trail",
+    "RECREATION_FEATURE_CODE": null,
+    "RESOURCE_FEATURE_IND": "Y",
+    "RIGHT_OF_WAY": 20,
+    "ARCH_IMPACT_ASSESS_IND": "N",
+    "SITE_LOCATION": "CAMPBELL RIVER",
+    "PROJECT_ESTABLISHED_DATE": "1990-11-18Z",
+    "RECREATION_VIEW_IND": "Y",
+    "RECREATION_DISTRICT_CODE": "RDCR",
+    "DEFINED_CAMPSITES": 0,
+    "LIFE_CYCLE_STATUS_CODE": "ACTIVE",
+    "FILE_STATUS_CODE": "HI",
+    "DISTRICT_CODE": "DCR",
+    "DISTRICT_NAME": "DCR",
+    "FEATURE_CLASS_SKEY": 728,
+    "FEATURE_LENGTH": 0.0755,
+    "FEATURE_LENGTH_M": 75.5428,
+    "OBJECTID": 248921,
+    "SE_ANNO_CAD_DATA": null
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "WHSE_FOREST_TENURE.FTEN_RECREATION_LINES_SVW.fid-5bbe2dd6_1a06d949d65_7ebd",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -124.16289,
+      49.94006
+     ],
+     [
+      -124.16283,
+      49.94008
+     ],
+     [
+      -124.16207,
+      49.94009
+     ],
+     [
+      -124.16139,
+      49.94008
+     ]
+    ]
+   },
+   "geometry_name": "GEOMETRY",
+   "properties": {
+    "RMF_SKEY": 23134,
+    "FOREST_FILE_ID": "REC0294",
+    "SECTION_ID": "0",
+    "RECREATION_MAP_FEATURE_CODE": "RTR",
+    "PROJECT_TYPE": "Recreation Trail Reserve",
+    "RETIREMENT_DATE": "2012-02-20Z",
+    "AMENDMENT_ID": 2,
+    "MAP_LABEL": "REC0294 0",
+    "PROJECT_NAME": "BETA LAKE TRAIL",
+    "RECREATION_FEATURE_CODE": null,
+    "RESOURCE_FEATURE_IND": "N",
+    "RIGHT_OF_WAY": null,
+    "ARCH_IMPACT_ASSESS_IND": null,
+    "SITE_LOCATION": "Powell River",
+    "PROJECT_ESTABLISHED_DATE": "1998-07-31Z",
+    "RECREATION_VIEW_IND": "N",
+    "RECREATION_DISTRICT_CODE": "RDSI",
+    "DEFINED_CAMPSITES": 0,
+    "LIFE_CYCLE_STATUS_CODE": "RETIRED",
+    "FILE_STATUS_CODE": "AR",
+    "DISTRICT_CODE": "DSC",
+    "DISTRICT_NAME": "DSC",
+    "FEATURE_CLASS_SKEY": 728,
+    "FEATURE_LENGTH": 0.6976,
+    "FEATURE_LENGTH_M": 697.5928,
+    "OBJECTID": 248916,
+    "SE_ANNO_CAD_DATA": null
+   }
+  },
+  {
+   "type": "Feature",
+   "id": "WHSE_FOREST_TENURE.FTEN_RECREATION_LINES_SVW.fid-5bbe2dd6_1a06d949d65_7ebe",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      -125.36346,
+      50.13018
+     ],
+     [
+      -125.36337,
+      50.12982
+     ],
+     [
+      -125.36383,
+      50.12973
+     ]
+    ]
+   },
+   "geometry_name": "GEOMETRY",
+   "properties": {
+    "RMF_SKEY": 999999,
+    "FOREST_FILE_ID": "REC0472",
+    "SECTION_ID": "2",
+    "RECREATION_MAP_FEATURE_CODE": "RR",
+    "PROJECT_TYPE": "Recreation Trail Reserve",
+    "RETIREMENT_DATE": null,
+    "AMENDMENT_ID": 2,
+    "MAP_LABEL": "REC0472 2",
+    "PROJECT_NAME": "Ripple Rock Trail",
+    "RECREATION_FEATURE_CODE": null,
+    "RESOURCE_FEATURE_IND": "Y",
+    "RIGHT_OF_WAY": 20,
+    "ARCH_IMPACT_ASSESS_IND": "N",
+    "SITE_LOCATION": "CAMPBELL RIVER",
+    "PROJECT_ESTABLISHED_DATE": "1990-11-18Z",
+    "RECREATION_VIEW_IND": "Y",
+    "RECREATION_DISTRICT_CODE": "RDCR",
+    "DEFINED_CAMPSITES": 0,
+    "LIFE_CYCLE_STATUS_CODE": "ACTIVE",
+    "FILE_STATUS_CODE": "HI",
+    "DISTRICT_CODE": "DCR",
+    "DISTRICT_NAME": "DCR",
+    "FEATURE_CLASS_SKEY": 728,
+    "FEATURE_LENGTH": 0.0755,
+    "FEATURE_LENGTH_M": 75.5428,
+    "OBJECTID": 248921,
+    "SE_ANNO_CAD_DATA": null
+   }
+  }
+ ]
+}

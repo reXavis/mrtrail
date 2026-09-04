@@ -1,0 +1,132 @@
+{
+ "type": "FeatureCollection",
+ "name": "Leder",
+ "crs": {
+  "type": "name",
+  "properties": {
+   "name": "EPSG:3006"
+  }
+ },
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      389867.444,
+      6996327.375
+     ],
+     [
+      389867.575,
+      6996325.398
+     ],
+     [
+      389868.012,
+      6996318.805
+     ],
+     [
+      389867.443,
+      6996312.988
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 12295864,
+    "GEOMETRIKVALITET": ">20-50 meter",
+    "LED_ID": "30415317",
+    "LEDNAMN": null,
+    "BESKRIVNING": null,
+    "LEDMARKERING": null,
+    "LEDTYP": "Skoterled",
+    "LEDKATEGORI": "Led på snö",
+    "STATLIGLED": "Vålådalen - Vålåstugorna (justerad) (Z 59)",
+    "STATLIGLED_ID": "Z 59",
+    "SKYDDATOMRADE": null,
+    "SKYDDATOMRADE_ID": null,
+    "LEDLANGD": 19297,
+    "SHAPE.LEN": 985.5343687006
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      505674.932,
+      7033691.396
+     ],
+     [
+      505413.689,
+      7033771.122
+     ],
+     [
+      505304.958,
+      7034189.315
+     ],
+     [
+      505154.409,
+      7034289.682
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 12296184,
+    "GEOMETRIKVALITET": ">20-50 meter",
+    "LED_ID": "30390481",
+    "LEDNAMN": null,
+    "BESKRIVNING": null,
+    "LEDMARKERING": null,
+    "LEDTYP": "Skoterled",
+    "LEDKATEGORI": "Led på snö",
+    "STATLIGLED": null,
+    "STATLIGLED_ID": null,
+    "SKYDDATOMRADE": "Öjsjömyrarna (2000891)",
+    "SKYDDATOMRADE_ID": "2000891",
+    "LEDLANGD": 5419,
+    "SHAPE.LEN": 888.766620465649
+   }
+  },
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "LineString",
+    "coordinates": [
+     [
+      447821.361,
+      6553994.047
+     ],
+     [
+      447812.029,
+      6553983.783
+     ],
+     [
+      447796.166,
+      6553977.25
+     ],
+     [
+      447770.97,
+      6553979.117
+     ]
+    ]
+   },
+   "properties": {
+    "OBJECTID": 12294387,
+    "GEOMETRIKVALITET": "Okänd noggrannhet",
+    "LED_ID": "30207711",
+    "LEDNAMN": "Led Hygntornet",
+    "BESKRIVNING": "Lättgången led på flack mark genom öppna marker ut till stora fågeltornet.",
+    "LEDMARKERING": null,
+    "LEDTYP": "Vandringsled",
+    "LEDKATEGORI": "Barmarksled",
+    "STATLIGLED": null,
+    "STATLIGLED_ID": null,
+    "SKYDDATOMRADE": "Inre Kilsviken (2002209)",
+    "SKYDDATOMRADE_ID": "2002209",
+    "LEDLANGD": 933,
+    "SHAPE.LEN": 933.252884865883
+   }
+  }
+ ]
+}

@@ -69,6 +69,13 @@ licenses:
     attribution_required: true
     share_alike: false
 
+  ogl-bc-2.0:
+    name: "Open Government Licence - British Columbia"
+    url: "https://www2.gov.bc.ca/gov/content?id=A519A56BC2BF44E4A008B33FCF527F61"
+    family: attribution
+    attribution_required: true
+    share_alike: false
+
   ogl-uk-3.0:
     name: "Open Government Licence v3.0 (United Kingdom)"
     url: "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
@@ -316,20 +323,25 @@ sources:
     publisher: "Kartverket"
     countries: ["NO"]
     adapter: kartverket
-    feature_class: segment
-    default_kind: mixed
+    feature_class: route
+    default_kind: hiking
     estimated_km: 80000
     km_confidence: assumed
     cadence: quarterly
-    license: nlod-2.0
-    attribution: "Contains data under the Norwegian licence for Open Government data (NLOD), made available by Kartverket"
-    homepage: "https://www.geonorge.no/"
+    license: cc-by-4.0
+    attribution: "(c) Kartverket"
+    homepage: "https://kartkatalog.geonorge.no/metadata/turrutebasen/d1422d17-6d95-4ef1-96ab-8af31744dd63"
     health_check:
-      url: "https://www.geonorge.no/"
+      url: "https://wfs.geonorge.no/skwms1/wfs.turogfriluftsruter?service=WFS&request=GetCapabilities&version=2.0.0"
       expect_status: 200
     legal:
       verified_on: null
-      notes: "Includes ski, bike and paddle routes alongside foot trails."
+      notes: >-
+        OPEN ITEM. The Geonorge record says "Apne data" and "No conditions
+        apply to access and use" but does not name the licence. Kartverket's
+        open data is generally CC BY 4.0 with "(c) Kartverket"; confirm on
+        kartverket.no before this ships. 166,434 features across foot, ski,
+        bike and other routes, served as GML only.
 
   naturvardsverket:
     name: "Vandringsleder"
@@ -341,14 +353,22 @@ sources:
     estimated_km: 15000
     km_confidence: assumed
     cadence: quarterly
-    license: cc-by-4.0
-    attribution: "(c) Naturvardsverket"
-    homepage: "https://www.naturvardsverket.se/"
+    license: cc0-1.0
+    attribution: "Naturvardsverket (CC0)"
+    homepage: "https://geodata.naturvardsverket.se/nedladdning/friluftsliv/"
     health_check:
-      url: "https://www.naturvardsverket.se/"
+      url: "https://geodata.naturvardsverket.se/nedladdning/friluftsliv/"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-09-04
+      notes: >-
+        From the publisher's own description of the open data ("Leder och
+        friluftsanordningar - beskrivning av oppna data"): "Data publiceras
+        enligt licenstypen CC0 vilket betyder att data kan anvandas utan
+        begransningar. Naturvardsverket ser garna att det ges en referens, om
+        mojligt." CC0 requires no attribution; the reference they ask for is
+        given anyway. Two GeoJSON files (Leder, Statliga_Leder) in SWEREF99 TM,
+        reprojected with a built-in transverse-Mercator inverse.
 
   uk_national_trails:
     name: "National Trails"
@@ -494,7 +514,12 @@ sources:
       expect_status: 200
     legal:
       verified_on: null
-      notes: "Third leg of the US dedup triangle with USFS and NPS."
+      notes: >-
+        No public bulk endpoint found. The National Digital Trails product is
+        absent from the TNM Access API, ScienceBase and ArcGIS Online item
+        search as of 2026-09-04. It was always the assumed, overlap-heavy third
+        leg of the US dedup triangle; USFS and NPS between them already carry
+        260,000 km of the federal estate. Revisit if USGS publishes it.
 
   ontario_otn:
     name: "Ontario Trail Network"
@@ -530,14 +555,22 @@ sources:
     estimated_km: 15000
     km_confidence: assumed
     cadence: quarterly
-    license: cc-by-4.0
-    attribution: "Contains information licensed under the Open Government Licence - British Columbia"
-    homepage: "https://catalogue.data.gov.bc.ca/"
+    license: ogl-bc-2.0
+    attribution: "Contains information licensed under the Open Government Licence - British Columbia."
+    homepage: "https://catalogue.data.gov.bc.ca/dataset/recreation-line"
     health_check:
-      url: "https://catalogue.data.gov.bc.ca/"
+      url: "https://openmaps.gov.bc.ca/geo/pub/wfs?service=WFS&version=2.0.0&request=GetCapabilities"
       expect_status: 200
     legal:
-      verified_on: null
+      verified_on: 2026-09-04
+      notes: >-
+        The catalogue record names the Open Government Licence - British
+        Columbia, and that licence's own text prescribes the statement above
+        verbatim: "you must use the following attribution statement: Contains
+        information licensed under the Open Government Licence - British
+        Columbia." Only the "Recreation Line" dataset is open -- the other
+        recreation-trail datasets are "Access Only" and are not pulled. Half of
+        the 19,782 lines are retired reserves and are dropped at normalize.
 
   spain_regional:
     name: "Regional sendero networks (autonomous communities)"

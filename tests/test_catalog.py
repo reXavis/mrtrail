@@ -83,10 +83,33 @@ class TestCatalog(unittest.TestCase):
         self.catalog.record_pull(manifest.finish())
         self.assertEqual(self.catalog.last_pull("nz_doc")["ok"], 0)
 
+    def test_re_normalizing_does_not_leave_stale_search_hits(self):
+        # Contentless FTS5 was never being cleaned: a renamed or removed trail
+        # kept matching under its old name after every re-run.
+        self.catalog.replace_features("nz_doc", [make(1, name="Old Ghost Road")])
+        self.catalog.replace_features("nz_doc", [make(1, name="Renamed Track")])
+        self.assertEqual([r["id"] for r in self.catalog.search("Ghost")], [])
+        self.assertEqual([r["id"] for r in self.catalog.search("Renamed")], ["nz_doc:1"])
+
     def test_search_finds_by_name(self):
         self.catalog.replace_features("nz_doc", [make(1, name="Milford Track"), make(2)])
         hits = self.catalog.search("Milford")
         self.assertEqual([row["id"] for row in hits], ["nz_doc:1"])
+
+    def test_a_failed_replace_leaves_the_previous_rows_intact(self):
+        # A duplicate id from an adapter used to leave the source three
+        # features long: the delete and the first rows were committed on close.
+        self.catalog.replace_features("nz_doc", [make(1), make(2), make(3)])
+
+        def with_a_duplicate():
+            yield make(10)
+            yield make(11)
+            yield make(10)  # primary key collision
+
+        with self.assertRaises(Exception):
+            self.catalog.replace_features("nz_doc", with_a_duplicate())
+        self.assertEqual(self.catalog.totals().features, 3)
+        self.assertEqual({r["id"] for r in self.catalog.search("Track")}, {"nz_doc:1", "nz_doc:2", "nz_doc:3"})
 
     def test_catalog_stores_no_geometry(self):
         self.catalog.replace_features("nz_doc", [make(1)])

@@ -95,8 +95,18 @@ class TestCli(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn("nothing pulled yet", out)
 
+    def test_the_planned_example_is_actually_still_planned(self):
+        from trailsdb.adapters import is_implemented
+        from trailsdb import registry as registry_module
+
+        source = registry_module.load().get("australia_states")
+        self.assertFalse(is_implemented(source.adapter))
+
     def test_pull_skips_unimplemented_adapters_without_failing(self):
-        code, out, _ = run("pull", "kartverket_turrutebasen", data_dir=self.data)
+        # A source whose adapter is genuinely still planned. This must never
+        # name one that exists: a real adapter here runs a real pull inside the
+        # test suite.
+        code, out, _ = run("pull", "australia_states", data_dir=self.data)
         self.assertEqual(code, 0)
         self.assertIn("adapter not implemented yet", out)
 

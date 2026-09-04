@@ -20,10 +20,10 @@ trailsdb status
 
 | built | not yet |
 | --- | --- |
-| Source registry for all 20 planned sources | 9 of 17 adapters (each tagged with the wave it lands in) |
+| Source registry for all 20 planned sources | 6 of 17 adapters (each tagged with the wave it lands in) |
 | Normalized schema, master-database format, SQLite catalog | Cross-link matcher against OSM relations |
-| Polite/resumable/revalidating fetch layer; stdlib GeoPackage/WKB reader and LV95 transform | Shapefile + file-geodatabase readers (the `geo` extra) |
-| CNIG ×3, NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo | App-side overlay toggle, source badges, licenses screen |
+| Polite fetch layer; stdlib readers for ArcGIS, WFS (JSON and GML), GeoPackage/WKB, GPX; LV95 and transverse-Mercator transforms | Shapefile + file-geodatabase readers (the `geo` extra) |
+| CNIG ×3, NZ DOC ×2, EuroVelo, USFS, NPS, Ontario, England, swisstopo, Norway, Sweden, BC | App-side overlay toggle, source badges, licenses screen |
 | Per-pack bbox export with tippecanoe settings | Quarterly refresh automation in CI |
 | Size model, validated against real pulled data | Legal verification of 17 of 20 sources |
 
@@ -40,9 +40,12 @@ close.** Figures are measured from the normalized data.
 | Ontario Trail Network | 6,991 | 45,544 | 35,000 (with BC) |
 | NPS park trails | 31,156 | 27,820 | 40,000 |
 | CNIG Camino de Santiago | 1,074 | 24,854 | 25,000 |
+| BC recreation trail reserves (active) | 9,886 | 20,198 | — |
 | NZ DOC network | 3,248 | 13,896 | 14,000 |
 | NZ DOC routes | 1,547 | 13,696 | — |
 | England: National Trails + Coast Path | 16,457 | 7,604 | 5,000 |
+| Sweden: Naturvårdsverket leder | 12,013 | see status | 15,000 |
+| Norway: Kartverket Turrutebasen | — | — | 80,000 (pull running) |
 | CNIG FEDME senderos | — | — | 50,000 (pull running) |
 
 The Camino pulled 1,074 stages across 80 route variants in three countries.
@@ -53,9 +56,10 @@ not yet opened.
 A Galicia cut — the pack that ships today — comes to **+11.2 MB of tiles,
 +0.6 % of the pack**, against the plan's predicted ~1 %, before FEDME.
 
-**Eight sources are legally verified** (USFS, swisstopo, EuroVelo, Ontario, NPS,
-England, NZ DOC ×2). CNIG stays refused by `trailsdb export` until its
-producer-attribution string is confirmed — see
+**Ten sources are legally verified** (USFS, swisstopo, EuroVelo, Ontario, NPS,
+England, BC, Sweden, NZ DOC ×2). CNIG and Norway stay refused by
+`trailsdb export` — CNIG until its producer-attribution string is confirmed,
+Norway until Kartverket's licence is read from its own text — see
 [Legal architecture](#legal-architecture).
 
 ### What contact with the real services changed
@@ -77,6 +81,10 @@ The plan's size estimates held up. Its assumptions about *access* mostly did not
   replacement published; the adapter re-reads that notice on every pull.
 - **Caminos Naturales isn't a CNIG dataset at all.** It's published separately
   by the Ministerio de Agricultura.
+- **Half of BC's recreation lines are retired** tenure records, not trails, and
+  are dropped. Sweden's 12,013 rows are pieces of 3,657 trails; Norway's WFS
+  speaks only GML, which is why there is a GML reader. USGS's National Digital
+  Trails has no public endpoint anywhere it was looked for.
 
 ## Install
 
