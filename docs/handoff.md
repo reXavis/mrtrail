@@ -25,8 +25,8 @@ Every `.geojsonl` line is one tile-shaped feature: a `LineString`,
 the tiles; the export already writes nothing else and the tippecanoe args in
 `export.json` whitelist the same names.
 
-Packs not in `exports/` (the Alps cut is 400 MB of GeoJSONL) are regenerated,
-see below.
+Packs not in `exports/` (the Alps cut is 400 MB of GeoJSONL) are on the data
+branch or regenerated, see below.
 
 ## Baking
 
@@ -80,6 +80,25 @@ routes get them; `official` and `eurovelo` features are lines like any route.
   `water`, `summit`, `pass`, `lake`, `other`. Pick the icon from it.
 
 `docs/schema.md` has the full field reference.
+
+## The data branch
+
+The pulled and normalized data is too big for the code history (GitHub caps
+files at 100 MB) and GitHub Releases cannot be created from this kind of
+session, so it lives on an orphan branch, `data-2026-09-04`: the master
+database (one gzipped GeoJSONL per source), the SQLite catalog in 95 MB parts,
+and the exports for all seven packs baked so far. Its README lists every
+source's licence and credit line; `reassemble.sh` rebuilds a `data/` directory
+from it in a minute:
+
+```bash
+git clone --single-branch --branch data-2026-09-04 https://github.com/reXavis/mrtrail mrtrail-data
+./mrtrail-data/reassemble.sh ./data
+TRAILSDB_DATA=./data trailsdb export --pack alps
+```
+
+The raw tier is not on it (3.2 GB, disposable, re-pulled in a day), and the
+Geotrek pulls are nowhere: their operators' terms are closed.
 
 ## Regenerating, and adding packs
 

@@ -302,9 +302,11 @@ labels the row `measured`.
 
 `exports/` holds the pack inputs for Galicia and the Pyrenees (tile-shaped
 GeoJSONL per layer, the tippecanoe arguments, the credit lines) and
-`licenses.json` for the licences screen. [docs/handoff.md](docs/handoff.md) is
-the contract: layer names and zooms, the attributes, the three rules, and how
-to regenerate any pack.
+`licenses.json` for the licences screen. The full snapshot — master database,
+catalog, all seven baked packs — is on the orphan branch `data-2026-09-04`,
+with a script that rebuilds a `data/` directory from it.
+[docs/handoff.md](docs/handoff.md) is the contract: layer names and zooms, the
+attributes, the three rules, and how to regenerate any pack.
 
 ## Adding a source
 
