@@ -1,0 +1,107 @@
+{
+  "pack": "newzealand",
+  "bbox": [
+    166.0,
+    -47.5,
+    179.0,
+    -34.0
+  ],
+  "layers": [
+    {
+      "layer": "official",
+      "file": "official.geojsonl",
+      "feature_class": "route",
+      "features": 1543,
+      "length_km": 13687.3,
+      "estimated_tiles_mb": 46.8,
+      "sources": [
+        "nz_doc"
+      ],
+      "tippecanoe": [
+        "--layer=official",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no"
+      ]
+    },
+    {
+      "layer": "official_net",
+      "file": "official_net.geojsonl",
+      "feature_class": "segment",
+      "features": 3230,
+      "length_km": 13819.3,
+      "estimated_tiles_mb": 23.6,
+      "sources": [
+        "nz_doc_network"
+      ],
+      "tippecanoe": [
+        "--layer=official_net",
+        "--minimum-zoom=8",
+        "--maximum-zoom=13",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no"
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "source": "cnig_fedme",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "cnig_camino",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "cnig_camino_cid",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "caminos_naturales",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "kartverket_turrutebasen",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "geotrek",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "refuges_info",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "usgs_ndt",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "spain_regional",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "australia_states",
+      "reason": "license/attribution not verified"
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "pack": "pyrenees",
+  "bbox": [
+    -1.8,
+    42.2,
+    3.2,
+    43.4
+  ],
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "file": "eurovelo.geojsonl",
+      "feature_class": "route",
+      "features": 19,
+      "length_km": 766.9,
+      "estimated_tiles_mb": 0.3,
+      "sources": [
+        "eurovelo"
+      ],
+      "tippecanoe": [
+        "--layer=eurovelo",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    },
+    {
+      "layer": "official",
+      "file": "official.geojsonl",
+      "feature_class": "route",
+      "features": 651,
+      "length_km": 9530.1,
+      "estimated_tiles_mb": 4.0,
+      "sources": [
+        "cnig_fedme",
+        "cnig_camino",
+        "caminos_naturales"
+      ],
+      "tippecanoe": [
+        "--layer=official",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    },
+    {
+      "layer": "refuges_info",
+      "file": "refuges_info.geojsonl",
+      "feature_class": "spot",
+      "features": 1112,
+      "length_km": 0.0,
+      "estimated_tiles_mb": 0.4,
+      "sources": [
+        "refuges_info"
+      ],
+      "tippecanoe": [
+        "--layer=refuges_info",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "source": "geotrek",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "usgs_ndt",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "spain_regional",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "australia_states",
+      "reason": "license/attribution not verified"
+    }
+  ]
+}

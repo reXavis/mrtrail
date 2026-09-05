@@ -1,0 +1,26 @@
+{
+  "pack": "newzealand",
+  "tippecanoe": "/usr/bin/tippecanoe",
+  "layers": [
+    {
+      "layer": "official",
+      "feature_class": "route",
+      "features": 1543,
+      "length_km": 13687.3,
+      "pmtiles": "official.pmtiles",
+      "bytes": 5227244,
+      "kb_per_km": 0.373,
+      "seconds": 1.6
+    },
+    {
+      "layer": "official_net",
+      "feature_class": "segment",
+      "features": 3230,
+      "length_km": 13819.3,
+      "pmtiles": "official_net.pmtiles",
+      "bytes": 5222960,
+      "kb_per_km": 0.369,
+      "seconds": 3.9
+    }
+  ]
+}

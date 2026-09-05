@@ -1,0 +1,81 @@
+{
+  "pack": "colorado",
+  "bbox": [
+    -109.06,
+    36.99,
+    -102.04,
+    41.0
+  ],
+  "layers": [
+    {
+      "layer": "official_net",
+      "file": "official_net.geojsonl",
+      "feature_class": "segment",
+      "features": 7358,
+      "length_km": 22986.8,
+      "estimated_tiles_mb": 39.3,
+      "sources": [
+        "usfs_trails",
+        "nps_trails"
+      ],
+      "tippecanoe": [
+        "--layer=official_net",
+        "--minimum-zoom=8",
+        "--maximum-zoom=13",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no"
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "source": "cnig_fedme",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "cnig_camino",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "cnig_camino_cid",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "caminos_naturales",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "kartverket_turrutebasen",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "geotrek",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "refuges_info",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "usgs_ndt",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "spain_regional",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "australia_states",
+      "reason": "license/attribution not verified"
+    }
+  ]
+}

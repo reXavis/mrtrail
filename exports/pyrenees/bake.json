@@ -1,0 +1,39 @@
+{
+  "pack": "pyrenees",
+  "tippecanoe": "/usr/bin/tippecanoe",
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "feature_class": "route",
+      "features": 19,
+      "length_km": 766.9,
+      "pmtiles": "eurovelo.pmtiles",
+      "bytes": 351255,
+      "kb_per_km": 0.447,
+      "kb_per_feature": 18.054,
+      "seconds": 0.2
+    },
+    {
+      "layer": "official",
+      "feature_class": "route",
+      "features": 589,
+      "length_km": 8961.9,
+      "pmtiles": "official.pmtiles",
+      "bytes": 4548013,
+      "kb_per_km": 0.496,
+      "kb_per_feature": 7.541,
+      "seconds": 2.4
+    },
+    {
+      "layer": "refuges_info",
+      "feature_class": "spot",
+      "features": 1112,
+      "length_km": 0.0,
+      "pmtiles": "refuges_info.pmtiles",
+      "bytes": 425135,
+      "kb_per_km": 0.0,
+      "kb_per_feature": 0.373,
+      "seconds": 0.3
+    }
+  ]
+}

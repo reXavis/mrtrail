@@ -1,0 +1,55 @@
+{
+  "pack": "pyrenees",
+  "sources": [
+    {
+      "source": "cnig_fedme",
+      "name": "Senderos homologados FEDME",
+      "publisher": "Centro Nacional de Informacion Geografica (CNIG) / FEDME",
+      "license": "cc-by-4.0",
+      "license_name": "Creative Commons Attribution 4.0 International",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Obra derivada de FEDME 2020-2026 CC-BY 4.0 FEDME",
+      "layer": "official"
+    },
+    {
+      "source": "cnig_camino",
+      "name": "Camino de Santiago (all variants)",
+      "publisher": "Centro Nacional de Informacion Geografica (CNIG) / FEAACS",
+      "license": "cc-by-4.0",
+      "license_name": "Creative Commons Attribution 4.0 International",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Obra derivada de Rutas de Caminos de Santiago 2020-2026 CC-BY 4.0 FEAACS",
+      "layer": "official"
+    },
+    {
+      "source": "caminos_naturales",
+      "name": "Caminos Naturales",
+      "publisher": "Ministerio de Agricultura, Pesca y Alimentacion (MAPA), via the CNIG download centre",
+      "license": "cc-by-4.0",
+      "license_name": "Creative Commons Attribution 4.0 International",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Obra derivada de CNT 2024 CC-BY 4.0 MAPA",
+      "layer": "official"
+    },
+    {
+      "source": "eurovelo",
+      "name": "EuroVelo cycle route network",
+      "publisher": "European Cyclists' Federation",
+      "license": "odbl-1.0",
+      "license_name": "Open Data Commons Open Database License v1.0",
+      "license_url": "https://opendatacommons.org/licenses/odbl/1-0/",
+      "attribution": "Contains information from EuroVelo GPX tracks downloaded from www.EuroVelo.com on 2026-08-27, which is made available here under the Open Database License (ODbL).",
+      "layer": "eurovelo"
+    },
+    {
+      "source": "refuges_info",
+      "name": "refuges.info huts and shelters",
+      "publisher": "refuges.info",
+      "license": "cc-by-sa-2.0",
+      "license_name": "Creative Commons Attribution-ShareAlike 2.0 Generic",
+      "license_url": "https://creativecommons.org/licenses/by-sa/2.0/",
+      "attribution": "\u00a9 refuges.info contributors, CC BY-SA 2.0",
+      "layer": "refuges_info"
+    }
+  ]
+}

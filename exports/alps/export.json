@@ -1,0 +1,121 @@
+{
+  "pack": "alps",
+  "bbox": [
+    5.0,
+    43.5,
+    16.5,
+    48.0
+  ],
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "file": "eurovelo.geojsonl",
+      "feature_class": "route",
+      "features": 176,
+      "length_km": 6960.0,
+      "estimated_tiles_mb": 2.7,
+      "sources": [
+        "eurovelo"
+      ],
+      "tippecanoe": [
+        "--layer=eurovelo",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    },
+    {
+      "layer": "official_net",
+      "file": "official_net.geojsonl",
+      "feature_class": "segment",
+      "features": 409276,
+      "length_km": 66926.3,
+      "estimated_tiles_mb": 78.4,
+      "sources": [
+        "swisstopo_wanderwege"
+      ],
+      "tippecanoe": [
+        "--layer=official_net",
+        "--minimum-zoom=8",
+        "--maximum-zoom=13",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    },
+    {
+      "layer": "refuges_info",
+      "file": "refuges_info.geojsonl",
+      "feature_class": "spot",
+      "features": 5346,
+      "length_km": 0.0,
+      "estimated_tiles_mb": 0.8,
+      "sources": [
+        "refuges_info"
+      ],
+      "tippecanoe": [
+        "--layer=refuges_info",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "source": "cnig_camino_cid",
+      "reason": "not normalized yet"
+    },
+    {
+      "source": "caminos_naturales",
+      "reason": "not normalized yet"
+    },
+    {
+      "source": "geotrek",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "usgs_ndt",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "spain_regional",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "australia_states",
+      "reason": "license/attribution not verified"
+    }
+  ]
+}

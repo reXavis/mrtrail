@@ -1,0 +1,25 @@
+{
+  "pack": "newzealand",
+  "sources": [
+    {
+      "source": "nz_doc",
+      "name": "DOC walking, tramping and mountain bike routes",
+      "publisher": "New Zealand Department of Conservation",
+      "license": "cc-by-4.0",
+      "license_name": "Creative Commons Attribution 4.0 International",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Crown copyright (c) Department of Conservation (DOC) and the New Zealand Government",
+      "layer": "official"
+    },
+    {
+      "source": "nz_doc_network",
+      "name": "DOC track network (EAM asset system)",
+      "publisher": "New Zealand Department of Conservation",
+      "license": "cc-by-4.0",
+      "license_name": "Creative Commons Attribution 4.0 International",
+      "license_url": "https://creativecommons.org/licenses/by/4.0/",
+      "attribution": "Crown copyright (c) Department of Conservation (DOC) and the New Zealand Government",
+      "layer": "official_net"
+    }
+  ]
+}

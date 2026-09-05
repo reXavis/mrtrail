@@ -1,0 +1,39 @@
+{
+  "pack": "galicia",
+  "tippecanoe": "/usr/bin/tippecanoe",
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "feature_class": "route",
+      "features": 17,
+      "length_km": 903.5,
+      "pmtiles": "eurovelo.pmtiles",
+      "bytes": 411424,
+      "kb_per_km": 0.445,
+      "kb_per_feature": 23.634,
+      "seconds": 0.3
+    },
+    {
+      "layer": "official",
+      "feature_class": "route",
+      "features": 263,
+      "length_km": 3975.0,
+      "pmtiles": "official.pmtiles",
+      "bytes": 2068420,
+      "kb_per_km": 0.508,
+      "kb_per_feature": 7.68,
+      "seconds": 0.9
+    },
+    {
+      "layer": "refuges_info",
+      "feature_class": "spot",
+      "features": 1,
+      "length_km": 0.0,
+      "pmtiles": "refuges_info.pmtiles",
+      "bytes": 2011,
+      "kb_per_km": 0.0,
+      "kb_per_feature": 1.964,
+      "seconds": 0.1
+    }
+  ]
+}

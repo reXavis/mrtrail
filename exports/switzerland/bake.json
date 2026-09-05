@@ -1,0 +1,26 @@
+{
+  "pack": "switzerland",
+  "tippecanoe": "/usr/bin/tippecanoe",
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "feature_class": "route",
+      "features": 65,
+      "length_km": 2175.7,
+      "pmtiles": "eurovelo.pmtiles",
+      "bytes": 950876,
+      "kb_per_km": 0.427,
+      "seconds": 0.4
+    },
+    {
+      "layer": "official_net",
+      "feature_class": "segment",
+      "features": 409276,
+      "length_km": 66926.3,
+      "pmtiles": "official_net.pmtiles",
+      "bytes": 110610541,
+      "kb_per_km": 1.614,
+      "seconds": 26.6
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "pack": "colorado",
+  "tippecanoe": "/usr/bin/tippecanoe",
+  "layers": [
+    {
+      "layer": "official_net",
+      "feature_class": "segment",
+      "features": 7358,
+      "length_km": 22986.8,
+      "pmtiles": "official_net.pmtiles",
+      "bytes": 8263524,
+      "kb_per_km": 0.351,
+      "seconds": 9.3
+    }
+  ]
+}

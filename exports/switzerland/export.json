@@ -1,0 +1,107 @@
+{
+  "pack": "switzerland",
+  "bbox": [
+    5.9,
+    45.8,
+    10.5,
+    47.9
+  ],
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "file": "eurovelo.geojsonl",
+      "feature_class": "route",
+      "features": 65,
+      "length_km": 2175.7,
+      "estimated_tiles_mb": 7.4,
+      "sources": [
+        "eurovelo"
+      ],
+      "tippecanoe": [
+        "--layer=eurovelo",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no"
+      ]
+    },
+    {
+      "layer": "official_net",
+      "file": "official_net.geojsonl",
+      "feature_class": "segment",
+      "features": 409276,
+      "length_km": 66926.3,
+      "estimated_tiles_mb": 114.4,
+      "sources": [
+        "swisstopo_wanderwege"
+      ],
+      "tippecanoe": [
+        "--layer=official_net",
+        "--minimum-zoom=8",
+        "--maximum-zoom=13",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no"
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "source": "cnig_fedme",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "cnig_camino",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "cnig_camino_cid",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "caminos_naturales",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "kartverket_turrutebasen",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "geotrek",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "refuges_info",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "usgs_ndt",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "spain_regional",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "australia_states",
+      "reason": "license/attribution not verified"
+    }
+  ]
+}

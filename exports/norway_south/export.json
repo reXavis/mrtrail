@@ -1,0 +1,149 @@
+{
+  "pack": "norway_south",
+  "bbox": [
+    4.0,
+    58.0,
+    12.5,
+    63.5
+  ],
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "file": "eurovelo.geojsonl",
+      "feature_class": "route",
+      "features": 40,
+      "length_km": 1924.0,
+      "estimated_tiles_mb": 0.8,
+      "sources": [
+        "eurovelo"
+      ],
+      "tippecanoe": [
+        "--layer=eurovelo",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    },
+    {
+      "layer": "official",
+      "file": "official.geojsonl",
+      "feature_class": "route",
+      "features": 1870,
+      "length_km": 2348.3,
+      "estimated_tiles_mb": 1.7,
+      "sources": [
+        "naturvardsverket"
+      ],
+      "tippecanoe": [
+        "--layer=official",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    },
+    {
+      "layer": "official_net",
+      "file": "official_net.geojsonl",
+      "feature_class": "segment",
+      "features": 141833,
+      "length_km": 66591.8,
+      "estimated_tiles_mb": 50.0,
+      "sources": [
+        "kartverket_turrutebasen"
+      ],
+      "tippecanoe": [
+        "--layer=official_net",
+        "--minimum-zoom=8",
+        "--maximum-zoom=13",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    },
+    {
+      "layer": "refuges_info",
+      "file": "refuges_info.geojsonl",
+      "feature_class": "spot",
+      "features": 11,
+      "length_km": 0.0,
+      "estimated_tiles_mb": 0.0,
+      "sources": [
+        "refuges_info"
+      ],
+      "tippecanoe": [
+        "--layer=refuges_info",
+        "--minimum-zoom=8",
+        "--maximum-zoom=14",
+        "--drop-densest-as-needed",
+        "--no-tile-size-limit",
+        "--include=id",
+        "--include=source",
+        "--include=license",
+        "--include=kind",
+        "--include=ref",
+        "--include=name",
+        "--include=official_status",
+        "--include=parent_id",
+        "--include=stage_no",
+        "--include=category"
+      ]
+    }
+  ],
+  "skipped": [
+    {
+      "source": "cnig_camino_cid",
+      "reason": "not normalized yet"
+    },
+    {
+      "source": "caminos_naturales",
+      "reason": "not normalized yet"
+    },
+    {
+      "source": "geotrek",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "usgs_ndt",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "spain_regional",
+      "reason": "license/attribution not verified"
+    },
+    {
+      "source": "australia_states",
+      "reason": "license/attribution not verified"
+    }
+  ]
+}

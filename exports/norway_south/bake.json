@@ -1,0 +1,50 @@
+{
+  "pack": "norway_south",
+  "tippecanoe": "/usr/bin/tippecanoe",
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "feature_class": "route",
+      "features": 40,
+      "length_km": 1924.0,
+      "pmtiles": "eurovelo.pmtiles",
+      "bytes": 1219267,
+      "kb_per_km": 0.619,
+      "kb_per_feature": 29.767,
+      "seconds": 0.5
+    },
+    {
+      "layer": "official",
+      "feature_class": "route",
+      "features": 1870,
+      "length_km": 2348.3,
+      "pmtiles": "official.pmtiles",
+      "bytes": 1637030,
+      "kb_per_km": 0.681,
+      "kb_per_feature": 0.855,
+      "seconds": 0.7
+    },
+    {
+      "layer": "official_net",
+      "feature_class": "segment",
+      "features": 141833,
+      "length_km": 66591.8,
+      "pmtiles": "official_net.pmtiles",
+      "bytes": 61925856,
+      "kb_per_km": 0.908,
+      "kb_per_feature": 0.426,
+      "seconds": 20.5
+    },
+    {
+      "layer": "refuges_info",
+      "feature_class": "spot",
+      "features": 11,
+      "length_km": 0.0,
+      "pmtiles": "refuges_info.pmtiles",
+      "bytes": 10785,
+      "kb_per_km": 0.0,
+      "kb_per_feature": 0.957,
+      "seconds": 0.1
+    }
+  ]
+}

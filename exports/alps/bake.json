@@ -1,0 +1,39 @@
+{
+  "pack": "alps",
+  "tippecanoe": "/usr/bin/tippecanoe",
+  "layers": [
+    {
+      "layer": "eurovelo",
+      "feature_class": "route",
+      "features": 176,
+      "length_km": 6960.0,
+      "pmtiles": "eurovelo.pmtiles",
+      "bytes": 3181367,
+      "kb_per_km": 0.446,
+      "kb_per_feature": 17.652,
+      "seconds": 1.1
+    },
+    {
+      "layer": "official_net",
+      "feature_class": "segment",
+      "features": 409276,
+      "length_km": 66926.3,
+      "pmtiles": "official_net.pmtiles",
+      "bytes": 110610547,
+      "kb_per_km": 1.614,
+      "kb_per_feature": 0.264,
+      "seconds": 27.1
+    },
+    {
+      "layer": "refuges_info",
+      "feature_class": "spot",
+      "features": 5346,
+      "length_km": 0.0,
+      "pmtiles": "refuges_info.pmtiles",
+      "bytes": 1783409,
+      "kb_per_km": 0.0,
+      "kb_per_feature": 0.326,
+      "seconds": 0.9
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "pack": "colorado",
+  "sources": [
+    {
+      "source": "usfs_trails",
+      "name": "National Forest System Trails",
+      "publisher": "USDA Forest Service",
+      "license": "us-public-domain",
+      "license_name": "U.S. Government work, not subject to domestic copyright (17 U.S.C. 105)",
+      "license_url": "https://www.usa.gov/government-works",
+      "attribution": "USDA Forest Service",
+      "layer": "official_net"
+    },
+    {
+      "source": "nps_trails",
+      "name": "National Park Service trails",
+      "publisher": "US National Park Service",
+      "license": "us-public-domain",
+      "license_name": "U.S. Government work, not subject to domestic copyright (17 U.S.C. 105)",
+      "license_url": "https://www.usa.gov/government-works",
+      "attribution": "US National Park Service",
+      "layer": "official_net"
+    }
+  ]
+}
